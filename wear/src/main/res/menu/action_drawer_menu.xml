@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/menu_home"
+        android:icon="@drawable/ic_menu_report"
+        android:title="@string/bottom_menu_home" />
+    <item android:id="@+id/menu_end_half"
+        android:icon="@drawable/close_button"
+        android:title="@string/bottom_menu_end_half" />
+    <item android:id="@+id/bottom_menu_scores"
+        android:icon="@drawable/ic_score"
+        android:title="@string/bottom_menu_scores" />
+    <item android:id="@+id/bottom_menu_cards"
+        android:icon="@drawable/ic_score"
+        android:title="@string/bottom_menu_cards" />
+    <item android:id="@+id/bottom_menu_subs"
+        android:icon="@drawable/ic_score"
+        android:title="@string/bottom_menu_subs" />
+    <item android:id="@+id/bottom_menu_injuries"
+        android:icon="@drawable/ic_score"
+        android:title="@string/bottom_menu_injuries" />
+    <item android:id="@+id/bottom_menu_reset_stopwatch"
+        android:icon="@drawable/ic_score"
+        android:title="@string/reset_stopwatch" />
+    <item
+        android:id="@+id/menu_sign_out"
+        android:icon="@android:drawable/ic_menu_revert"
+        android:title="@string/bottom_menu_sign_out" />
+</menu>
