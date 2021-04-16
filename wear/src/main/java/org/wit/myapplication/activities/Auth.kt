@@ -9,18 +9,18 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AlertDialog
-import com.google.android.gms.auth.api.signin.*
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
-import com.google.android.gms.common.api.Api
-import com.google.android.gms.tasks.Task
-import org.wit.myapplication.R
-import org.jetbrains.anko.startActivity
+import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
+import org.jetbrains.anko.startActivity
+import org.wit.myapplication.R
 import org.wit.myapplication.main.MainApp
-import com.google.android.gms.common.api.ApiException
-
 
 
 /**
@@ -32,6 +32,7 @@ class Auth : ComponentActivity() {
     private var mSignOutButton: Button? = null
     lateinit var app: MainApp
     lateinit var loader: AlertDialog
+    lateinit var db : FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,10 +52,24 @@ class Auth : ComponentActivity() {
 
         // Initialise Firebase Auth
         app.auth = FirebaseAuth.getInstance()
+        // Initialise Firestore
+        db = FirebaseFirestore.getInstance()
         setupGoogleSignInClient()
     }
 
 
+    /**
+     * Configures the GoogleApiClient used for sign in. Requests scopes profile and email.
+     */
+    protected fun setupGoogleSignInClient() {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build()
+        app.mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
+
+
+    }
 //    private fun checkAlreadySignedIn() {
 //        val account = GoogleSignIn.getLastSignedInAccount(this)
 //        updateUi(account)
@@ -63,8 +78,8 @@ class Auth : ComponentActivity() {
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
         super.onActivityResult(requestCode, resultCode, data)
         Log.d(
-            TAG,
-            "Activity request code: $requestCode"
+                TAG,
+                "Activity request code: $requestCode"
         )
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == REQUEST_CODE_SIGN_IN) {
@@ -76,25 +91,14 @@ class Auth : ComponentActivity() {
                     firebaseAuthWithGoogle(account!!)
                    // handleSignInResult(task)
                 }catch (e: ApiException){
-                    Log.w(TAG, "Google Sign In Failed: ",e)
-                    Toast.makeText(this,"SignIn Failed", Toast.LENGTH_LONG )
+                    Log.w(TAG, "Google Sign In Failed: ", e)
+                    Toast.makeText(this, "SignIn Failed", Toast.LENGTH_LONG)
                     updateUi(null)
                 }
         }
     }
 
-    /**
-     * Configures the GoogleApiClient used for sign in. Requests scopes profile and email.
-     */
-    protected fun setupGoogleSignInClient() {
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-            .build()
-        app.mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
 
-
-    }
 
 //    protected fun handleSignInResult(completedTask: Task<GoogleSignInAccount?>) {
 //        try {
@@ -121,7 +125,7 @@ class Auth : ComponentActivity() {
             mSignInButton!!.visibility = View.GONE
             //mSignOutButton!!.visibility = View.VISIBLE
 
-            startActivity<MainActivity>()
+            startActivity<GamesList>()
         } else {
             mSignInButton!!.visibility = View.VISIBLE
           //  mSignOutButton!!.visibility = View.GONE
@@ -151,9 +155,9 @@ class Auth : ComponentActivity() {
         app.mGoogleSignInClient!!.signOut().addOnCompleteListener(this) {
             updateUi(null)
             Toast.makeText(
-                this,
-                R.string.signout_successful,
-                Toast.LENGTH_SHORT
+                    this,
+                    R.string.signout_successful,
+                    Toast.LENGTH_SHORT
             ).show()
         }
     }
@@ -164,25 +168,64 @@ class Auth : ComponentActivity() {
 
         val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
         app.auth.signInWithCredential(credential)
-                .addOnCompleteListener(this) { task ->
-                    if (task.isSuccessful) {
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d(TAG, "signInWithCredential:success")
-                        val user = app.auth.currentUser
-                        updateUi(user)
-                    } else {
-                        // If sign in fails, display a message to the user.
-                        Log.w(TAG, "signInWithCredential:failure", task.exception)
-                        Toast.makeText(
-                                this,
-                                "SignIn Failed",
-                                Toast.LENGTH_LONG
-                        ).show()
-                        updateUi(null)
-                    }
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "signInWithCredential:success")
+                    val user = app.auth.currentUser
+
+
+
+                    db.collection("Member").document(user.uid)
+                            .get()
+                            .addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    val document = task.result!!
+                                    val isClubRef = document.data?.get("refereeOfClub")
+                                    val isCountyRef = document.data?.get("refereeOfCounty")
+//                                    Check if the authenticated user is a member & if they are a referee
+                                    if (document != null)
+                                    {
+                                        if(isClubRef == true  || isCountyRef == true ) {
+                                            Log.d(TAG, document.id + " => " + isClubRef)
+                                            updateUi(user)
+                                        }
+                                        else{
+                                            Log.w(TAG, "Error getting documents.", task.exception)
+                                            Toast.makeText(
+                                                    this,
+                                                    "SignIn Failed",
+                                                    Toast.LENGTH_LONG
+                                            ).show()
+                                            updateUi(null)
+                                        }
+                                    }
+                                } else {
+                                    Log.w(TAG, "Error getting documents.", task.exception)
+                                    Toast.makeText(
+                                            this,
+                                            "SignIn Failed",
+                                            Toast.LENGTH_LONG
+                                    ).show()
+                                    updateUi(null)
+                                }
+                            }
+
+
+
+
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+                    Toast.makeText(
+                            this,
+                            "SignIn Failed",
+                            Toast.LENGTH_LONG
+                    ).show()
+                    updateUi(null)
                 }
+            }
     }
-    // [END auth_with_google]
 
     companion object {
         private const val TAG = "GoogleSignInActivity"
