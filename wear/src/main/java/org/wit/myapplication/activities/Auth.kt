@@ -181,11 +181,13 @@ class Auth : ComponentActivity() {
                             .addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
                                     val document = task.result!!
-                                    val isClubRef = document.data?.get("refereeOfClub")
-                                    val isCountyRef = document.data?.get("refereeOfCounty")
+
 //                                    Check if the authenticated user is a member & if they are a referee
                                     if (document != null)
                                     {
+                                        val isClubRef = document.data?.get("refereeOfClub")
+                                        val isCountyRef = document.data?.get("refereeOfCounty")
+
                                         if(isClubRef == true  || isCountyRef == true ) {
                                             Log.d(TAG, document.id + " => " + isClubRef)
                                             updateUi(user)
