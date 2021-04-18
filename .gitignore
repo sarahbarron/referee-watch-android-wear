@@ -15,3 +15,4 @@
 local.properties
 wear/google-services.json
 mobile/google-services.json
+wear/src/main/res/values/firebase.xml

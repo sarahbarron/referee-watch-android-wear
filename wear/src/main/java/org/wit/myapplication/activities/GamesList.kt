@@ -88,7 +88,7 @@ class GamesList: FragmentActivity(), GamesListener,
         private const val TAG = "Game List Activity"
     }
 
-    fun getListOfGames():ArrayList<ArrayList<String>>{
+    fun getListOfGames() :ArrayList<ArrayList<String>>{
 
         var listOfGames = ArrayList<ArrayList<String>>()
         var singleGame = ArrayList<String>()
@@ -125,6 +125,33 @@ class GamesList: FragmentActivity(), GamesListener,
                                                 if (document != null) {
                                                     teamA = document.data?.get("name")!!
                                                     Log.w(TAG,"TeamA"+teamA , task.exception)
+
+                                                    db.collection("Team").document(b)
+                                                            .get()
+                                                            .addOnCompleteListener { task ->
+                                                                if (task.isSuccessful) {
+                                                                    val document = task.result!!
+                                                                    if (document != null) {
+                                                                        teamB = document.data?.get("name")!!
+                                                                        Log.w(TAG,"TeamB"+teamB , task.exception)
+                                                                        val game = ( ""+teamA+" V " + teamB)
+                                                                        singleGame.add(game)
+                                                                        listOfGames.add(singleGame)
+                                                                        Log.w(TAG, "Game: "+ game)
+                                                                    } else {
+                                                                        Log.w(TAG, "Error getting documents.", task.exception)
+                                                                        Toast.makeText(
+                                                                                this,
+                                                                                "No Team B",
+                                                                                Toast.LENGTH_LONG
+                                                                        ).show()
+
+                                                                    }
+
+                                                                }
+
+                                                            }
+
                                                 } else {
                                                     Log.w(TAG, "Error getting documents.", task.exception)
                                                     Toast.makeText(
@@ -136,35 +163,6 @@ class GamesList: FragmentActivity(), GamesListener,
                                                 }
                                             }
                                         }
-
-
-                                db.collection("Team").document(b)
-                                        .get()
-                                        .addOnCompleteListener { task ->
-                                            if (task.isSuccessful) {
-                                                val document = task.result!!
-                                                if (document != null) {
-                                                    teamB = document.data?.get("name")!!
-                                                    Log.w(TAG,"TeamB"+teamB , task.exception)
-                                                    val game = ( ""+teamA+" V " + teamB)
-                                                    singleGame.add(game)
-                                                    listOfGames.add(singleGame)
-                                                    Log.w(TAG, "Game: "+ game)
-                                                } else {
-                                                    Log.w(TAG, "Error getting documents.", task.exception)
-                                                    Toast.makeText(
-                                                            this,
-                                                            "No Team B",
-                                                            Toast.LENGTH_LONG
-                                                    ).show()
-
-                                                }
-
-                                            }
-
-                                        }
-
-
 
                             }
 
