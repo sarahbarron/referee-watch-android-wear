@@ -21,6 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import org.jetbrains.anko.startActivity
 import org.wit.myapplication.R
 import org.wit.myapplication.main.MainApp
+import org.wit.myapplication.models.firebase.GamesFireStore
 
 
 /**
@@ -34,10 +35,13 @@ class Auth : ComponentActivity() {
     lateinit var loader: AlertDialog
     lateinit var db : FirebaseFirestore
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
         app = application as MainApp
+
 
 
 
@@ -190,6 +194,8 @@ class Auth : ComponentActivity() {
 
                                         if(isClubRef == true  || isCountyRef == true ) {
                                             Log.d(TAG, document.id + " => " + isClubRef)
+                                            val games = app.firebasestore.fetchGames()
+                                            Log.i(TAG, "fetchGames: $games")
                                             updateUi(user)
                                         }
                                         else{

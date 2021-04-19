@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
     android:elevation="24dp"
-    android:id="@+id/card_games">
+    android:id="@+id/card_injury">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -13,10 +13,9 @@
         android:padding="16dp">
 
         <TextView
-            android:id="@+id/gameTime"
-            android:layout_width="match_parent"
+            android:id="@+id/injuryTime"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:paddingLeft="10dp"
             android:paddingTop="5dp"
             android:text="12:00pm"
@@ -25,31 +24,26 @@
             android:layout_alignParentStart="true" />
 
         <TextView
-            android:id="@+id/teamA"
+            android:id="@+id/injuryTeam"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="10dp"
             android:paddingTop="5dp"
-            android:text="hello"
+            android:text="Team"
             android:textColor="@color/white"
             android:textSize="13sp"
-            android:layout_alignTop="@id/teamA"
-            android:layout_below="@id/gameTime"
+            android:layout_below="@id/injuryTime"
             />
         <TextView
-            android:id="@+id/teamB"
+            android:id="@+id/injuredPlayer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="10dp"
             android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:layout_marginBottom="10dp"
-            android:text="Goodbye"
+            android:text="Player"
             android:textColor="@color/white"
             android:textSize="13sp"
-            android:layout_below="@id/teamA"
-            android:layout_alignParentEnd="true"
+            android:layout_below="@id/injuryTeam"
             />
-
-</RelativeLayout>
+    </RelativeLayout>
 </androidx.cardview.widget.CardView>

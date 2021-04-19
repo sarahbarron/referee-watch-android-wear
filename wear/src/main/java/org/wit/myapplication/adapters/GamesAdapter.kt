@@ -5,23 +5,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import org.jetbrains.anko.attr
 import org.wit.myapplication.R
-import org.wit.myapplication.main.MainApp
+import android.util.Log
 
 import kotlinx.android.synthetic.main.activity_games_list.*
 import kotlinx.android.synthetic.main.card_games.view.*
+import kotlinx.coroutines.Deferred
+import org.wit.myapplication.models.GameModel
+import java.util.logging.Level.INFO
+
 
 interface GamesListener{
-    fun onGameClick(game: String)
+    fun onGameClick(game: GameModel)
 }
-class GamesAdapter(val games: ArrayList<ArrayList<String>>,
+class GamesAdapter constructor(val games: ArrayList<GameModel>,
                    val listener: GamesListener)
     : RecyclerView.Adapter<GamesAdapter.MainHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainHolder {
+        Log.i(TAG, "onCreateViewHolder: ");
         return MainHolder(
-                LayoutInflater.from(parent.context).inflate
+                LayoutInflater.from(parent?.context).inflate
                     (R.layout.card_games, parent, false)
         )
     }
@@ -29,17 +33,24 @@ class GamesAdapter(val games: ArrayList<ArrayList<String>>,
 
 
     override fun onBindViewHolder(holder: MainHolder, position: Int) {
-       val game = games[holder.adapterPosition]
+        val game = games[holder.adapterPosition]
+        Log.i(TAG, "onBindViewHolderbinding: $game");
         holder.bind(game, listener)
     }
 
     override fun getItemCount(): Int = games.size
 
     class MainHolder constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-        fun bind(game: ArrayList<String>, listener: GamesListener) {
-            itemView.game.text = game[1]
+        fun bind(game: GameModel, listener: GamesListener) {
+            val x = 0
+            itemView.gameTime.text = game.dateTime.toString()
+            itemView.teamA.text = game.id
         }
+    }
+
+
+    companion object {
+        private const val TAG = "Games Adapter"
     }
 }
 

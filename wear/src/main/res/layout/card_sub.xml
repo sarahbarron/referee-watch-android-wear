@@ -5,27 +5,39 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
     android:elevation="24dp"
-    android:id="@+id/card_games">
+    android:id="@+id/card_sub">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/blue_a400"
+        android:background="@color/dark_grey"
         android:padding="16dp">
 
         <TextView
-            android:id="@+id/gameTime"
-            android:layout_width="match_parent"
+            android:id="@+id/subTime"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:paddingLeft="10dp"
             android:paddingTop="5dp"
             android:text="12:00pm"
             android:textColor="@color/white"
             android:textSize="13sp"
             android:layout_alignParentStart="true" />
+        <TextView
+            android:id="@+id/bloodsub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:layout_marginBottom="10dp"
+            android:text="BloodSub"
+            android:textColor="@color/white"
+            android:textSize="13sp"
+            android:layout_toRightOf="@id/subTime"
+            />
 
         <TextView
-            android:id="@+id/teamA"
+            android:id="@+id/subTeam"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="10dp"
@@ -33,11 +45,21 @@
             android:text="hello"
             android:textColor="@color/white"
             android:textSize="13sp"
-            android:layout_alignTop="@id/teamA"
-            android:layout_below="@id/gameTime"
+            android:layout_below="@id/subTime"
             />
         <TextView
-            android:id="@+id/teamB"
+            android:id="@+id/playerOn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingTop="5dp"
+            android:text="hello"
+            android:textColor="@color/red_a200"
+            android:textSize="13sp"
+            android:layout_below="@id/subTeam"
+            />
+        <TextView
+            android:id="@+id/playerOff"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="10dp"
@@ -45,11 +67,10 @@
             android:paddingBottom="5dp"
             android:layout_marginBottom="10dp"
             android:text="Goodbye"
-            android:textColor="@color/white"
+            android:textColor="@color/green"
             android:textSize="13sp"
-            android:layout_below="@id/teamA"
+            android:layout_below="@id/playerOn"
             android:layout_alignParentEnd="true"
             />
-
-</RelativeLayout>
+    </RelativeLayout>
 </androidx.cardview.widget.CardView>
