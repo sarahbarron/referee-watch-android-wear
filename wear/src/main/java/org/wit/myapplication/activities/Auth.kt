@@ -1,6 +1,7 @@
 package org.wit.myapplication.activities
 
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -167,6 +168,7 @@ class Auth : ComponentActivity() {
     }
 
     // [START auth_with_google]
+    @SuppressLint("NewApi")
     private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.id!!)
 
@@ -194,7 +196,14 @@ class Auth : ComponentActivity() {
 
                                         if(isClubRef == true  || isCountyRef == true ) {
                                             Log.d(TAG, document.id + " => " + isClubRef)
-                                            val games = app.firebasestore.fetchGames()
+                                            app.firebasestore.fetchGames()
+                                            val games =  app.firebasestore.findAllGames()
+                                            // get the teams involved in each game
+                                            for(game in games)
+                                            {
+                                                game.teamA?.let { app.firebasestore.fetchTeam(it) }
+                                                game.teamB?.let { app.firebasestore.fetchTeam(it) }
+                                            }
                                             Log.i(TAG, "fetchGames: $games")
                                             updateUi(user)
                                         }

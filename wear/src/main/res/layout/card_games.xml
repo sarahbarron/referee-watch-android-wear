@@ -10,46 +10,57 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/blue_a400"
-        android:padding="16dp">
+        android:padding="10dp">
 
         <TextView
             android:id="@+id/gameTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:paddingLeft="10dp"
-            android:paddingTop="5dp"
-            android:text="12:00pm"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:text="@string/gameTime"
             android:textColor="@color/white"
             android:textSize="13sp"
             android:layout_alignParentStart="true" />
 
         <TextView
             android:id="@+id/teamA"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:paddingTop="5dp"
-            android:text="hello"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:text="@string/gameListTeamA"
             android:textColor="@color/white"
             android:textSize="13sp"
             android:layout_alignTop="@id/teamA"
             android:layout_below="@id/gameTime"
             />
         <TextView
-            android:id="@+id/teamB"
-            android:layout_width="match_parent"
+            android:id="@+id/versus"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:layout_marginBottom="10dp"
-            android:text="Goodbye"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:text="@string/versus"
             android:textColor="@color/white"
             android:textSize="13sp"
-            android:layout_below="@id/teamA"
+            android:layout_below="@id/gameTime"
+            android:layout_toEndOf="@id/teamA"
+
+            />
+        <TextView
+            android:id="@+id/teamB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:text="@string/gamesListTeamB"
+            android:textColor="@color/white"
+            android:textSize="13sp"
+            android:layout_below="@id/gameTime"
+            android:layout_toEndOf="@id/versus"
             android:layout_alignParentEnd="true"
             />
-
 </RelativeLayout>
 </androidx.cardview.widget.CardView>

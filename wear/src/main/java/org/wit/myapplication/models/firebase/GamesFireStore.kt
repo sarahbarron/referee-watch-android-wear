@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.CoroutineScope
@@ -37,48 +38,19 @@ class GamesFireStore(val context: Context): GamesStore {
     lateinit var db: FirebaseFirestore
 
 
-    override fun findReferee(id: String): Map<String, Any>? {
-        var referee: Map<String, Any>? = null
-        db.collection("Member").document(id)
-            .get()
-            .addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val document  = task.result!!
-                referee = document.data
-            }
-        }
-        return referee
-    }
 
     override fun findAllGames(): ArrayList<GameModel> {
         return games
     }
 
-    override fun findGameById(id: String): Map<String, Any>? {
-        var game: Map<String, Any>? = null
-        db!!.collection("Game").document(id)
-            .get()
-            .addOnCompleteListener{ task ->
-                if(task.isSuccessful)
-                {
-                    val document = task.result!!
-                    game = document.data
-                }
-            }
-        return game
+    override fun findGameById(id: String): GameModel? {
+       val foundGame: GameModel? = games.find{p->p.id == id}
+        return foundGame
     }
 
-    override fun findTeam(id: String): Map<String, Any>? {
-        var team: Map<String, Any>? = null
-        db.collection("Team").document(id)
-            .get()
-            .addOnCompleteListener{ task->
-                if(task.isSuccessful){
-                    val document = task.result!!
-                    team = document.data
-                }
-            }
-        return team
+    override fun findTeam(id: String): TeamModel? {
+        val foundTeam: TeamModel? = teams.find{p->p.id==id}
+        return foundTeam
     }
 
     fun fetchUser(){
@@ -136,7 +108,6 @@ class GamesFireStore(val context: Context): GamesStore {
                 {
                     snapshot!!.documents.mapNotNullTo(games){
                         it.toObject(GameModel::class.java)
-
                     }
 
                 }
@@ -146,9 +117,9 @@ class GamesFireStore(val context: Context): GamesStore {
             }
     }
 
-    fun fetchTeams(ref: String){
+    fun fetchTeam(ref: DocumentReference){
         db = FirebaseFirestore.getInstance()
-        db!!.collection("Team").document(ref)
+        db!!.collection("Team").document(ref.id)
             .addSnapshotListener addSnapshotListener@{ snapshot, e ->
                 if (e != null) {
                     Log.i(TAG, "Listen failed.", e)
@@ -156,13 +127,11 @@ class GamesFireStore(val context: Context): GamesStore {
                 }
                 if(snapshot !=null)
                 {
-                    Log.i(TAG, "Team: ${snapshot}")
+                        snapshot.toObject(TeamModel::class.java)
                 }
                 else{
                     Log.i(TAG, "Team = null")
                 }
             }
-
-
     }
 }

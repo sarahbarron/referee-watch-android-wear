@@ -19,6 +19,7 @@ import org.wit.myapplication.adapters.GamesAdapter
 import org.wit.myapplication.adapters.GamesListener
 import org.wit.myapplication.models.GamesStore
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.uiThread
 import org.wit.myapplication.models.GameModel
 import org.wit.myapplication.models.GamesMemStore
@@ -41,8 +42,7 @@ class GamesList: FragmentActivity(), GamesListener,
         val layoutManager = WearableLinearLayoutManager(this)
         recycler_games_list.layoutManager = layoutManager
         recycler_games_list.setHasFixedSize(true)
-        recycler_games_list.isEdgeItemsCenteringEnabled = true
-
+        recycler_games_list.isEdgeItemsCenteringEnabled = false
         getGames()
 
     }
@@ -97,12 +97,7 @@ class GamesList: FragmentActivity(), GamesListener,
 
 
     override fun onGameClick(game: GameModel) {
-        Log.i(TAG, "Game Clicked")
-        Toast.makeText(
-            applicationContext,
-            "Clicked $game.id",
-            Toast.LENGTH_SHORT
-        ).show()
+        startActivity(intentFor<MainActivity>().putExtra("game_edit", game.id))
     }
 
     private fun subscribeToRealtimeUpdate(){

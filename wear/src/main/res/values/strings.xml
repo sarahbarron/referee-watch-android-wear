@@ -72,4 +72,8 @@
     <string name="goal">Goal</string>
     <string name="point">Point</string>
     <string name="reset_stopwatch">Reset Stopwatch</string>
+    <string name="gameTime">Time</string>
+    <string name="gameListTeamA">Team A</string>
+    <string name="versus">V</string>
+    <string name="gamesListTeamB">TeamB</string>
 </resources>

@@ -9,26 +9,20 @@ class GamesMemStore : GamesStore {
 
 
 
-    override fun findReferee(id: String): Map<String, Any>? {
-        TODO(reason = "Not yet implemented")
-    }
-
     override fun findAllGames():ArrayList<GameModel>? {
         TODO("Not yet implemented")
     }
 
-    override fun findGameById(id: String): Map<String,Any>? {
-        return games.find{id == id}
-
+    override fun findGameById(id: String): GameModel? {
+        TODO("Not yet implemented")
     }
 
-    override fun findTeam(id: String): Map<String,Any>? {
-        return teams.find{id == id}
+    override fun findTeam(id: String): TeamModel? {
+        TODO("Not yet implemented")
     }
 
     fun logAllGames(){
-        Log.v("Game", "Games List")
-        games.forEach{Log.v("logAllGames", "${it}")}
+        TODO("Not yet implemented")
     }
 
 }
