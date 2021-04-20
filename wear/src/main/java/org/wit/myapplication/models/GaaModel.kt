@@ -155,7 +155,7 @@ data class VenueModel(
 ):Parcelable
 
 @Parcelize
-data class Score(
+data class ScoreModel(
     @DocumentId
     var id:String?=null,
     var timestamp: Date?=null,
@@ -166,7 +166,7 @@ data class Score(
 ):Parcelable
 
 @Parcelize
-data class Card(
+data class CardModel(
     @DocumentId
     var id:String?=null,
     var timestamp: Date?=null,
@@ -177,7 +177,7 @@ data class Card(
 
 
 @Parcelize
-data class Injury(
+data class InjuryModel(
     @DocumentId
     var id:String?=null,
     var timestamp: Date?=null,
@@ -187,7 +187,7 @@ data class Injury(
 ):Parcelable
 
 @Parcelize
-data class Substitute(
+data class SubstituteModel(
     @DocumentId
     var id:String?=null,
     var timestamp: Date?=null,

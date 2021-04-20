@@ -14,10 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.wit.myapplication.activities.GamesList
-import org.wit.myapplication.models.GameModel
-import org.wit.myapplication.models.GamesStore
-import org.wit.myapplication.models.MemberModel
-import org.wit.myapplication.models.TeamModel
+import org.wit.myapplication.models.*
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.time.Instant
@@ -34,6 +31,10 @@ class GamesFireStore(val context: Context): GamesStore {
     val games = ArrayList<GameModel>()
     val user: MemberModel? = null
     val teams = ArrayList<TeamModel>()
+    val scores = ArrayList<ScoreModel>()
+    val cards = ArrayList<CardModel>()
+    val injuries = ArrayList<InjuryModel>()
+    val substitutes = ArrayList<SubstituteModel>()
     lateinit var userId: String
     lateinit var db: FirebaseFirestore
 
@@ -51,6 +52,10 @@ class GamesFireStore(val context: Context): GamesStore {
     override fun findTeam(id: String): TeamModel? {
         val foundTeam: TeamModel? = teams.find{p->p.id==id}
         return foundTeam
+    }
+
+    override fun findAllScores(): ArrayList<ScoreModel>? {
+        return scores
     }
 
     fun fetchUser(){
@@ -134,4 +139,102 @@ class GamesFireStore(val context: Context): GamesStore {
                 }
             }
     }
+
+
+    fun fetchScores(gameRef: DocumentReference) {
+        db = FirebaseFirestore.getInstance()
+        scores.clear()
+
+        db!!.collection("Scores")
+            .whereEqualTo("game", gameRef)
+            .addSnapshotListener addSnapshotListener@{ snapshot, e ->
+                Log.i(TAG, " Number Of Scores : " + (snapshot?.size() ?: null))
+                if (e != null) {
+                    Log.i(TAG, "Listen failed.", e)
+                    return@addSnapshotListener
+                }
+                if(snapshot !=null)
+                {
+                    snapshot!!.documents.mapNotNullTo(scores){
+                        it.toObject(ScoreModel::class.java)
+                    }
+                }
+                else{
+                    Log.i(TAG, "Scores = null")
+                }
+            }
+    }
+
+    fun fetchCards(gameRef: DocumentReference) {
+        db = FirebaseFirestore.getInstance()
+        cards.clear()
+
+        db!!.collection("Cards")
+            .whereEqualTo("game", gameRef)
+            .addSnapshotListener addSnapshotListener@{ snapshot, e ->
+                Log.i(TAG, " Number Of Cards: " + (snapshot?.size() ?: null))
+                if (e != null) {
+                    Log.i(TAG, "Listen failed.", e)
+                    return@addSnapshotListener
+                }
+                if(snapshot !=null)
+                {
+                    snapshot!!.documents.mapNotNullTo(cards){
+                        it.toObject(CardModel::class.java)
+                    }
+                }
+                else{
+                    Log.i(TAG, "Card = null")
+                }
+            }
+    }
+
+    fun fetchInjuries(gameRef: DocumentReference) {
+        db = FirebaseFirestore.getInstance()
+        injuries.clear()
+
+        db!!.collection("Injury")
+            .whereEqualTo("game", gameRef)
+            .addSnapshotListener addSnapshotListener@{ snapshot, e ->
+                Log.i(TAG, " Number Of Cards: " + (snapshot?.size() ?: null))
+                if (e != null) {
+                    Log.i(TAG, "Listen failed.", e)
+                    return@addSnapshotListener
+                }
+                if(snapshot !=null)
+                {
+                    snapshot!!.documents.mapNotNullTo(injuries){
+                        it.toObject(InjuryModel::class.java)
+                    }
+                }
+                else{
+                    Log.i(TAG, "Injury = null")
+                }
+            }
+    }
+    fun fetchSubstitutes(gameRef: DocumentReference) {
+        db = FirebaseFirestore.getInstance()
+        substitutes.clear()
+
+        db!!.collection("Substitute")
+            .whereEqualTo("substitute", gameRef)
+            .addSnapshotListener addSnapshotListener@{ snapshot, e ->
+                Log.i(TAG, " Number Of Subs: " + (snapshot?.size() ?: null))
+                if (e != null) {
+                    Log.i(TAG, "Listen failed.", e)
+                    return@addSnapshotListener
+                }
+                if(snapshot !=null)
+                {
+                    snapshot!!.documents.mapNotNullTo(substitutes){
+                        it.toObject(SubstituteModel::class.java)
+                    }
+                }
+                else{
+                    Log.i(TAG, "Substitute = null")
+                }
+            }
+    }
+
+
 }

@@ -15,6 +15,8 @@ import androidx.fragment.app.Fragment
 import androidx.wear.ambient.AmbientModeSupport
 import androidx.wear.widget.drawer.WearableActionDrawerView
 import androidx.wear.widget.drawer.WearableNavigationDrawerView
+import com.google.firebase.firestore.DocumentReference
+import org.jetbrains.anko.intentFor
 import org.wit.myapplication.R
 import org.wit.myapplication.TopNav
 import org.wit.myapplication.fragments.CardsFragment
@@ -76,6 +78,8 @@ class MainActivity : AppCompatActivity(),
         mWearableActionDrawer?.controller?.peekDrawer()
         mWearableActionDrawer?.setOnMenuItemClickListener(this)
 
+
+
     }
 
     // Initialize the top navigation
@@ -104,7 +108,7 @@ class MainActivity : AppCompatActivity(),
         var toastMessage = ""
         when (itemId) {
 
-            R.id.menu_home -> toastMessage = mTopNav!![mSelectedTopNav].name
+            R.id.menu_home -> startActivity(intentFor<GamesList>())
             R.id.menu_end_half -> toastMessage = mTopNav!![mSelectedTopNav].name
             R.id.bottom_menu_scores -> toastMessage = mTopNav!![mSelectedTopNav].name
             R.id.bottom_menu_cards -> toastMessage = mTopNav!![mSelectedTopNav].name
@@ -265,5 +269,22 @@ class MainActivity : AppCompatActivity(),
 
     companion object {
         private const val TAG = "MainActivity"
+    }
+
+    private fun getScores(gameId: DocumentReference)
+    {
+        app.firebasestore.fetchScores(gameId)
+    }
+    private fun getCards(gameId: DocumentReference)
+    {
+        app.firebasestore.fetchCards(gameId)
+    }
+    private fun getSubstitutes(gameId: DocumentReference)
+    {
+        app.firebasestore.fetchSubstitutes(gameId)
+    }
+    private fun getInjuries(gameId: DocumentReference)
+    {
+        app.firebasestore.fetchInjuries(gameId)
     }
 }
