@@ -9,6 +9,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.wit.myapplication.activities.GamesList
 import org.wit.myapplication.models.GameModel
 import org.wit.myapplication.models.GamesStore
 import org.wit.myapplication.models.MemberModel
@@ -96,7 +100,7 @@ class GamesFireStore(val context: Context): GamesStore {
 
     }
     @RequiresApi(Build.VERSION_CODES.O)
-    fun fetchGames(){
+    fun fetchGames() {
         db = FirebaseFirestore.getInstance()
         userId = FirebaseAuth.getInstance().currentUser!!.uid
         val referee = db.collection("Member").document(userId)
@@ -115,14 +119,6 @@ class GamesFireStore(val context: Context): GamesStore {
         val tomorrow = Date.from(localdate.atStartOfDay(ZoneId.systemDefault()).toInstant())
 
 
-        // Current Time
-        var currentTime: Date = Date()
-
-
-//        Log.i(
-//            TAG,
-//            "Current Time $currentTime , tomorrow: $localdate,  tomorrow date: $date"
-//        )
         db!!.collection("Game")
             .whereEqualTo("referee", referee)
             .whereLessThan("dateTime", tomorrow)
@@ -138,19 +134,16 @@ class GamesFireStore(val context: Context): GamesStore {
                 }
                 if(snapshot !=null)
                 {
-                    Log.i(TAG, "FetchGames: ${snapshot.documents}")
-
                     snapshot!!.documents.mapNotNullTo(games){
                         it.toObject(GameModel::class.java)
+
                     }
-                    Log.i(TAG, "inside fetch games: $games")
+
                 }
                 else{
                     Log.i(TAG, "Games = null")
                 }
             }
-
-
     }
 
     fun fetchTeams(ref: String){

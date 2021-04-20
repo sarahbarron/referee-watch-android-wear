@@ -1,32 +1,32 @@
 package org.wit.myapplication.adapters
 
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import org.wit.myapplication.R
-import android.util.Log
-
 import kotlinx.android.synthetic.main.activity_games_list.*
 import kotlinx.android.synthetic.main.card_games.view.*
-import kotlinx.coroutines.Deferred
+import org.wit.myapplication.R
 import org.wit.myapplication.models.GameModel
-import java.util.logging.Level.INFO
+import java.text.SimpleDateFormat
 
 
 interface GamesListener{
     fun onGameClick(game: GameModel)
 }
-class GamesAdapter constructor(val games: ArrayList<GameModel>,
-                   val listener: GamesListener)
+class GamesAdapter constructor(
+    val games: ArrayList<GameModel>,
+    val listener: GamesListener
+)
     : RecyclerView.Adapter<GamesAdapter.MainHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainHolder {
         Log.i(TAG, "onCreateViewHolder: ");
         return MainHolder(
-                LayoutInflater.from(parent?.context).inflate
-                    (R.layout.card_games, parent, false)
+            LayoutInflater.from(parent?.context).inflate
+                (R.layout.card_games, parent, false)
         )
     }
 
@@ -41,12 +41,23 @@ class GamesAdapter constructor(val games: ArrayList<GameModel>,
     override fun getItemCount(): Int = games.size
 
     class MainHolder constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
         fun bind(game: GameModel, listener: GamesListener) {
-            val x = 0
-            itemView.gameTime.text = game.dateTime.toString()
+
+            var seconds = game.dateTime
+
+            // Convert the date to just show the time
+            val pattern ="HH.mm"
+            val simpleDateFormat = SimpleDateFormat(pattern)
+            val matchTime: String = simpleDateFormat.format(seconds)
+            Log.i(TAG, "time $matchTime")
+
+            itemView.gameTime.text = matchTime
             itemView.teamA.text = game.id
         }
     }
+
+
 
 
     companion object {

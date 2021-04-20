@@ -30,9 +30,6 @@ class GamesList: FragmentActivity(), GamesListener,
 
     lateinit var app: MainApp
     lateinit var db : FirebaseFirestore
-    lateinit var gamesStore: GamesStore
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,8 +37,6 @@ class GamesList: FragmentActivity(), GamesListener,
 
         app = this.application as MainApp
         db = FirebaseFirestore.getInstance()
-       // gamesStore = GamesMemStore()
-
 
         val layoutManager = WearableLinearLayoutManager(this)
         recycler_games_list.layoutManager = layoutManager
@@ -92,38 +87,7 @@ class GamesList: FragmentActivity(), GamesListener,
         }
     }
 
-//    fun getGameDetails(games: QuerySnapshot?){
-//        var listOfGames: ArrayList<ArrayList<String>>? = null
-//        var singleGame: ArrayList<String>? =null
-//        doAsync{
-//            Log.i(TAG, "GetGamesDetails")
-//            for(document in games!!) {
-//                var teamA: Any? = null
-//                var teamB: Any? = null
-//                var a = document.getDocumentReference("teamA")?.id
-//                var b = document.getDocumentReference("teamB")?.id
-//                var gameId = document.id
-//                singleGame?.add(gameId)
-//
-//                if(a!=null && b!=null) {
-//                    teamA = db.collection("Team").document(a).get().result?.data?.get("name")!!
-//                    teamB = db.collection("Team").document(b).get().result?.data?.get("name")!!
-//                    val gameString = (""+teamA+" V "+teamB)
-//                    singleGame?.add(gameString)
-//                    if (singleGame != null) {
-//                        Log.i(TAG, "GetGamesDetails singleGame: "+ singleGame)
-//                        listOfGames?.add(singleGame)
-//                        Log.i(TAG, "GetGamesDetails listGames: "+ listOfGames)
-//                    }
-//                }
-//
-//            }
-//            uiThread {
-//                Log.i(TAG, "GetGamesDetails uiThread: " + listOfGames)
-//                showGames(listOfGames!!)
-//            }
-//        }
-//    }
+
     fun showGames(games:ArrayList<GameModel> ){
         Log.i(TAG, "showGames")
         recycler_games_list.adapter = GamesAdapter(games, this)
@@ -141,5 +105,8 @@ class GamesList: FragmentActivity(), GamesListener,
         ).show()
     }
 
+    private fun subscribeToRealtimeUpdate(){
+
+    }
 
 }

@@ -3,6 +3,7 @@ import android.os.Parcelable
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.ServerTimestamp
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.parcel.RawValue
 import java.util.*
@@ -84,12 +85,14 @@ data class MemberModel(
     var id: String? = null,
     var firstName: String? = null,
     var lastName: String? = null,
+    @ServerTimestamp
     var DOB: Date? = null,
     var clubPlayer: Boolean = false,
     var contactDetails: @RawValue DocumentReference? = null,
     var countyPlayer: Boolean = false,
     var firstClub: @RawValue DocumentReference? = null,
     var ownClub: @RawValue DocumentReference? = null,
+    @ServerTimestamp
     var membershipDate: Date? = null,
     var membershipType: @RawValue DocumentReference? = null,
     var refereeOfClub: Boolean = false,
@@ -109,6 +112,7 @@ data class GameModel(
     @DocumentId
     var id: String? = null,
     var competition: @RawValue DocumentReference? = null,
+    @ServerTimestamp
     var dateTime: Date? = null,
     var linesmen: ArrayList<String>? = null,
     var umpires: ArrayList<String>? = null,
