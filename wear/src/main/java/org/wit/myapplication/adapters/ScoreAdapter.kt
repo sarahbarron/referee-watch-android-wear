@@ -1,21 +1,14 @@
 package org.wit.myapplication.adapters
 
 
-import android.content.ContentValues
+
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.android.synthetic.main.activity_games_list.*
-import kotlinx.android.synthetic.main.card_games.view.*
 import org.wit.myapplication.R
-import org.wit.myapplication.models.GameModel
 import org.wit.myapplication.models.ScoreModel
-import org.wit.myapplication.models.TeamModel
-import org.wit.myapplication.models.firebase.GamesFireStore
-import java.text.SimpleDateFormat
 
 
 interface ScoreListener{
