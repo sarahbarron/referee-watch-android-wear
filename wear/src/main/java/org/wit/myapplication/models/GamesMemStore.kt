@@ -27,6 +27,10 @@ class GamesMemStore : GamesStore {
         TODO("Not yet implemented")
     }
 
+    override fun findAllSubstitutes(): ArrayList<SubstituteModel>? {
+        TODO("Not yet implemented")
+    }
+
     fun logAllGames(){
         TODO("Not yet implemented")
     }

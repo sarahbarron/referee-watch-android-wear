@@ -8,4 +8,5 @@ interface GamesStore{
     fun findAllScores(): ArrayList<ScoreModel>?
 
     fun findAllCards(): ArrayList<CardModel>?
+    fun findAllSubstitutes(): ArrayList<SubstituteModel>?
 }

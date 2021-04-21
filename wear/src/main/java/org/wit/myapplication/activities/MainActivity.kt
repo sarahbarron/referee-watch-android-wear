@@ -40,7 +40,7 @@ class MainActivity :AppCompatActivity(),
     private var watchFragment: StopwatchFragment? = null
     private var listScoresFragment: ListScoresFragment? =null
     private var listCardsFragment: ListCardsFragment? =null
-
+    private var listSubstitutesFragment: ListSubstitutesFragment? = null
 
 
     lateinit var app: MainApp
@@ -142,14 +142,20 @@ class MainActivity :AppCompatActivity(),
                 val fragmentManager = supportFragmentManager
                 fragmentManager.beginTransaction().replace(R.id.content_frame, listScoresFragment!!).commit()
             }
-            R.id.bottom_menu_cards -> {//startActivity(intentFor<ScoresList>())
+            R.id.bottom_menu_cards -> {
                 listCardsFragment = ListCardsFragment()
                 val args = Bundle()
                 listCardsFragment!!.arguments = args
                 val fragmentManager = supportFragmentManager
                 fragmentManager.beginTransaction().replace(R.id.content_frame, listCardsFragment!!).commit()
             }
-            R.id.bottom_menu_subs -> toastMessage = mTopNav!![mSelectedTopNav].name
+            R.id.bottom_menu_subs -> {
+                listSubstitutesFragment = ListSubstitutesFragment()
+                val args = Bundle()
+                listSubstitutesFragment!!.arguments = args
+                val fragmentManager = supportFragmentManager
+                fragmentManager.beginTransaction().replace(R.id.content_frame, listSubstitutesFragment!!).commit()
+            }
             R.id.bottom_menu_injuries -> toastMessage = mTopNav!![mSelectedTopNav].name
             R.id.bottom_menu_reset_stopwatch -> toastMessage = mTopNav!![mSelectedTopNav].name
             R.id.menu_sign_out -> signOut()

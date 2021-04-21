@@ -70,6 +70,10 @@ class GamesFireStore(val context: Context): GamesStore {
         return cards
     }
 
+    override fun findAllSubstitutes(): ArrayList<SubstituteModel>? {
+        return substitutes
+    }
+
 
     // FETCHES FROM FIRESTORE
 
