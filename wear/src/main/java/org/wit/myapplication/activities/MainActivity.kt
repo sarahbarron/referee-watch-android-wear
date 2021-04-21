@@ -13,25 +13,29 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.wear.ambient.AmbientModeSupport
+import androidx.wear.widget.WearableLinearLayoutManager
 import androidx.wear.widget.drawer.WearableActionDrawerView
 import androidx.wear.widget.drawer.WearableNavigationDrawerView
 import com.google.firebase.firestore.DocumentReference
+import kotlinx.android.synthetic.main.recycler_layout.*
+import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.intentFor
 import org.wit.myapplication.R
 import org.wit.myapplication.TopNav
-import org.wit.myapplication.fragments.CardsFragment
-import org.wit.myapplication.fragments.ScoreFragment
-import org.wit.myapplication.fragments.StopwatchFragment
-import org.wit.myapplication.fragments.SubFragment
 import org.wit.myapplication.main.MainApp
 import java.util.*
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.uiThread
+import org.wit.myapplication.adapters.*
+import org.wit.myapplication.fragments.*
+import org.wit.myapplication.models.*
+import java.lang.Exception
 
 
 /**
  * GAA Referee Main Activity control of navigation
  */
-class MainActivity : AppCompatActivity(),
+class MainActivity :AppCompatActivity(),
     AmbientModeSupport.AmbientCallbackProvider, MenuItem.OnMenuItemClickListener,
     WearableNavigationDrawerView.OnItemSelectedListener {
     private var mWearableNavigationDrawer: WearableNavigationDrawerView? = null
@@ -39,16 +43,24 @@ class MainActivity : AppCompatActivity(),
     private var mTopNav: ArrayList<TopNav>? = null
     private var mSelectedTopNav = 0
     private var subFragment: SubFragment? = null
-    private var cardsFragment: CardsFragment? = null
+    private var cardsFragment: CardFragment? = null
     private var scoreFragment: ScoreFragment? = null
     private var watchFragment: StopwatchFragment? = null
+
     lateinit var app: MainApp
+    var edit: Boolean = false
+    var game = GameModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate()")
         setContentView(R.layout.activity_main)
         app = application as MainApp
+        game = app.firebasestore.game
+
+//        game = intent.extras?.getParcelable<GameModel>("game_edit")!!
+        Log.i(TAG, "Game Id: $game.id")
+        game.id?.let { app.firebasestore.fetchScores(it) }
         // Enables Ambient mode.
         AmbientModeSupport.attach(this)
         mTopNav = initializeTopNav()
@@ -77,8 +89,6 @@ class MainActivity : AppCompatActivity(),
         // Peeks action drawer on the bottom.
         mWearableActionDrawer?.controller?.peekDrawer()
         mWearableActionDrawer?.setOnMenuItemClickListener(this)
-
-
 
     }
 
@@ -109,8 +119,9 @@ class MainActivity : AppCompatActivity(),
         when (itemId) {
 
             R.id.menu_home -> startActivity(intentFor<GamesList>())
-            R.id.menu_end_half -> toastMessage = mTopNav!![mSelectedTopNav].name
-            R.id.bottom_menu_scores -> toastMessage = mTopNav!![mSelectedTopNav].name
+            R.id.menu_end_half -> {}
+            R.id.bottom_menu_scores -> { startActivity(intentFor<ScoresList>())
+            }
             R.id.bottom_menu_cards -> toastMessage = mTopNav!![mSelectedTopNav].name
             R.id.bottom_menu_subs -> toastMessage = mTopNav!![mSelectedTopNav].name
             R.id.bottom_menu_injuries -> toastMessage = mTopNav!![mSelectedTopNav].name
@@ -158,7 +169,7 @@ class MainActivity : AppCompatActivity(),
                 fragmentManager.beginTransaction().replace(R.id.content_frame, scoreFragment!!).commit()
             }
             "Card" -> {
-                cardsFragment = CardsFragment()
+                cardsFragment = CardFragment()
                 val args = Bundle()
                 cardsFragment!!.arguments = args
                 val fragmentManager = supportFragmentManager
@@ -271,20 +282,25 @@ class MainActivity : AppCompatActivity(),
         private const val TAG = "MainActivity"
     }
 
-    private fun getScores(gameId: DocumentReference)
-    {
-        app.firebasestore.fetchScores(gameId)
-    }
-    private fun getCards(gameId: DocumentReference)
+
+    // Cards Recycler View
+    private fun fetchCards(gameId: String)
     {
         app.firebasestore.fetchCards(gameId)
     }
-    private fun getSubstitutes(gameId: DocumentReference)
+    private fun fetchSubstitutes(gameId: String)
+    {
+        app.firebasestore.fetchCards(gameId)
+    }
+    private fun fetchScores(gameId: String)
     {
         app.firebasestore.fetchSubstitutes(gameId)
     }
-    private fun getInjuries(gameId: DocumentReference)
+    private fun fetchInjuries(gameId: String)
     {
         app.firebasestore.fetchInjuries(gameId)
     }
+
+
+
 }

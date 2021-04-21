@@ -12,17 +12,14 @@ import com.google.firebase.firestore.FirebaseFirestore
 import org.wit.myapplication.R
 import org.wit.myapplication.main.MainApp
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.QuerySnapshot
-import kotlinx.android.synthetic.main.activity_games_list.*
+import kotlinx.android.synthetic.main.recycler_layout.*
 import org.jetbrains.anko.startActivity
 import org.wit.myapplication.adapters.GamesAdapter
 import org.wit.myapplication.adapters.GamesListener
-import org.wit.myapplication.models.GamesStore
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.uiThread
 import org.wit.myapplication.models.GameModel
-import org.wit.myapplication.models.GamesMemStore
 
 
 class GamesList: FragmentActivity(), GamesListener,
@@ -34,15 +31,15 @@ class GamesList: FragmentActivity(), GamesListener,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_games_list)
+        setContentView(R.layout.recycler_layout)
 
         app = this.application as MainApp
         db = FirebaseFirestore.getInstance()
 
         val layoutManager = WearableLinearLayoutManager(this)
-        recycler_games_list.layoutManager = layoutManager
-        recycler_games_list.setHasFixedSize(true)
-        recycler_games_list.isEdgeItemsCenteringEnabled = false
+        recycler_layout.layoutManager = layoutManager
+        recycler_layout.setHasFixedSize(true)
+        recycler_layout.isEdgeItemsCenteringEnabled = false
         getGames()
 
     }
@@ -90,18 +87,16 @@ class GamesList: FragmentActivity(), GamesListener,
 
     fun showGames(games:ArrayList<GameModel> ){
         Log.i(TAG, "showGames")
-        recycler_games_list.adapter = GamesAdapter(games, this)
-        recycler_games_list.adapter?.notifyDataSetChanged()
+        recycler_layout.adapter = GamesAdapter(games, this)
+        recycler_layout.adapter?.notifyDataSetChanged()
     }
 
 
 
     override fun onGameClick(game: GameModel) {
+        app.firebasestore.game = game
         startActivity(intentFor<MainActivity>().putExtra("game_edit", game.id))
     }
 
-    private fun subscribeToRealtimeUpdate(){
-
-    }
 
 }

@@ -42,8 +42,6 @@ class ScoreAdapter constructor(
 
         fun bind(score: ScoreModel, listener: ScoreListener) {
 
-
-
             itemView.setOnClickListener{listener.onScoreClick(score)}
         }
     }

@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
     android:elevation="24dp"
-    android:id="@+id/card_injury">
+    android:id="@+id/card_card">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

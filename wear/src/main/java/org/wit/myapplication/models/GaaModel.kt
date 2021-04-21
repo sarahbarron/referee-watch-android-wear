@@ -159,8 +159,8 @@ data class ScoreModel(
     @DocumentId
     var id:String?=null,
     var timestamp: Date?=null,
-    var goal:Boolean?=null,
-    var point: Boolean?=null,
+    var goal:Int?=null,
+    var point: Int?=null,
     var member: @RawValue DocumentReference? = null,
     var game: @RawValue DocumentReference? = null
 ):Parcelable

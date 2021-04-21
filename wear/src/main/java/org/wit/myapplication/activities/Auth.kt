@@ -204,6 +204,7 @@ class Auth : ComponentActivity() {
                                                 game.teamA?.let { app.firebasestore.fetchTeam(it) }
                                                 game.teamB?.let { app.firebasestore.fetchTeam(it) }
                                             }
+
                                             Log.i(TAG, "fetchGames: $games")
                                             updateUi(user)
                                         }

@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import org.wit.myapplication.R
 
-class CardsFragment : Fragment() {
+class CardFragment : Fragment() {
 
 
     override fun onCreateView(

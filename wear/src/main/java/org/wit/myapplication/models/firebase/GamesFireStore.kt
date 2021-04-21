@@ -28,13 +28,14 @@ import kotlin.collections.ArrayList
 
 class GamesFireStore(val context: Context): GamesStore {
 
-    val games = ArrayList<GameModel>()
-    val user: MemberModel? = null
-    val teams = ArrayList<TeamModel>()
-    val scores = ArrayList<ScoreModel>()
-    val cards = ArrayList<CardModel>()
-    val injuries = ArrayList<InjuryModel>()
-    val substitutes = ArrayList<SubstituteModel>()
+    var games = ArrayList<GameModel>()
+    var user: MemberModel? = null
+    var teams = ArrayList<TeamModel>()
+    var scores = ArrayList<ScoreModel>()
+    var cards = ArrayList<CardModel>()
+    var injuries = ArrayList<InjuryModel>()
+    var substitutes = ArrayList<SubstituteModel>()
+    var game = GameModel()
     lateinit var userId: String
     lateinit var db: FirebaseFirestore
 
@@ -45,8 +46,8 @@ class GamesFireStore(val context: Context): GamesStore {
     }
 
     override fun findGameById(id: String): GameModel? {
-       val foundGame: GameModel? = games.find{p->p.id == id}
-        return foundGame
+       game = games.find{ p->p.id == id}!!
+        return game
     }
 
     override fun findTeam(id: String): TeamModel? {
@@ -141,12 +142,13 @@ class GamesFireStore(val context: Context): GamesStore {
     }
 
 
-    fun fetchScores(gameRef: DocumentReference) {
+    fun fetchScores(gameId: String) {
         db = FirebaseFirestore.getInstance()
         scores.clear()
-
+        Log.i(TAG, "Fetch Scores game Id $gameId")
+        var gameDoc = db!!.collection("Game").document(gameId)
         db!!.collection("Scores")
-            .whereEqualTo("game", gameRef)
+            .whereEqualTo("game", gameDoc)
             .addSnapshotListener addSnapshotListener@{ snapshot, e ->
                 Log.i(TAG, " Number Of Scores : " + (snapshot?.size() ?: null))
                 if (e != null) {
@@ -165,7 +167,7 @@ class GamesFireStore(val context: Context): GamesStore {
             }
     }
 
-    fun fetchCards(gameRef: DocumentReference) {
+    fun fetchCards(gameRef: String) {
         db = FirebaseFirestore.getInstance()
         cards.clear()
 
@@ -189,12 +191,12 @@ class GamesFireStore(val context: Context): GamesStore {
             }
     }
 
-    fun fetchInjuries(gameRef: DocumentReference) {
+    fun fetchInjuries(gameId: String) {
         db = FirebaseFirestore.getInstance()
         injuries.clear()
-
+        var gameDoc = db!!.collection("Game").document(gameId)
         db!!.collection("Injury")
-            .whereEqualTo("game", gameRef)
+            .whereEqualTo("game", gameDoc)
             .addSnapshotListener addSnapshotListener@{ snapshot, e ->
                 Log.i(TAG, " Number Of Cards: " + (snapshot?.size() ?: null))
                 if (e != null) {
@@ -212,7 +214,7 @@ class GamesFireStore(val context: Context): GamesStore {
                 }
             }
     }
-    fun fetchSubstitutes(gameRef: DocumentReference) {
+    fun fetchSubstitutes(gameRef: String) {
         db = FirebaseFirestore.getInstance()
         substitutes.clear()
 
@@ -231,7 +233,7 @@ class GamesFireStore(val context: Context): GamesStore {
                     }
                 }
                 else{
-                    Log.i(TAG, "Substitute = null")
+                    Log.i(TAG, "Substitutes = null")
                 }
             }
     }
