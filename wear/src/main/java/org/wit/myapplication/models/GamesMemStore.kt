@@ -31,6 +31,10 @@ class GamesMemStore : GamesStore {
         TODO("Not yet implemented")
     }
 
+    override fun findAllInjuries(): ArrayList<InjuryModel>? {
+        TODO("Not yet implemented")
+    }
+
     fun logAllGames(){
         TODO("Not yet implemented")
     }

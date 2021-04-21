@@ -9,4 +9,5 @@ interface GamesStore{
 
     fun findAllCards(): ArrayList<CardModel>?
     fun findAllSubstitutes(): ArrayList<SubstituteModel>?
+    fun findAllInjuries(): ArrayList<InjuryModel>?
 }

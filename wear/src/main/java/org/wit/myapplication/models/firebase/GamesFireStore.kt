@@ -74,6 +74,10 @@ class GamesFireStore(val context: Context): GamesStore {
         return substitutes
     }
 
+    override fun findAllInjuries(): ArrayList<InjuryModel>? {
+        return injuries
+    }
+
 
     // FETCHES FROM FIRESTORE
 
