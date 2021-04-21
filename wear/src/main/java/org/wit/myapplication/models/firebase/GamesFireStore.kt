@@ -66,6 +66,10 @@ class GamesFireStore(val context: Context): GamesStore {
         return scores
     }
 
+    override fun findAllCards(): ArrayList<CardModel>? {
+        return cards
+    }
+
 
     // FETCHES FROM FIRESTORE
 
@@ -195,9 +199,9 @@ class GamesFireStore(val context: Context): GamesStore {
     fun fetchCards(gameRef: String) {
         db = FirebaseFirestore.getInstance()
         cards.clear()
-
+        var gameDoc = db!!.collection("Game").document(gameRef)
         db!!.collection("Cards")
-            .whereEqualTo("game", gameRef)
+            .whereEqualTo("game", gameDoc)
             .addSnapshotListener addSnapshotListener@{ snapshot, e ->
                 Log.i(TAG, " Number Of Cards: " + (snapshot?.size() ?: null))
                 if (e != null) {
@@ -224,7 +228,7 @@ class GamesFireStore(val context: Context): GamesStore {
         db!!.collection("Injury")
             .whereEqualTo("game", gameDoc)
             .addSnapshotListener addSnapshotListener@{ snapshot, e ->
-                Log.i(TAG, " Number Of Cards: " + (snapshot?.size() ?: null))
+                Log.i(TAG, " Number Of Injuries: " + (snapshot?.size() ?: null))
                 if (e != null) {
                     Log.i(TAG, "Listen failed.", e)
                     return@addSnapshotListener
@@ -245,9 +249,9 @@ class GamesFireStore(val context: Context): GamesStore {
     fun fetchSubstitutes(gameRef: String) {
         db = FirebaseFirestore.getInstance()
         substitutes.clear()
-
+        var gameDoc = db!!.collection("Game").document(gameRef)
         db!!.collection("Substitute")
-            .whereEqualTo("substitute", gameRef)
+            .whereEqualTo("game", gameDoc)
             .addSnapshotListener addSnapshotListener@{ snapshot, e ->
                 Log.i(TAG, " Number Of Subs: " + (snapshot?.size() ?: null))
                 if (e != null) {
@@ -302,6 +306,10 @@ class GamesFireStore(val context: Context): GamesStore {
                 }
             }
 
+    }
+
+    companion object {
+        private const val TAG = "Firestore"
     }
 
 

@@ -7,4 +7,5 @@ interface GamesStore{
     fun findGameById(id: String): GameModel?
     fun findAllScores(): ArrayList<ScoreModel>?
 
+    fun findAllCards(): ArrayList<CardModel>?
 }
