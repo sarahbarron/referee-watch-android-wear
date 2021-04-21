@@ -12,7 +12,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import org.wit.myapplication.R
 import org.wit.myapplication.main.MainApp
 import com.google.firebase.auth.FirebaseUser
-import kotlinx.android.synthetic.main.recycler_layout.*
+import kotlinx.android.synthetic.main.game_recycler_layout.*
 import org.jetbrains.anko.startActivity
 import org.wit.myapplication.adapters.GamesAdapter
 import org.wit.myapplication.adapters.GamesListener
@@ -31,15 +31,15 @@ class GamesList: FragmentActivity(), GamesListener,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.recycler_layout)
+        setContentView(R.layout.game_recycler_layout)
 
         app = this.application as MainApp
         db = FirebaseFirestore.getInstance()
 
         val layoutManager = WearableLinearLayoutManager(this)
-        recycler_layout.layoutManager = layoutManager
-        recycler_layout.setHasFixedSize(true)
-        recycler_layout.isEdgeItemsCenteringEnabled = false
+        game_recycler_layout.layoutManager = layoutManager
+        game_recycler_layout.setHasFixedSize(true)
+        game_recycler_layout.isEdgeItemsCenteringEnabled = false
         getGames()
 
     }
@@ -87,8 +87,8 @@ class GamesList: FragmentActivity(), GamesListener,
 
     fun showGames(games:ArrayList<GameModel> ){
         Log.i(TAG, "showGames")
-        recycler_layout.adapter = GamesAdapter(games, this)
-        recycler_layout.adapter?.notifyDataSetChanged()
+        game_recycler_layout.adapter = GamesAdapter(games, this)
+        game_recycler_layout.adapter?.notifyDataSetChanged()
     }
 
 

@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <androidx.wear.widget.WearableRecyclerView
-        android:id="@+id/recycler_layout"
+        android:id="@+id/fragment_list_scores"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical" />

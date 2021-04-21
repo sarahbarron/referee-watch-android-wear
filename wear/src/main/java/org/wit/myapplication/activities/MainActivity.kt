@@ -1,6 +1,5 @@
 package org.wit.myapplication.activities
 
-
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -13,23 +12,16 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.wear.ambient.AmbientModeSupport
-import androidx.wear.widget.WearableLinearLayoutManager
 import androidx.wear.widget.drawer.WearableActionDrawerView
 import androidx.wear.widget.drawer.WearableNavigationDrawerView
-import com.google.firebase.firestore.DocumentReference
-import kotlinx.android.synthetic.main.recycler_layout.*
-import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.intentFor
 import org.wit.myapplication.R
 import org.wit.myapplication.TopNav
 import org.wit.myapplication.main.MainApp
 import java.util.*
 import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.uiThread
-import org.wit.myapplication.adapters.*
 import org.wit.myapplication.fragments.*
 import org.wit.myapplication.models.*
-import java.lang.Exception
 
 
 /**
@@ -46,6 +38,8 @@ class MainActivity :AppCompatActivity(),
     private var cardsFragment: CardFragment? = null
     private var scoreFragment: ScoreFragment? = null
     private var watchFragment: StopwatchFragment? = null
+    private var listScoresFragment: ListScoresFragment? =null
+
 
     lateinit var app: MainApp
     var edit: Boolean = false
@@ -58,8 +52,17 @@ class MainActivity :AppCompatActivity(),
         app = application as MainApp
         game = app.firebasestore.game
 
-//        game = intent.extras?.getParcelable<GameModel>("game_edit")!!
         Log.i(TAG, "Game Id: $game.id")
+        // fetch team A and players
+        game.teamA?.let { app.firebasestore.fetchTeam(it.id, "teamA") }
+        game.id?.let { game.teamA?.let { it1 -> app.firebasestore.fetchTeamsheetPlayers(it, it1.id, "teamA") } }
+        Log.i(TAG, "Team A: ${app.firebasestore.teamA} : ${app.firebasestore.teamAPlayers}")
+        // fetch team B
+        game.teamB?.let { app.firebasestore.fetchTeam(it.id, "teamB") }
+        game.id?.let { game.teamB?.let { it1 -> app.firebasestore.fetchTeamsheetPlayers(it, it1.id, "teamB") } }
+        Log.i(TAG, "Team B: ${app.firebasestore.teamB}: ${app.firebasestore.teamBPlayers}")
+
+        // fetch scores
         game.id?.let { app.firebasestore.fetchScores(it) }
         // Enables Ambient mode.
         AmbientModeSupport.attach(this)
@@ -120,7 +123,13 @@ class MainActivity :AppCompatActivity(),
 
             R.id.menu_home -> startActivity(intentFor<GamesList>())
             R.id.menu_end_half -> {}
-            R.id.bottom_menu_scores -> { startActivity(intentFor<ScoresList>())
+            R.id.bottom_menu_scores -> {
+                //startActivity(intentFor<ScoresList>())
+                listScoresFragment = ListScoresFragment()
+                val args = Bundle()
+                listScoresFragment!!.arguments = args
+                val fragmentManager = supportFragmentManager
+                fragmentManager.beginTransaction().replace(R.id.content_frame, listScoresFragment!!).commit()
             }
             R.id.bottom_menu_cards -> toastMessage = mTopNav!![mSelectedTopNav].name
             R.id.bottom_menu_subs -> toastMessage = mTopNav!![mSelectedTopNav].name

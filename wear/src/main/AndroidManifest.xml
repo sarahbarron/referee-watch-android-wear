@@ -39,9 +39,5 @@
             android:name="org.wit.myapplication.activities.GamesList"
             android:label="@string/app_name">
         </activity>
-        <activity
-            android:name="org.wit.myapplication.activities.ScoresList"
-            android:label="@string/app_name">
-        </activity>
     </application>
 </manifest>

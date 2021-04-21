@@ -199,11 +199,11 @@ class Auth : ComponentActivity() {
                                             app.firebasestore.fetchGames()
                                             val games =  app.firebasestore.findAllGames()
                                             // get the teams involved in each game
-                                            for(game in games)
-                                            {
-                                                game.teamA?.let { app.firebasestore.fetchTeam(it) }
-                                                game.teamB?.let { app.firebasestore.fetchTeam(it) }
-                                            }
+//                                            for(game in games)
+//                                            {
+//                                                game.teamA?.let { app.firebasestore.fetchTeam(it, "TeamA") }
+//                                                game.teamB?.let { app.firebasestore.fetchTeam(it, "TeamB") }
+//                                            }
 
                                             Log.i(TAG, "fetchGames: $games")
                                             updateUi(user)

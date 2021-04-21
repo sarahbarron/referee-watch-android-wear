@@ -120,14 +120,20 @@ data class GameModel(
     var substituteReferee: @RawValue DocumentReference? = null,
     var teamA: @RawValue DocumentReference? = null,
     var teamB: @RawValue DocumentReference? = null,
-    var teamAGoals: Int? = null,
-    var teamBGoals: Int? = null,
-    var teamAPoints: Int? = null,
-    var teamBPoints: Int? = null,
+    var teamATotalGoals: Int? = null,
+    var teamBTotalGoals: Int? = null,
+    var teamATotalPoints: Int? = null,
+    var teamBTotalPoints: Int? = null,
     var venue: @RawValue DocumentReference? = null,
 ): Parcelable
 
-
+@Parcelize
+data class TeamsheetPlayerModel(
+    @DocumentId
+    var id: String? = null,
+    var fieldPosition: Int? = null,
+    var jerseyNumber: Int? = null
+): Parcelable
 @Parcelize
 data class TeamModel(
     @DocumentId
@@ -138,7 +144,9 @@ data class TeamModel(
     var players: ArrayList<@RawValue DocumentReference>? = null,
     var teamOfficials: ArrayList<@RawValue DocumentReference>? = null,
     var sportType: @RawValue DocumentReference? = null,
+    var teamModel: @RawValue DocumentReference? = null,
     var teamName: String? = null,
+    var grade: @RawValue DocumentReference? =null
 ): Parcelable
 
 

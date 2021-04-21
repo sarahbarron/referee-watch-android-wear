@@ -18,9 +18,6 @@ class GamesMemStore : GamesStore {
         TODO("Not yet implemented")
     }
 
-    override fun findTeam(id: String): TeamModel? {
-        TODO("Not yet implemented")
-    }
 
     override fun findAllScores(): ArrayList<ScoreModel>? {
         TODO("Not yet implemented")

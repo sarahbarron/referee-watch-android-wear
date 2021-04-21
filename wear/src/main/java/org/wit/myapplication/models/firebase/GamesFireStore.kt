@@ -29,13 +29,20 @@ import kotlin.collections.ArrayList
 class GamesFireStore(val context: Context): GamesStore {
 
     var games = ArrayList<GameModel>()
-    var user: MemberModel? = null
-    var teams = ArrayList<TeamModel>()
+    var game = GameModel()
+
+  //  var teams = ArrayList<TeamModel>()
+    var teamA = TeamModel()
+    var teamB = TeamModel()
+
+    var teamAPlayers = ArrayList<TeamsheetPlayerModel>()
+    var teamBPlayers = ArrayList<TeamsheetPlayerModel>()
+
     var scores = ArrayList<ScoreModel>()
     var cards = ArrayList<CardModel>()
     var injuries = ArrayList<InjuryModel>()
     var substitutes = ArrayList<SubstituteModel>()
-    var game = GameModel()
+
     lateinit var userId: String
     lateinit var db: FirebaseFirestore
 
@@ -50,15 +57,19 @@ class GamesFireStore(val context: Context): GamesStore {
         return game
     }
 
-    override fun findTeam(id: String): TeamModel? {
-        val foundTeam: TeamModel? = teams.find{p->p.id==id}
-        return foundTeam
-    }
+//    override fun findTeam(id: String): TeamModel? {
+//        val foundTeam: TeamModel? = teams.find{p->p.id==id}
+//        return foundTeam
+//    }
 
     override fun findAllScores(): ArrayList<ScoreModel>? {
         return scores
     }
 
+
+    // FETCHES FROM FIRESTORE
+
+//    Fetch Users
     fun fetchUser(){
         userId = FirebaseAuth.getInstance().currentUser!!.uid
         db!!.collection("Game").document(userId)
@@ -77,6 +88,8 @@ class GamesFireStore(val context: Context): GamesStore {
             }
 
     }
+
+//    Fetch Games
     @RequiresApi(Build.VERSION_CODES.O)
     fun fetchGames() {
         db = FirebaseFirestore.getInstance()
@@ -123,9 +136,11 @@ class GamesFireStore(val context: Context): GamesStore {
             }
     }
 
-    fun fetchTeam(ref: DocumentReference){
+//    Fetch A Team
+    fun fetchTeam(ref: String, team:String){
         db = FirebaseFirestore.getInstance()
-        db!!.collection("Team").document(ref.id)
+        Log.i(TAG, "fetchTeam $ref, $team")
+        db!!.collection("Team").document(ref)
             .addSnapshotListener addSnapshotListener@{ snapshot, e ->
                 if (e != null) {
                     Log.i(TAG, "Listen failed.", e)
@@ -133,7 +148,16 @@ class GamesFireStore(val context: Context): GamesStore {
                 }
                 if(snapshot !=null)
                 {
-                        snapshot.toObject(TeamModel::class.java)
+                    if(team == "teamA"){
+                        teamA = snapshot.toObject(TeamModel::class.java)!!
+                        Log.i(TAG, "Team A = $teamA")
+                    }
+                    if(team == "teamB"){
+                        teamB = snapshot.toObject(TeamModel::class.java)!!
+                        Log.i(TAG, "Team B = $teamB")
+
+                    }
+
                 }
                 else{
                     Log.i(TAG, "Team = null")
@@ -141,7 +165,7 @@ class GamesFireStore(val context: Context): GamesStore {
             }
     }
 
-
+// Fetch A Scores
     fun fetchScores(gameId: String) {
         db = FirebaseFirestore.getInstance()
         scores.clear()
@@ -167,6 +191,7 @@ class GamesFireStore(val context: Context): GamesStore {
             }
     }
 
+//    Fetch Cards
     fun fetchCards(gameRef: String) {
         db = FirebaseFirestore.getInstance()
         cards.clear()
@@ -191,6 +216,7 @@ class GamesFireStore(val context: Context): GamesStore {
             }
     }
 
+//    Fetch Injuries
     fun fetchInjuries(gameId: String) {
         db = FirebaseFirestore.getInstance()
         injuries.clear()
@@ -214,6 +240,8 @@ class GamesFireStore(val context: Context): GamesStore {
                 }
             }
     }
+
+//    Fetch Substitutes
     fun fetchSubstitutes(gameRef: String) {
         db = FirebaseFirestore.getInstance()
         substitutes.clear()
@@ -236,6 +264,44 @@ class GamesFireStore(val context: Context): GamesStore {
                     Log.i(TAG, "Substitutes = null")
                 }
             }
+    }
+
+//    Fetch Teamsheet Players
+    fun fetchTeamsheetPlayers(gameId: String, teamId: String, team: String){
+        var db: FirebaseFirestore = FirebaseFirestore.getInstance()
+
+    db!!.collection("Game")
+            .document(gameId)
+            .collection("teamsheet")
+            .document(teamId)
+            .collection("players")
+            .addSnapshotListener addSnapshotListener@{ snapshot, e ->
+                Log.i(TAG, " Number Of Players : " + (snapshot?.size() ?: null))
+                if (e != null) {
+                    Log.i(TAG, "Listen failed.", e)
+                    return@addSnapshotListener
+                }
+                if(snapshot !=null)
+                {
+                    if(team == "teamA") {
+                        teamAPlayers.clear()
+                        snapshot!!.documents.mapNotNullTo(teamAPlayers) {
+                            it.toObject(TeamsheetPlayerModel::class.java)
+                        }
+                    }
+                    if(team == "teamB") {
+                        teamBPlayers.clear()
+                        snapshot!!.documents.mapNotNullTo(teamBPlayers) {
+                            it.toObject(TeamsheetPlayerModel::class.java)
+                        }
+                    }
+
+                }
+                else{
+                    Log.i(TAG, "Games = null")
+                }
+            }
+
     }
 
 
