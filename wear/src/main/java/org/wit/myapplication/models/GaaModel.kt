@@ -180,7 +180,8 @@ data class CardModel(
     var timestamp: Date?=null,
     var note: String? =null,
     var member: @RawValue DocumentReference? = null,
-    var game: @RawValue DocumentReference? = null
+    var game: @RawValue DocumentReference? = null,
+    var color: String? = null
 ):Parcelable
 
 

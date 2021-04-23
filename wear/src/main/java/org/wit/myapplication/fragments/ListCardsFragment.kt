@@ -71,8 +71,11 @@ class ListCardsFragment : Fragment(), CardListener {
     fun showCards(){
         Log.i(TAG, "showCards")
         val cards = app.firebasestore.cards
+        val teamA = app.firebasestore.teamA
+        val teamB = app.firebasestore.teamB
+        val players = app.firebasestore.allPlayers
         if(cards != null) {
-            root.fragment_list_cards.adapter = CardAdapter(cards, this)
+            root.fragment_list_cards.adapter = CardAdapter(teamA, teamB, players,cards, this)
             root.fragment_list_cards.adapter?.notifyDataSetChanged()
         }
     }

@@ -155,6 +155,7 @@ class GamesFireStore(val context: Context): GamesStore {
                         snapshot!!.documents.mapNotNullTo(games) {
                             it.toObject(GameModel::class.java)
                         }
+                        Log.i(TAG, "AFTER FETCH GAMES : $games")
 
                     } else {
                         Log.i(TAG, "Games = null")

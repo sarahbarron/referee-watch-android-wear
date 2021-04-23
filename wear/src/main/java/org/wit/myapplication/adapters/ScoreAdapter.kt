@@ -14,6 +14,7 @@ import org.wit.myapplication.models.MemberModel
 import org.wit.myapplication.models.ScoreModel
 import org.wit.myapplication.models.TeamModel
 import java.lang.reflect.Member
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -62,7 +63,12 @@ class ScoreAdapter constructor(
             var playerName: String = ""
             var team: String = teamAname!!
             var player = MemberModel()
-            if (score != null) scoretime = score.timestamp.toString()
+            if (score.timestamp != null) {
+                var seconds = score.timestamp
+                val pattern ="HH.mm"
+                val simpleDateFormat = SimpleDateFormat(pattern)
+                scoretime = simpleDateFormat.format(seconds)
+            }
             if (score!!.goal == 1) scoretype = "Goal"
             else if(score.point == 1) scoretype ="Point"
             if (players.size != 0) player = players.find{ p->p.id == score.member?.id}!!
