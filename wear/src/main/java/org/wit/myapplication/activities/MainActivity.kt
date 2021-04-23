@@ -14,6 +14,9 @@ import androidx.fragment.app.Fragment
 import androidx.wear.ambient.AmbientModeSupport
 import androidx.wear.widget.drawer.WearableActionDrawerView
 import androidx.wear.widget.drawer.WearableNavigationDrawerView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.jetbrains.anko.intentFor
 import org.wit.myapplication.R
 import org.wit.myapplication.TopNav
@@ -22,7 +25,10 @@ import java.util.*
 import org.jetbrains.anko.startActivity
 import org.wit.myapplication.fragments.*
 import org.wit.myapplication.models.*
-
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 
 /**
  * GAA Referee Main Activity control of navigation
@@ -56,26 +62,7 @@ class MainActivity :AppCompatActivity(),
         game = app.firebasestore.game
 
         Log.i(TAG, "Game Id: $game.id")
-        // fetch team A and its players
-        game.teamA?.let { app.firebasestore.fetchTeam(it.id, "teamA") }
-        game.id?.let { game.teamA?.let { it1 -> app.firebasestore.fetchTeamsheetPlayers(it, it1.id, "teamA") } }
-        Log.i(TAG, "Team A: ${app.firebasestore.teamA} : ${app.firebasestore.teamAPlayers}")
-        // fetch team B and its players
-        game.teamB?.let { app.firebasestore.fetchTeam(it.id, "teamB") }
-        game.id?.let { game.teamB?.let { it1 -> app.firebasestore.fetchTeamsheetPlayers(it, it1.id, "teamB") } }
-        Log.i(TAG, "Team B: ${app.firebasestore.teamB}: ${app.firebasestore.teamBPlayers}")
-
-        // fetch scores
-        game.id?.let { app.firebasestore.fetchScores(it) }
-
-        // fetch cards
-        game.id?.let { app.firebasestore.fetchCards(it) }
-
-        // fetch subs
-        game.id?.let { app.firebasestore.fetchSubstitutes(it) }
-
-        // fetch injuries
-        game.id?.let { app.firebasestore.fetchInjuries(it) }
+        fetchDataFromFirebase(game)
 
         // Enables Ambient mode.
         AmbientModeSupport.attach(this)
@@ -322,24 +309,14 @@ class MainActivity :AppCompatActivity(),
     }
 
 
-    // Cards Recycler View
-    private fun fetchCards(gameId: String)
-    {
-        app.firebasestore.fetchCards(gameId)
-    }
-    private fun fetchSubstitutes(gameId: String)
-    {
-        app.firebasestore.fetchCards(gameId)
-    }
-    private fun fetchScores(gameId: String)
-    {
-        app.firebasestore.fetchSubstitutes(gameId)
-    }
-    private fun fetchInjuries(gameId: String)
-    {
-        app.firebasestore.fetchInjuries(gameId)
-    }
+   fun fetchDataFromFirebase(game: GameModel) {
 
+           app.firebasestore.fetchTeam(game.id!!, game.teamA?.id!!, "teamA")
+           app.firebasestore.fetchTeam(game.id!!, game.teamB?.id!!, "teamB")
+           app.firebasestore.fetchScores(game.id!!)
+           app.firebasestore.fetchCards(game.id!!)
+           app.firebasestore.fetchSubstitutes(game.id!!)
+           app.firebasestore.fetchInjuries(game.id!!)
 
-
+    }
 }

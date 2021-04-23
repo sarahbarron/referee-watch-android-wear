@@ -19,6 +19,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.startActivity
 import org.wit.myapplication.R
 import org.wit.myapplication.main.MainApp
@@ -197,6 +199,7 @@ class Auth : ComponentActivity() {
                                         if(isClubRef == true  || isCountyRef == true ) {
                                             Log.d(TAG, document.id + " => " + isClubRef)
                                             app.firebasestore.fetchGames()
+
                                             val games =  app.firebasestore.findAllGames()
                                             // get the teams involved in each game
 //                                            for(game in games)

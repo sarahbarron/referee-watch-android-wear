@@ -68,8 +68,11 @@ class ListScoresFragment : Fragment(), ScoreListener {
     fun showScores(){
         Log.i(TAG, "showScores")
         val scores = app.firebasestore.scores
+        val teamA = app.firebasestore.teamA
+        val teamB = app.firebasestore.teamB
+        val players = app.firebasestore.allPlayers
         if(scores != null) {
-            root.fragment_list_scores.adapter = ScoreAdapter(scores, this)
+            root.fragment_list_scores.adapter = ScoreAdapter(teamA, teamB, players, scores, this)
             root.fragment_list_scores.adapter?.notifyDataSetChanged()
         }
     }
