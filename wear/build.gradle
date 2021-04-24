@@ -11,6 +11,9 @@ android {
     buildToolsVersion "30.0.2"
     dataBinding.enabled true
 
+    buildFeatures {
+        viewBinding true
+    }
     defaultConfig {
         applicationId "org.wit.myapplication"
         minSdkVersion 25

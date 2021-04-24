@@ -21,6 +21,9 @@
     <item android:id="@+id/bottom_menu_reset_stopwatch"
         android:icon="@drawable/ic_score"
         android:title="@string/reset_stopwatch" />
+    <item android:id="@+id/bottom_menu_gameslist"
+        android:icon="@drawable/ic_menu_report"
+        android:title="@string/games_list" />
     <item
         android:id="@+id/menu_sign_out"
         android:icon="@android:drawable/ic_menu_revert"

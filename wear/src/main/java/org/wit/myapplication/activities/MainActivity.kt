@@ -29,6 +29,7 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import org.wit.myapplication.adapters.InjuryListener
 
 /**
  * GAA Referee Main Activity control of navigation
@@ -44,6 +45,7 @@ class MainActivity :AppCompatActivity(),
     private var cardsFragment: CardFragment? = null
     private var scoreFragment: ScoreFragment? = null
     private var watchFragment: StopwatchFragment? = null
+    private var injuryFragment: InjuryFragment?=  null
     private var listScoresFragment: ListScoresFragment? =null
     private var listCardsFragment: ListCardsFragment? =null
     private var listSubstitutesFragment: ListSubstitutesFragment? = null
@@ -90,7 +92,7 @@ class MainActivity :AppCompatActivity(),
         mWearableActionDrawer = findViewById(R.id.bottom_action_drawer)
 
         // Peeks action drawer on the bottom.
-        mWearableActionDrawer?.controller?.peekDrawer()
+        mWearableActionDrawer?.controller?.closeDrawer()
         mWearableActionDrawer?.setOnMenuItemClickListener(this)
 
     }
@@ -121,13 +123,20 @@ class MainActivity :AppCompatActivity(),
         var toastMessage = ""
         when (itemId) {
 
-            R.id.menu_home -> startActivity(intentFor<GamesList>())
+            R.id.menu_home -> {
+                watchFragment = StopwatchFragment()
+                val args = Bundle()
+                watchFragment!!.arguments = args
+                val fragmentManager = supportFragmentManager
+                fragmentManager.beginTransaction().replace(R.id.content_frame, watchFragment!!).commit()
+            }
             R.id.menu_end_half -> {}
             R.id.bottom_menu_scores -> {
                 listScoresFragment = ListScoresFragment()
                 val args = Bundle()
                 listScoresFragment!!.arguments = args
                 val fragmentManager = supportFragmentManager
+                mWearableActionDrawer?.controller?.closeDrawer()
                 fragmentManager.beginTransaction().replace(R.id.content_frame, listScoresFragment!!).commit()
             }
             R.id.bottom_menu_cards -> {
@@ -152,6 +161,7 @@ class MainActivity :AppCompatActivity(),
                 fragmentManager.beginTransaction().replace(R.id.content_frame, listInjuriesFragment!!).commit()
             }
             R.id.bottom_menu_reset_stopwatch -> toastMessage = mTopNav!![mSelectedTopNav].name
+            R.id.bottom_menu_gameslist -> startActivity(intentFor<GamesList>())
             R.id.menu_sign_out -> signOut()
         }
         mWearableActionDrawer!!.controller.closeDrawer()
@@ -179,7 +189,7 @@ class MainActivity :AppCompatActivity(),
         val selectedItemName: String = mTopNav!![mSelectedTopNav].name
         Log.d(TAG, "SelectedItem: $selectedItemName")
         when (selectedItemName) {
-            "Home" -> {
+            "Stopwatch" -> {
                 watchFragment = StopwatchFragment()
                 val args = Bundle()
                 watchFragment!!.arguments = args
@@ -208,13 +218,20 @@ class MainActivity :AppCompatActivity(),
                 val fragmentManager = supportFragmentManager
                 fragmentManager.beginTransaction().replace(R.id.content_frame, subFragment!!).commit()
             }
+            "Injury" ->{
+                injuryFragment = InjuryFragment()
+                val args = Bundle()
+                subFragment!!.arguments = args
+                val fragmentManager = supportFragmentManager
+                fragmentManager.beginTransaction().replace(R.id.content_frame, injuryFragment!!).commit()
+            }
 
             else -> HomeFragment()
         }
 
     }
 
-    private inner class NavigationAdapter  /* package */ internal constructor(private val mContext: Context) :
+    private inner class NavigationAdapter  /* package */(private val mContext: Context) :
         WearableNavigationDrawerView.WearableNavigationDrawerAdapter() {
         override fun getCount(): Int {
             return mTopNav!!.size

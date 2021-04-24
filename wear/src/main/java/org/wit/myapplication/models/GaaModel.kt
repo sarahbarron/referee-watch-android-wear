@@ -1,4 +1,5 @@
-package org.wit.myapplication.models;
+package org.wit.myapplication.models
+
 import android.os.Parcelable
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentId
@@ -200,8 +201,8 @@ data class SubstituteModel(
     @DocumentId
     var id:String?=null,
     var timestamp: Date?=null,
-    var memberOn:  @RawValue DocumentReference? = null,
-    var memberOff: @RawValue DocumentReference? = null,
-    var boodsub: Boolean = false,
+    var playerOn:  @RawValue DocumentReference? = null,
+    var playerOff: @RawValue DocumentReference? = null,
+    var bloodsub: Boolean = false,
     var game: @RawValue DocumentReference? = null
 ):Parcelable

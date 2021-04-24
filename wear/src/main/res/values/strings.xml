@@ -5,10 +5,11 @@
     Reference name for each top nav option
     -->
     <string-array name="topnav_array_names">
-        <item>home</item>
+        <item>stopwatch</item>
         <item>score</item>
         <item>card</item>
         <item>sub</item>
+        <item>injury</item>
     </string-array>
 
     <!--
@@ -17,8 +18,8 @@
         "Navigation icon",
     -->
 
-    <string-array name="home">
-        <item>Home</item>
+    <string-array name="stopwatch">
+        <item>Stopwatch</item>
         <item>ic_menu_home</item>
     </string-array>
 
@@ -35,6 +36,10 @@
     <string-array name="sub">
         <item>Sub</item>
         <item>ic_menu_sub</item>
+    </string-array>
+    <string-array name="injury">
+        <item>Injury</item>
+        <item>ic_injury</item>
     </string-array>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -76,4 +81,10 @@
     <string name="gameListTeamA">Team A</string>
     <string name="versus">V</string>
     <string name="gamesListTeamB">TeamB</string>
+    <string name="scoreTeam">Score Team</string>
+    <string name="scorePlayer">Score Player</string>
+    <string name="yellowCard">Yel</string>
+    <string name="redCard">Red</string>
+    <string name="blackCard">Black</string>
+    <string name="games_list">Games List</string>
 </resources>

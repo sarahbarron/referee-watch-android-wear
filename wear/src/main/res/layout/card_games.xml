@@ -22,6 +22,7 @@
             android:text="@string/gameTime"
             android:textColor="@color/white"
             android:textSize="13sp"
+            android:textStyle="bold"
             android:layout_alignParentStart="true" />
 
         <TextView
@@ -33,6 +34,7 @@
             android:text="@string/gameListTeamA"
             android:textColor="@color/white"
             android:textSize="13sp"
+            android:textStyle="bold"
             android:layout_alignTop="@id/teamA"
             android:layout_below="@id/gameTime"
             />
@@ -45,6 +47,7 @@
             android:text="@string/versus"
             android:textColor="@color/white"
             android:textSize="13sp"
+            android:textStyle="bold"
             android:layout_below="@id/gameTime"
             android:layout_toEndOf="@id/teamA"
 
@@ -58,6 +61,7 @@
             android:text="@string/gamesListTeamB"
             android:textColor="@color/white"
             android:textSize="13sp"
+            android:textStyle="bold"
             android:layout_below="@id/gameTime"
             android:layout_toEndOf="@id/versus"
             android:layout_alignParentEnd="true"

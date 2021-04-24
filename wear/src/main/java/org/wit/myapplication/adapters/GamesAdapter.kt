@@ -26,9 +26,9 @@ class GamesAdapter constructor(
     : RecyclerView.Adapter<GamesAdapter.MainHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainHolder {
-        Log.i(TAG, "onCreateViewHolder: ");
+        Log.i(TAG, "onCreateViewHolder: ")
         return MainHolder(
-            LayoutInflater.from(parent?.context).inflate
+            LayoutInflater.from(parent.context).inflate
                 (R.layout.card_games, parent, false)
         )
     }
@@ -37,7 +37,7 @@ class GamesAdapter constructor(
 
     override fun onBindViewHolder(holder: MainHolder, position: Int) {
         val game = games[holder.adapterPosition]
-        Log.i(TAG, "onBindViewHolderbinding: $game");
+        Log.i(TAG, "onBindViewHolderbinding: $game")
         holder.bind(game, listener)
     }
 
@@ -59,7 +59,7 @@ class GamesAdapter constructor(
             lateinit var db: FirebaseFirestore
             db = FirebaseFirestore.getInstance()
             if(game.teamA?.id != null) {
-                db!!.collection("Team").document(game.teamA!!.id)
+                db.collection("Team").document(game.teamA!!.id)
                     .addSnapshotListener addSnapshotListener@{ snapshot, e ->
                         if (e != null) {
                             Log.i(ContentValues.TAG, "Listen failed.", e)
@@ -76,7 +76,7 @@ class GamesAdapter constructor(
 
 
             if(game.teamB?.id != null ) {
-                db!!.collection("Team").document(game.teamB!!.id)
+                db.collection("Team").document(game.teamB!!.id)
                     .addSnapshotListener addSnapshotListener@{ snapshot, e ->
                         if (e != null) {
                             Log.i(ContentValues.TAG, "Listen failed.", e)

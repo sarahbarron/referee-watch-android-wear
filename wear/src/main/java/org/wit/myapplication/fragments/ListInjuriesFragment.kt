@@ -65,8 +65,11 @@ class ListInjuriesFragment : Fragment(), InjuryListener {
     fun showInjuries(){
         Log.i(TAG, "showInjuries")
         val injuries = app.firebasestore.injuries
+        val teamA = app.firebasestore.teamA
+        val teamB = app.firebasestore.teamB
+        val players = app.firebasestore.allPlayers
         if(injuries != null) {
-            root.fragment_list_injuries.adapter = InjuryAdapter(injuries, this)
+            root.fragment_list_injuries.adapter = InjuryAdapter(teamA, teamB, players,injuries, this)
             root.fragment_list_injuries.adapter?.notifyDataSetChanged()
         }
     }

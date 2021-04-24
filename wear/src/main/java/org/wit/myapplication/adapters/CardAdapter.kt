@@ -32,9 +32,9 @@ class CardAdapter constructor(
     : RecyclerView.Adapter<CardAdapter.MainHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainHolder {
-        Log.i(TAG, "onCreateViewHolder: ");
+        Log.i(TAG, "onCreateViewHolder: ")
         return MainHolder(
-            LayoutInflater.from(parent?.context).inflate
+            LayoutInflater.from(parent.context).inflate
                 (R.layout.card_card, parent, false)
         )
     }
@@ -46,7 +46,27 @@ class CardAdapter constructor(
         val teamAname = teamA.name!!
         val teamBname = teamB.name!!
         val teamBid = teamB.id!!
-        val players = players!!
+        val players = players
+
+        var time =""
+        var playerName = ""
+        var team: String = teamAname
+        var player = MemberModel()
+        if(card.timestamp!=null) {
+            var seconds = card.timestamp
+            val pattern ="HH.mm"
+            val simpleDateFormat = SimpleDateFormat(pattern)
+            time = simpleDateFormat.format(seconds)
+
+        }
+        if (players.size != 0) player = players.find{ p->p.id == card.member?.id}!!
+        if (player.firstName !=null || player.lastName !=null ) playerName = "${player.firstName} ${player.lastName}"
+        if (player.ownClub?.id == teamBid) team = teamBname
+
+
+        holder.itemView.cardTime.text = time
+        holder.itemView.cardTeam.text = team
+        holder.itemView.cardPlayer.text = playerName
 
 
         if(card.color == "yellow"){
@@ -66,36 +86,15 @@ class CardAdapter constructor(
             Log.i(TAG, "CARD COLOR RED")
             holder.itemView.setBackgroundColor(Color.RED)
         }
-        Log.i(TAG, "onBindViewHolderbinding: $card");
-        holder.bind(teamBid, teamAname, teamBname, players,card, listener)
+        Log.i(TAG, "onBindViewHolderbinding: $card")
+        holder.bind(card, listener)
     }
 
     override fun getItemCount(): Int = cards.size
 
     class MainHolder constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        fun bind(teamBid:String, teamAname: String, teamBname: String, players: ArrayList<MemberModel>, card: CardModel, listener: CardListener) {
-            var time: String=""
-            var playerName = ""
-            var team: String = teamAname!!
-            var player = MemberModel()
-
-            if(card.timestamp!=null) {
-                var seconds = card.timestamp
-                val pattern ="HH.mm"
-                val simpleDateFormat = SimpleDateFormat(pattern)
-                time = simpleDateFormat.format(seconds)
-
-            }
-            if (players.size != 0) player = players.find{ p->p.id == card.member?.id}!!
-            if (player.firstName !=null || player.lastName !=null ) playerName = "${player.firstName} ${player.lastName}"
-            if (player.ownClub?.id == teamBid) team = teamBname!!
-
-
-            itemView.cardTime.text = time
-            itemView.cardTeam.text = team
-            itemView.cardPlayer.text = playerName
-
+        fun bind(card: CardModel, listener: CardListener) {
             itemView.setOnClickListener{listener.onCardClick(card)}
         }
     }

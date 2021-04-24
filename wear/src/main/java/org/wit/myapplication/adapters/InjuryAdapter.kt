@@ -5,23 +5,30 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.card_injury.view.*
 import org.wit.myapplication.R
 import org.wit.myapplication.models.InjuryModel
+import org.wit.myapplication.models.MemberModel
+import org.wit.myapplication.models.TeamModel
+import java.text.SimpleDateFormat
 
 
 interface InjuryListener{
     fun onInjuryClick(injury: InjuryModel)
 }
 class InjuryAdapter constructor(
-    val injuries: ArrayList<InjuryModel>,
-    val listener: InjuryListener
+        val teamA: TeamModel,
+        val teamB: TeamModel,
+        val players: ArrayList<MemberModel>,
+        val injuries: ArrayList<InjuryModel>,
+        val listener: InjuryListener
 )
     : RecyclerView.Adapter<InjuryAdapter.MainHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainHolder {
-        Log.i(TAG, "onCreateViewHolder: ");
+        Log.i(TAG, "onCreateViewHolder: ")
         return MainHolder(
-            LayoutInflater.from(parent?.context).inflate
+            LayoutInflater.from(parent.context).inflate
                 (R.layout.card_injury, parent, false)
         )
     }
@@ -30,7 +37,33 @@ class InjuryAdapter constructor(
 
     override fun onBindViewHolder(holder: MainHolder, position: Int) {
         val injury = injuries[holder.adapterPosition]
-        Log.i(TAG, "onBindViewHolderbinding: $injuries");
+
+        val teamAname = teamA.name!!
+        val teamBname = teamB.name!!
+        val teamBid = teamB.id!!
+        val players = players
+
+        var time =""
+        var team: String = teamAname
+        var player = MemberModel()
+        var playerName = ""
+
+        if(injury.timestamp!=null) {
+            var seconds = injury.timestamp
+            val pattern ="HH.mm"
+            val simpleDateFormat = SimpleDateFormat(pattern)
+            time = simpleDateFormat.format(seconds)
+
+        }
+        if (players.size != 0) player = players.find{ p->p.id == injury.member?.id}!!
+        if (player.firstName !=null || player.lastName !=null ) playerName = "${player.firstName} ${player.lastName}"
+        if (player.ownClub?.id == teamBid) team = teamBname
+
+        holder.itemView.injuryTime.text = time
+        holder.itemView.injuryTeam.text = team
+        holder.itemView.injuredPlayer.text = playerName
+
+        Log.i(TAG, "onBindViewHolderbinding: $injuries")
         holder.bind(injury, listener)
     }
 
@@ -39,8 +72,6 @@ class InjuryAdapter constructor(
     class MainHolder constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(injury: InjuryModel, listener: InjuryListener) {
-
-
 
             itemView.setOnClickListener{listener.onInjuryClick(injury)}
         }

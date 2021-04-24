@@ -40,6 +40,7 @@ class GamesList: FragmentActivity(), GamesListener,
         game_recycler_layout.layoutManager = layoutManager
         game_recycler_layout.setHasFixedSize(true)
         game_recycler_layout.isEdgeItemsCenteringEnabled = false
+        app.firebasestore.allPlayers.clear()
         getGames()
 
     }

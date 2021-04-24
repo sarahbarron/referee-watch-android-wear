@@ -70,15 +70,18 @@ class ListSubstitutesFragment : Fragment(), SubstituteListener {
     fun showSubs(){
         Log.i(TAG, "showSubs")
         val substitutes = app.firebasestore.substitutes
+        val teamA = app.firebasestore.teamA
+        val teamB = app.firebasestore.teamB
+        val players = app.firebasestore.allPlayers
         if(substitutes != null) {
-            root.fragment_list_substitutes.adapter = SubstituteAdapter(substitutes, this)
+            root.fragment_list_substitutes.adapter = SubstituteAdapter(teamA, teamB, players,substitutes, this)
             root.fragment_list_substitutes.adapter?.notifyDataSetChanged()
         }
     }
 
 
     companion object {
-        private const val TAG = "Score Fragment"
+        private const val TAG = "Substitute Fragment"
     }
 
     override fun onSubstituteClick(substitute: SubstituteModel) {

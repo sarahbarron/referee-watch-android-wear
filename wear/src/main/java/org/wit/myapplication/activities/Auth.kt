@@ -147,7 +147,7 @@ class Auth : ComponentActivity() {
             Log.e(TAG, "Google Sign In API client not initialized.")
             return
         }
-        val signInIntent = app.mGoogleSignInClient!!.signInIntent
+        val signInIntent = app.mGoogleSignInClient.signInIntent
         startActivityForResult(signInIntent, REQUEST_CODE_SIGN_IN)
     }
 
@@ -155,11 +155,7 @@ class Auth : ComponentActivity() {
      * Signs the user out and resets the sign-in button to visible.
      */
     private fun signOut() {
-        if (app.mGoogleSignInClient == null) {
-            Log.e(TAG, "Google Sign In API client not initialized.")
-            return
-        }
-        app.mGoogleSignInClient!!.signOut().addOnCompleteListener(this) {
+        app.mGoogleSignInClient.signOut().addOnCompleteListener(this) {
             updateUi(null)
             Toast.makeText(
                     this,
