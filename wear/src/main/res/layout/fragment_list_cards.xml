@@ -8,6 +8,9 @@
         android:id="@+id/fragment_list_cards"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingTop="40dp"
+        android:paddingBottom="50dp"
         android:scrollbars="vertical" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -21,7 +21,9 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.uiThread
 import org.wit.myapplication.R
 import org.wit.myapplication.main.MainApp
 import org.wit.myapplication.models.firebase.GamesFireStore
@@ -194,18 +196,15 @@ class Auth : ComponentActivity() {
 
                                         if(isClubRef == true  || isCountyRef == true ) {
                                             Log.d(TAG, document.id + " => " + isClubRef)
-                                            app.firebasestore.fetchGames()
 
-                                            val games =  app.firebasestore.findAllGames()
-                                            // get the teams involved in each game
-//                                            for(game in games)
-//                                            {
-//                                                game.teamA?.let { app.firebasestore.fetchTeam(it, "TeamA") }
-//                                                game.teamB?.let { app.firebasestore.fetchTeam(it, "TeamB") }
-//                                            }
-
-                                            Log.i(TAG, "fetchGames: $games")
-                                            updateUi(user)
+                                            doAsync {
+                                                app.firebasestore.fetchGames()
+                                                uiThread {
+                                                    val games = app.firebasestore.findAllGames()
+                                                    Log.i(TAG, "fetchGames: $games")
+                                                    updateUi(user)
+                                                }
+                                            }
                                         }
                                         else{
                                             Log.w(TAG, "Error getting documents.", task.exception)
