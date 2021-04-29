@@ -120,13 +120,7 @@ class MainActivity :AppCompatActivity(),
         mWearableActionDrawer?.controller?.closeDrawer()
         mWearableActionDrawer?.setOnMenuItemClickListener(this)
 
-
-        val intentService = Intent(this, StopwatchService::class.java)
-        val integerTimeSet = Integer.parseInt(app.stopwatchstore.getTime().toString())
-        intentService.putExtra("TimeValue", integerTimeSet).putExtra("Running", true)
-        intentService.also{intent->
-            bindService(intent, connection, Context.BIND_AUTO_CREATE)}
-        startService(intentService)
+        startStopwatchListener()
     }
 
 
@@ -164,7 +158,7 @@ class MainActivity :AppCompatActivity(),
                 fragmentManager.beginTransaction().replace(R.id.content_frame, watchFragment!!)
                         .commit()
             }
-            R.id.menu_end_half -> {
+            R.id.menu_end_half -> { resetStopWatch()
             }
             R.id.bottom_menu_scores -> {
                 listScoresFragment = ListScoresFragment()
@@ -203,7 +197,7 @@ class MainActivity :AppCompatActivity(),
                         listInjuriesFragment!!
                 ).commit()
             }
-            R.id.bottom_menu_reset_stopwatch -> toastMessage = mTopNav!![mSelectedTopNav].name
+            R.id.bottom_menu_reset_stopwatch -> resetStopWatch()
             R.id.bottom_menu_gameslist -> startActivity(intentFor<GamesList>())
             R.id.menu_sign_out -> signOut()
 
@@ -222,6 +216,7 @@ class MainActivity :AppCompatActivity(),
             false
         }
     }
+
 
     // Updates content when user changes between items in the top navigation drawer.
     override fun onItemSelected(position: Int) {
@@ -388,6 +383,7 @@ class MainActivity :AppCompatActivity(),
     }
 
 
+
     private lateinit var mService:StopwatchService
     private var mBound: Boolean = false
   //  private lateinit var serviceIntent:Intent
@@ -398,12 +394,21 @@ class MainActivity :AppCompatActivity(),
             mService = binder.getService()
             mBound = true
         }
+//        when the service is unexpectedly disconnected
         override fun onServiceDisconnected(name:ComponentName) {
             mBound = false
         }
     }
 
 
+    private fun startStopwatchListener(){
+        val intentService = Intent(this, StopwatchService::class.java)
+        val integerTimeSet = Integer.parseInt(app.stopwatchstore.getTime().toString())
+        intentService.putExtra("TimeValue", integerTimeSet).putExtra("Running", true)
+        intentService.also{intent->
+            bindService(intent, connection, Context.BIND_AUTO_CREATE)}
+        startService(intentService)
+    }
     override fun onStart(){
         super.onStart()
         val integerTimeSet = Integer.parseInt(app.stopwatchstore.getTime().toString())
@@ -413,10 +418,20 @@ class MainActivity :AppCompatActivity(),
 
     override fun onStop(){
         super.onStop()
-        unbindService(connection)
-        mBound= false
+        if(mBound) {
+            model.time.value ="00:00:00"
+            unbindService(connection)
+            mBound = false
+        }
     }
 
+    private fun resetStopWatch() {
+        model.time.value="00:00:00"
+        if(mBound){
+            mService.updateServiceTime(0)
+            mService.updateServiceRunning(false)
+        }
+    }
 
     fun onClickStart(view: View) {
         if(mBound) {
@@ -424,11 +439,14 @@ class MainActivity :AppCompatActivity(),
             // call method within the service
             mService.updateServiceRunning(true)
         }
+        else startStopwatchListener()
     }
+
+
+
     fun onClickPause(view: View) {
         if(mBound) {
             Log.i(TAG, "Button Pause")
-
             // call method within the service
             mService.updateServiceRunning(false)
         }

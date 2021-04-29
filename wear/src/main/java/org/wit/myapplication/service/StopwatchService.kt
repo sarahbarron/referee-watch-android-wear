@@ -100,5 +100,11 @@ class StopwatchService : Service(){
         running = boolean
     }
 
+    fun updateServiceTime(time: Int) {
+        Log.i("SERVICE", "Update Service Running")
+        currentTime[0]=time
+    }
+
+
 
 }
