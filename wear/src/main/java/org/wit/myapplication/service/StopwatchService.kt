@@ -3,10 +3,7 @@ package org.wit.myapplication.service
 import android.app.*
 import org.wit.myapplication.R
 import android.content.Intent
-import android.os.Build
-import android.os.Handler
-import android.os.IBinder
-import android.os.Looper
+import android.os.*
 import android.util.Log
 import android.view.View
 import androidx.annotation.RequiresApi
@@ -22,39 +19,48 @@ import java.util.*
 
 class StopwatchService : Service(){
 
+
     private val CHANNEL_ID = "NotificationChannelID"
     var stopAfterHours = 2
     var clubGame = 30 * 60
     var countyGame = 35 *60
+    var running: Boolean = false
+    // Binder given to clients
+    private val binder = LocalBinder()
+
+    lateinit var currentTime: Array<Int>
+    val timer = Timer()
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int{
 
-        val currentTime = arrayOf<Int>(intent!!.getIntExtra("TimeValue", 0))
-        var running = intent!!.getBooleanExtra("Running", false)
-        val timer = Timer()
-        if(running) {
+        currentTime = arrayOf<Int>(intent!!.getIntExtra("TimeValue", 0))
+        Log.i("SERVICE", "running $running")
+
             timer.scheduleAtFixedRate(object : TimerTask() {
                 @RequiresApi(Build.VERSION_CODES.O)
                 override fun run() {
-                    val intent1local = Intent()
-                    intent1local.setAction("Counter")
-                    currentTime[0]++
-                    intent1local.putExtra("Time", currentTime[0])
+                    if(running) {
+                        val intent1local = Intent()
+                        intent1local.setAction("Counter")
+                        currentTime[0]++
+                        intent1local.putExtra("Time", currentTime[0])
 
-                    sendBroadcast(intent1local)
+                        sendBroadcast(intent1local)
 
-                    // if the time is up send a notification to the watch
-                    if (currentTime[0] == clubGame) NotificationUpdate(currentTime[0])
-                    // if the timer is still running after 2 hours cancel the timer running in the background
-                    if (currentTime[0] == (3600 * stopAfterHours)) timer.cancel()
+                        // if the time is up send a notification to the watch
+                        if (currentTime[0] == clubGame) NotificationUpdate(currentTime[0])
+                        // if the timer is still running after 2 hours cancel the timer running in the background
+                        if (currentTime[0] == (3600 * stopAfterHours)) timer.cancel()
+                    }
                 }
             }, 0, 1000)
-        }
+
         return super.onStartCommand(intent, flags, startId)
 
     }
+
     override fun onBind(intent: Intent?): IBinder? {
-        return null
+        return binder
     }
 
 
@@ -81,6 +87,17 @@ class StopwatchService : Service(){
         catch (e:Exception) {
             e.printStackTrace()
         }
+    }
+
+
+    inner class LocalBinder : Binder() {
+        fun getService(): StopwatchService = this@StopwatchService
+    }
+
+
+    fun updateServiceRunning(boolean: Boolean) {
+        Log.i("SERVICE", "Update Service Running")
+        running = boolean
     }
 
 

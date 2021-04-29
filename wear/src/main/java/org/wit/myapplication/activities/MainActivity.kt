@@ -1,13 +1,11 @@
 package org.wit.myapplication.activities
 
 import android.Manifest.permission.FOREGROUND_SERVICE
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.os.IBinder
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -31,9 +29,6 @@ import org.wit.myapplication.main.MainApp
 import org.wit.myapplication.models.GameModel
 import org.wit.myapplication.service.StopwatchService
 import java.util.*
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import androidx.core.app.NotificationCompat.WearableExtender
 import org.wit.myapplication.models.stopwatch.LiveDataViewModel
 
 /**
@@ -60,6 +55,7 @@ class MainActivity :AppCompatActivity(),
     lateinit var app: MainApp
     var edit: Boolean = false
     var game = GameModel()
+
 
     private val model: LiveDataViewModel by viewModels()
 
@@ -109,12 +105,6 @@ class MainActivity :AppCompatActivity(),
         val fragmentManager = supportFragmentManager
         fragmentManager.beginTransaction().replace(R.id.content_frame, watchFragment!!).commit()
 
-//        btnStart?.setOnClickListener{startService(
-//                Intent(
-//                        applicationContext,
-//                        StopwatchService::class.java
-//                )
-//        )}
         // Top Navigation Drawer
         mWearableNavigationDrawer = findViewById(R.id.top_navigation_drawer)
         mWearableNavigationDrawer?.setAdapter(NavigationAdapter(this))
@@ -129,7 +119,16 @@ class MainActivity :AppCompatActivity(),
         // Peeks action drawer on the bottom.
         mWearableActionDrawer?.controller?.closeDrawer()
         mWearableActionDrawer?.setOnMenuItemClickListener(this)
+
+
+        val intentService = Intent(this, StopwatchService::class.java)
+        val integerTimeSet = Integer.parseInt(app.stopwatchstore.getTime().toString())
+        intentService.putExtra("TimeValue", integerTimeSet).putExtra("Running", true)
+        intentService.also{intent->
+            bindService(intent, connection, Context.BIND_AUTO_CREATE)}
+        startService(intentService)
     }
+
 
     // Initialize the top navigation
     private fun initializeTopNav(): ArrayList<TopNav> {
@@ -207,6 +206,7 @@ class MainActivity :AppCompatActivity(),
             R.id.bottom_menu_reset_stopwatch -> toastMessage = mTopNav!![mSelectedTopNav].name
             R.id.bottom_menu_gameslist -> startActivity(intentFor<GamesList>())
             R.id.menu_sign_out -> signOut()
+
         }
         mWearableActionDrawer!!.controller.closeDrawer()
 
@@ -388,13 +388,62 @@ class MainActivity :AppCompatActivity(),
     }
 
 
-    fun onClickStart(view: View) {
-        val intentService = Intent(this, StopwatchService::class.java)
-        val integerTimeSet = Integer.parseInt(app.stopwatchstore.getTime().toString())
-        intentService.putExtra("TimeValue", integerTimeSet).putExtra("Running", true)
-        startService(intentService)
+    private lateinit var mService:StopwatchService
+    private var mBound: Boolean = false
+  //  private lateinit var serviceIntent:Intent
+
+    private val connection = object: ServiceConnection {
+        override fun onServiceConnected(className:ComponentName, service:IBinder) {
+           val binder = service as StopwatchService.LocalBinder
+            mService = binder.getService()
+            mBound = true
+        }
+        override fun onServiceDisconnected(name:ComponentName) {
+            mBound = false
+        }
     }
-    fun onClickPause(view: View) {}
+
+
+    override fun onStart(){
+        super.onStart()
+        val integerTimeSet = Integer.parseInt(app.stopwatchstore.getTime().toString())
+        Intent(this, StopwatchService::class.java).putExtra("TimeValue", integerTimeSet).putExtra("Running", false).also{intent->
+            bindService(intent, connection, Context.BIND_AUTO_CREATE)}
+        }
+
+    override fun onStop(){
+        super.onStop()
+        unbindService(connection)
+        mBound= false
+    }
+
+
+    fun onClickStart(view: View) {
+        if(mBound) {
+            Log.i(TAG, "Button Start")
+            // call method within the service
+            mService.updateServiceRunning(true)
+        }
+    }
+    fun onClickPause(view: View) {
+        if(mBound) {
+            Log.i(TAG, "Button Pause")
+
+            // call method within the service
+            mService.updateServiceRunning(false)
+        }
+    }
+
+    //   fun onClickStart(view: View) {
+//        val intentService = Intent(this, StopwatchService::class.java)
+//        val integerTimeSet = Integer.parseInt(app.stopwatchstore.getTime().toString())
+//        intentService.putExtra("TimeValue", integerTimeSet).putExtra("Running", true)
+//        startService(intentService)
+//        stopwatchService.doServiceStuff(true)
+//    }
+//    fun onClickPause(view: View) {
+//        stopwatchService.doServiceStuff(false)
+//    }
 
 
 }
