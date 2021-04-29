@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:tools="http://schemas.android.com/tools"
-    package="org.wit.myapplication"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="org.wit.myapplication">
 
-    <uses-feature android:name="android.hardware.type.watch"/>
-    <!-- Required for Always-on. -->
+    <uses-feature android:name="android.hardware.type.watch" /> <!-- Required for Always-on. -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <application
         android:name=".main.MainApp"
         android:allowBackup="true"
@@ -18,26 +17,30 @@
 
         <meta-data
             android:name="com.google.android.wearable.standalone"
-            android:value="true" />
-
-        <!--If you want your app to run on pre-22, then set required to false -->
-        <uses-library android:name="com.google.android.wearable" android:required="false" />
+            android:value="true" /> <!-- If you want your app to run on pre-22, then set required to false -->
+        <uses-library
+            android:name="com.google.android.wearable"
+            android:required="false" />
 
         <activity
-            android:name="org.wit.myapplication.activities.Auth"
+            android:name=".activities.Auth"
             android:label="@string/app_name">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name="org.wit.myapplication.activities.MainActivity"
-            android:label="@string/app_name">
-        </activity>
+            android:name=".activities.MainActivity"
+            android:label="@string/app_name"></activity>
         <activity
-            android:name="org.wit.myapplication.activities.GamesList"
-            android:label="@string/app_name">
-        </activity>
+            android:name=".activities.GamesList"
+            android:label="@string/app_name"></activity>
+        <service
+            android:name=".service.StopwatchService"
+            android:enabled="true"
+            android:exported="true" />
     </application>
+
 </manifest>

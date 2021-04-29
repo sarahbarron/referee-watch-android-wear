@@ -1,27 +1,18 @@
 package org.wit.myapplication.models.firebase
 
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.squareup.okhttp.Dispatcher
 import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
-import org.wit.myapplication.activities.GamesList
 import org.wit.myapplication.models.*
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
-import java.time.temporal.ChronoUnit
-import java.time.temporal.TemporalQueries.localDate
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -43,6 +34,7 @@ class GamesFireStore(val context: Context): GamesStore {
     var cards = ArrayList<CardModel>()
     var injuries = ArrayList<InjuryModel>()
     var substitutes = ArrayList<SubstituteModel>()
+
 
     lateinit var userId: String
     lateinit var db: FirebaseFirestore

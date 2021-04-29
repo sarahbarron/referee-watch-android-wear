@@ -8,17 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.wear.widget.WearableLinearLayoutManager
-import kotlinx.android.synthetic.main.fragment_list_cards.view.*
-import kotlinx.android.synthetic.main.fragment_list_scores.*
-import kotlinx.android.synthetic.main.fragment_list_scores.view.*
 import kotlinx.android.synthetic.main.fragment_list_substitutes.view.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.wit.myapplication.R
 import org.wit.myapplication.adapters.*
 import org.wit.myapplication.main.MainApp
-import org.wit.myapplication.models.CardModel
-import org.wit.myapplication.models.ScoreModel
 import org.wit.myapplication.models.SubstituteModel
 import java.lang.Exception
 import java.util.ArrayList
