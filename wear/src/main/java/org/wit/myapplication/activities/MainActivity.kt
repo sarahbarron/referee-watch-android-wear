@@ -43,7 +43,6 @@ class MainActivity :AppCompatActivity(),
     private var mWearableNavigationDrawer: WearableNavigationDrawerView? = null
     private var mWearableActionDrawer: WearableActionDrawerView? = null
     private var mTopNav: ArrayList<TopNav>? = null
-    private var mSelectedTopNav: Int = 0
     private var subFragment: SubFragment? = null
     private var cardsFragment: CardFragment? = null
     private var scoreFragment: ScoreFragment? = null
@@ -325,9 +324,6 @@ class MainActivity :AppCompatActivity(),
             return mContext.getDrawable(drawableNavigationIconId)!!
         }
 
-        override fun notifyDataSetChanged() {
-            super.notifyDataSetChanged()
-        }
     }
 
     /**

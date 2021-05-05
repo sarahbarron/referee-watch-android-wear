@@ -170,7 +170,8 @@ data class ScoreModel(
         var goal:Int?=null,
         var point: Int?=null,
         var member: @RawValue DocumentReference? = null,
-        var game: @RawValue DocumentReference? = null
+        var game: @RawValue DocumentReference? = null,
+        var team: @RawValue DocumentReference? = null
 ):Parcelable
 
 @Parcelize

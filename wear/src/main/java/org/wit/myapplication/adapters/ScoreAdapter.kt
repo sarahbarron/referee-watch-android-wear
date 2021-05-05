@@ -54,6 +54,7 @@ class ScoreAdapter constructor(
             var playerName = ""
             var team: String = teamAname
             var player = MemberModel()
+
             if (score.timestamp != null) {
                 var seconds = score.timestamp
                 val pattern = "HH.mm"
@@ -62,9 +63,12 @@ class ScoreAdapter constructor(
             }
             if (score.goal == 1) scoretype = "Goal"
             else if (score.point == 1) scoretype = "Point"
+
             if (players.size != 0) player = players.find { p -> p.id == score.member?.id }!!
             if (player.firstName != null || player.lastName != null) playerName = "${player.firstName} ${player.lastName}"
-            if (player.ownClub?.id == teamBid) team = teamBname
+
+            Log.i(TAG, "TeamA id: ${teamA.id}\nTeamB id: ${teamB.id}\nScore Team ID = ${score.team?.id}")
+            if (score.team?.id == teamBid) team = teamBname
 
             holder.itemView.scoreTime.text = scoretime
             holder.itemView.score.text = scoretype

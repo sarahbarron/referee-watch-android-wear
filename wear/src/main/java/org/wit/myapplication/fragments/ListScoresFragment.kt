@@ -52,7 +52,6 @@ class ListScoresFragment : Fragment(), ScoreListener {
             var scores: ArrayList<ScoreModel>?
             doAsync {
                 scores = app.firebasestore.findAllScores()
-                Log.i(TAG,"GetScores: $scores")
                 uiThread {
                     Log.i(TAG, "GetScores UiThread")
                     showScores(scores!!)
