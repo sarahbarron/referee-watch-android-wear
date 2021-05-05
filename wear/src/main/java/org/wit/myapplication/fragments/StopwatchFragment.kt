@@ -7,12 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_stopwatch.*
-import kotlinx.android.synthetic.main.fragment_stopwatch.view.*
 import org.wit.myapplication.R
 import org.wit.myapplication.main.MainApp
 import org.wit.myapplication.models.stopwatch.LiveDataViewModel
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 
-import androidx.fragment.app.activityViewModels
 
 
 class StopwatchFragment : Fragment() {
@@ -21,28 +21,45 @@ class StopwatchFragment : Fragment() {
 
     lateinit var app: MainApp
     lateinit var root: View
-    private val model: LiveDataViewModel by activityViewModels()
+//    private val model: LiveDataViewModel by activityViewModels()
 
+     private val model: LiveDataViewModel by viewModels()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
 
         app = activity?.application as MainApp
         root =inflater.inflate(R.layout.fragment_stopwatch, container, false)
-        model.time.observe(viewLifecycleOwner, androidx.lifecycle.Observer{ item ->
-            timer.text = item
-        })
+
+        val timer = Observer<String>{ item -> timer.text = item}
+        val teamAGoals = Observer<Int> { item -> teamAGoals.text = item.toString() }
+        val teamBGoals = Observer<Int> { item -> teamBGoals.text = item.toString() }
+        val teamAPoints = Observer<Int> { item -> teamAPoints.text = item.toString() }
+        val teamBPoints = Observer<Int> { item -> teamBPoints.text = item.toString() }
+        val teamATotal = Observer<Int> { item -> teamAtotal.text = item.toString() }
+        val teamBTotal = Observer<Int> { item -> teamBtotal.text = item.toString() }
+
+        model.time.observe(viewLifecycleOwner, timer)
+        model.teamAtotalGoals.observe(viewLifecycleOwner, teamAGoals)
+        model.teamBtotalGoals.observe(viewLifecycleOwner, teamBGoals)
+        model.teamAtotalPoints.observe(viewLifecycleOwner, teamAPoints)
+        model.teamBtotalPoints.observe(viewLifecycleOwner, teamBPoints)
+        model.teamAtotal.observe(viewLifecycleOwner, teamATotal)
+        model.teamBtotal.observe(viewLifecycleOwner, teamBTotal)
+
+
+
+//        model.time.observe(viewLifecycleOwner, { item -> timer.text = item })
+//
+//        model.teamAtotalGoals.observe(viewLifecycleOwner, { item-> teamAGoals.text = item.toString()})
+//        model.teamBtotalGoals.observe(viewLifecycleOwner, { item-> teamBGoals.text = item.toString()})
+//        model.teamAtotalPoints.observe(viewLifecycleOwner, { item-> teamAPoints.text = item.toString()})
+//        model.teamBtotalPoints.observe(viewLifecycleOwner, { item-> teamBPoints.text = item.toString()})
+//        model.teamAtotal.observe(viewLifecycleOwner, { item-> teamAtotal.text = item.toString()})
+//        model.teamBtotal.observe(viewLifecycleOwner, { item-> teamBtotal.text = item.toString()})
+
         return root
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-//        runTimer()
-    }
-
-    fun arguments(putString: Unit) {
-
     }
 
 
@@ -50,31 +67,6 @@ class StopwatchFragment : Fragment() {
         private const val TAG = "StopwatchFragment"
     }
 
-
-
-    fun setStopwatchStartListener(view: View) {
-        view.btnStart.setOnClickListener{
-//            app.stopwatchstore.setStopwatchRunning(true)
-//            stopwatchRunning = true
-        }
-    }
-//    fun setStopwatchPauseListener(view: View) {
-//        view.btnPause.setOnClickListener{
-//            app.stopwatchstore.setStopwatchRunning(false)
-//            stopwatchRunning = false
-//        }
-//    }
-//
-    fun runTimer(){
-        val seconds = app.stopwatchstore.getTime()
-        val hours = (seconds!! / 3600)
-        val minutes = (seconds!! % 3600) / 60
-        val secs = seconds!! % 60
-
-        val time = String.format("%d:%02d:%02d", hours, minutes, secs)
-        timer.text = time
-
-    }
 
 //    companion object{
 //        fun setAlarm(context: Context, currentSeconds: Int, gameTime: Long = 35): Long{

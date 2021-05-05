@@ -52,8 +52,8 @@
         android:tint="@color/orange" />
 
     <TextView
-        android:id="@+id/team1"
-        android:layout_width="match_parent"
+        android:id="@+id/teamAName"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/btnStart"
         android:layout_marginStart="8dp"
@@ -61,18 +61,178 @@
         android:textColor="@color/white"
         android:textSize="12sp"
         android:visibility="visible" />
-
     <TextView
-        android:id="@+id/team2"
-        android:layout_width="50dp"
+        android:id="@+id/v"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/team1"
+        android:layout_below="@id/btnStart"
+        android:layout_toRightOf="@id/teamAName"
+        android:layout_toLeftOf="@id/teamBName"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="70dp"
+        android:textAlignment="center"
+        android:text="@string/versus"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:visibility="visible" />
+    <TextView
+        android:id="@+id/teamBName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnStart"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="8dp"
         android:text="@string/team_2"
         android:textColor="@color/white"
         android:textSize="12sp"
         android:visibility="visible" />
+    <TextView
+        android:id="@+id/teamAInitials"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/teamAName"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="8dp"
+        android:text="@string/initials"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:visibility="visible" />
+    <TextView
+        android:id="@+id/teamAGoals"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/teamAName"
+        android:layout_toRightOf="@id/teamAInitials"
+        android:layout_marginStart="4dp"
+        android:text="@string/zerozero"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/teamAdash"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/teamAName"
+        android:layout_toRightOf="@id/teamAGoals"
+        android:text="@string/dash"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:visibility="visible" />
+    <TextView
+        android:id="@+id/teamAPoints"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/teamAName"
+        android:layout_toRightOf="@+id/teamAdash"
+        android:text="@string/zerozero"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:visibility="visible" />
+    <TextView
+        android:id="@+id/teamAopen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:text="@string/openpar"
+        android:layout_toRightOf="@id/teamAPoints"
+        android:layout_below="@id/teamAName"
+        />
+    <TextView
+        android:id="@+id/teamAtotal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/teamBName"
+        android:layout_toRightOf="@id/teamAopen"
+        android:layout_marginStart="2dp"
+        android:text="@string/zerozero"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:visibility="visible" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:text="@string/closingpar"
+        android:layout_toRightOf="@id/teamAtotal"
+        android:layout_below="@id/teamAName"
+        />
+
+    <TextView
+        android:id="@+id/teamBInitials"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/teamBName"
+        android:layout_toLeftOf="@id/teamBGoals"
+        android:layout_marginStart="2dp"
+        android:text="@string/initials"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:visibility="visible" />
+    <TextView
+        android:id="@+id/teamBGoals"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/teamBName"
+        android:layout_toLeftOf="@id/teamBdash"
+        android:layout_marginStart="4dp"
+        android:text="@string/zerozero"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/teamBdash"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/teamBName"
+        android:layout_toLeftOf="@id/teamBPoints"
+        android:text="@string/dash"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:visibility="visible" />
+    <TextView
+        android:id="@+id/teamBPoints"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/teamBName"
+        android:layout_toLeftOf="@+id/teamBopen"
+        android:text="@string/zerozero"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:visibility="visible" />
+    <TextView
+        android:id="@+id/teamBopen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:text="@string/openpar"
+        android:layout_toLeftOf="@id/teamBtotal"
+        android:layout_below="@id/teamAName"
+        />
+    <TextView
+        android:id="@+id/teamBtotal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/teamBName"
+        android:layout_toLeftOf="@id/teamBclose"
+        android:layout_marginStart="2dp"
+        android:text="@string/zerozero"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:visibility="visible" />
+    <TextView
+        android:id="@+id/teamBclose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:text="@string/closingpar"
+        android:layout_below="@id/teamBName"
+        android:layout_alignParentEnd="true"
+        />
+
 
 </RelativeLayout>

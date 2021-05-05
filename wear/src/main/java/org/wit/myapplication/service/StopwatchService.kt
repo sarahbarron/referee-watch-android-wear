@@ -40,11 +40,11 @@ class StopwatchService : Service(){
                 @RequiresApi(Build.VERSION_CODES.O)
                 override fun run() {
                     if(running) {
+
                         val intent1local = Intent()
                         intent1local.setAction("Counter")
                         currentTime[0]++
                         intent1local.putExtra("Time", currentTime[0])
-
                         sendBroadcast(intent1local)
 
                         // if the time is up send a notification to the watch
@@ -104,7 +104,4 @@ class StopwatchService : Service(){
         Log.i("SERVICE", "Update Service Running")
         currentTime[0]=time
     }
-
-
-
 }

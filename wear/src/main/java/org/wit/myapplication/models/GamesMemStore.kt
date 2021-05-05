@@ -39,9 +39,18 @@ class GamesMemStore : GamesStore {
         TODO("Not yet implemented")
     }
 
-    override fun findPlayer(id: String): MemberModel? {
+    override fun findMember(id: String): MemberModel? {
         TODO("Not yet implemented")
     }
+
+    override fun findMemberByJerseyNum(team: String, jerseyNum: Int): MemberModel? {
+        TODO("Not yet implemented")
+    }
+
+    override fun saveScore(scoreModel: ScoreModel) {
+        TODO("Not yet implemented")
+    }
+
 
     fun logAllGames(){
         TODO("Not yet implemented")

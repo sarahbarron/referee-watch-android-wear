@@ -46,7 +46,7 @@ class GamesFireStore(val context: Context): GamesStore {
     }
 
     override fun findGameById(id: String): GameModel? {
-       game = games.find{ p->p.id == id}!!
+        game = games.find{ p->p.id == id}!!
         return game
     }
 
@@ -78,203 +78,220 @@ class GamesFireStore(val context: Context): GamesStore {
         else return null
     }
 
-    override fun findPlayer(id: String): MemberModel?{
+    override fun findMember(id: String): MemberModel?{
         val player = allPlayers.find{ p->p.id == id}!!
         return player
 
     }
 
+    override fun findMemberByJerseyNum(team: String, jerseyNum: Int): MemberModel? {
+        var member = MemberModel()
+       if(team === "teamA") {
+           val teamsheetPlayer = teamAPlayers.find { p -> p.jerseyNumber == jerseyNum }
+           member = allPlayers.find{ p-> p.id == teamsheetPlayer?.id }!!
+       }
+        if(team === "teamB") {
+            val teamsheetPlayer = teamBPlayers.find { p -> p.jerseyNumber == jerseyNum }
+            member = allPlayers.find{ p-> p.id == teamsheetPlayer?.id }!!
+        }
+        return member
+    }
+
+    override fun saveScore(scoreModel: ScoreModel) {
+
+    }
+
     // FETCHES FROM FIRESTORE
 
-//    Fetch Users
+    //    Fetch Users
     fun fetchUser(){
-    try{
-        userId = FirebaseAuth.getInstance().currentUser!!.uid
-        db.collection("Game").document(userId)
-            .addSnapshotListener addSnapshotListener@{ snapshot, e ->
-                if (e != null) {
-                    Log.i(TAG, "Listen failed.", e)
-                    return@addSnapshotListener
-                }
-                if(snapshot !=null)
-                {
-                    Log.i(TAG, "User: ${snapshot}")
-                }
-                else{
-                    Log.i(TAG, "User = null")
-                }
-            }
-    }catch (e: Exception){Log.w(TAG,"Fetch User Exception: $e")}
+        try{
+            userId = FirebaseAuth.getInstance().currentUser!!.uid
+            db.collection("Game").document(userId)
+                    .addSnapshotListener addSnapshotListener@{ snapshot, e ->
+                        if (e != null) {
+                            Log.i(TAG, "Listen failed.", e)
+                            return@addSnapshotListener
+                        }
+                        if(snapshot !=null)
+                        {
+                            Log.i(TAG, "User: ${snapshot}")
+                        }
+                        else{
+                            Log.i(TAG, "User = null")
+                        }
+                    }
+        }catch (e: Exception){Log.w(TAG,"Fetch User Exception: $e")}
 
 
-}
+    }
 
-//    Fetch Games
+    //    Fetch Games
     @RequiresApi(Build.VERSION_CODES.O)
     fun fetchGames(){
-    try {
-        db = FirebaseFirestore.getInstance()
-        userId = FirebaseAuth.getInstance().currentUser!!.uid
-        val referee = db.collection("Member").document(userId)
-        Log.i(TAG, "UserID: " + userId)
+        try {
+            db = FirebaseFirestore.getInstance()
+            userId = FirebaseAuth.getInstance().currentUser!!.uid
+            val referee = db.collection("Member").document(userId)
+            Log.i(TAG, "UserID: " + userId)
 
-        games.clear()
+            games.clear()
 
 
-        // Get the local date
-        var localdate = LocalDate.now()
-        // get the date from the start of day
-        val today = Date.from(localdate.atStartOfDay(ZoneId.systemDefault()).toInstant())
-        // Simply plus 1 day to make it tomorrows date
-        localdate = localdate.plusDays(1)
-        // convert it to type Date at the start of tomorrows date
-        val tomorrow = Date.from(localdate.atStartOfDay(ZoneId.systemDefault()).toInstant())
+            // Get the local date
+            var localdate = LocalDate.now()
+            // get the date from the start of day
+            val today = Date.from(localdate.atStartOfDay(ZoneId.systemDefault()).toInstant())
+            // Simply plus 1 day to make it tomorrows date
+            localdate = localdate.plusDays(1)
+            // convert it to type Date at the start of tomorrows date
+            val tomorrow = Date.from(localdate.atStartOfDay(ZoneId.systemDefault()).toInstant())
 
-         db.collection("Game")
-                .whereEqualTo("referee", referee)
-                .whereLessThan("dateTime", tomorrow)
-                .whereGreaterThanOrEqualTo(
-                        "dateTime",
-                        today
-                ).orderBy("dateTime", Query.Direction.ASCENDING)
-                .addSnapshotListener addSnapshotListener@{ snapshot, e ->
-                    Log.i(TAG, " Number Of Games : " + (snapshot?.size() ?: null))
-                    if (e != null) {
-                        Log.i(TAG, "Listen failed.", e)
-                        return@addSnapshotListener
-                    }
-                    if (snapshot != null) {
-                        snapshot.documents.mapNotNullTo(games) {
-                            it.toObject(GameModel::class.java)
+            db.collection("Game")
+                    .whereEqualTo("referee", referee)
+                    .whereLessThan("dateTime", tomorrow)
+                    .whereGreaterThanOrEqualTo(
+                            "dateTime",
+                            today
+                    ).orderBy("dateTime", Query.Direction.ASCENDING)
+                    .addSnapshotListener addSnapshotListener@{ snapshot, e ->
+                        Log.i(TAG, " Number Of Games : " + (snapshot?.size() ?: null))
+                        if (e != null) {
+                            Log.i(TAG, "Listen failed.", e)
+                            return@addSnapshotListener
                         }
-                        Log.i(TAG, "AFTER FETCH GAMES : $games")
+                        if (snapshot != null) {
+                            snapshot.documents.mapNotNullTo(games) {
+                                it.toObject(GameModel::class.java)
+                            }
+                            Log.i(TAG, "AFTER FETCH GAMES : $games")
 
-                    } else {
-                        Log.i(TAG, "Games = null")
+                        } else {
+                            Log.i(TAG, "Games = null")
+                        }
                     }
-             }
-    }catch(e: Exception){
+        }catch(e: Exception){
 
             Log.w(TAG, "Fetch Games Exception: $e")
 
-    }
+        }
     }
 
 
-// Fetch A Scores
+    // Fetch A Scores
     fun fetchScores(gameId: String){
-    try {
-        db = FirebaseFirestore.getInstance()
-        scores.clear()
-        Log.i(TAG, "Fetch Scores game Id $gameId")
-        var gameDoc = db.collection("Game").document(gameId)
-        db.collection("Scores")
-            .whereEqualTo("game", gameDoc)
-            .orderBy("timestamp", Query.Direction.DESCENDING)
-            .addSnapshotListener addSnapshotListener@{ snapshot, e ->
-                Log.i(TAG, " Number Of Scores : " + (snapshot?.size() ?: null))
-                if (e != null) {
-                    Log.i(TAG, "Listen failed.", e)
-                    return@addSnapshotListener
-                }
-                if (snapshot != null) {
-                    snapshot.documents.mapNotNullTo(scores) {
-                        it.toObject(ScoreModel::class.java)
+        try {
+            db = FirebaseFirestore.getInstance()
+            scores.clear()
+            Log.i(TAG, "Fetch Scores game Id $gameId")
+            var gameDoc = db.collection("Game").document(gameId)
+            db.collection("Scores")
+                    .whereEqualTo("game", gameDoc)
+                    .orderBy("timestamp", Query.Direction.DESCENDING)
+                    .addSnapshotListener addSnapshotListener@{ snapshot, e ->
+                        Log.i(TAG, " Number Of Scores : " + (snapshot?.size() ?: null))
+                        if (e != null) {
+                            Log.i(TAG, "Listen failed.", e)
+                            return@addSnapshotListener
+                        }
+                        if (snapshot != null) {
+                            snapshot.documents.mapNotNullTo(scores) {
+                                it.toObject(ScoreModel::class.java)
+                            }
+                        } else {
+                            Log.i(TAG, "Scores = null")
+                        }
                     }
-                } else {
-                    Log.i(TAG, "Scores = null")
-                }
-            }
         }catch (e: Exception){Log.w(TAG,"Fetch Team Exception: $e")}
-}
+    }
 
-//    Fetch Cards
+    //    Fetch Cards
     fun fetchCards(gameRef: String) {
-    try {
-        db = FirebaseFirestore.getInstance()
-        cards.clear()
-        var gameDoc = db.collection("Game").document(gameRef)
-        db.collection("Cards")
-            .whereEqualTo("game", gameDoc)
-            .orderBy("timestamp", Query.Direction.DESCENDING)
-            .addSnapshotListener addSnapshotListener@{ snapshot, e ->
-                Log.i(TAG, " Number Of Cards: " + (snapshot?.size() ?: null))
-                if (e != null) {
-                    Log.i(TAG, "Listen failed.", e)
-                    return@addSnapshotListener
-                }
-                if (snapshot != null) {
-                    snapshot.documents.mapNotNullTo(cards) {
-                        it.toObject(CardModel::class.java)
+        try {
+            db = FirebaseFirestore.getInstance()
+            cards.clear()
+            var gameDoc = db.collection("Game").document(gameRef)
+            db.collection("Cards")
+                    .whereEqualTo("game", gameDoc)
+                    .orderBy("timestamp", Query.Direction.DESCENDING)
+                    .addSnapshotListener addSnapshotListener@{ snapshot, e ->
+                        Log.i(TAG, " Number Of Cards: " + (snapshot?.size() ?: null))
+                        if (e != null) {
+                            Log.i(TAG, "Listen failed.", e)
+                            return@addSnapshotListener
+                        }
+                        if (snapshot != null) {
+                            snapshot.documents.mapNotNullTo(cards) {
+                                it.toObject(CardModel::class.java)
+                            }
+                        } else {
+                            Log.i(TAG, "Card = null")
+                        }
                     }
-                } else {
-                    Log.i(TAG, "Card = null")
-                }
-            }
-    }catch (e: Exception){Log.w(TAG,"Fetch Cards Exception: $e")}
+        }catch (e: Exception){Log.w(TAG,"Fetch Cards Exception: $e")}
 
-}
+    }
 
-//    Fetch Injuries
+    //    Fetch Injuries
     fun fetchInjuries(gameRef: String) {
-    try{
-        db = FirebaseFirestore.getInstance()
-        injuries.clear()
-        var gameDoc = db.collection("Game").document(gameRef)
+        try{
+            db = FirebaseFirestore.getInstance()
+            injuries.clear()
+            var gameDoc = db.collection("Game").document(gameRef)
 
-        db.collection("Injury")
-            .whereEqualTo("game", gameDoc)
-            .orderBy("timestamp", Query.Direction.DESCENDING)
-            .addSnapshotListener addSnapshotListener@{ snapshot, e ->
-                Log.i(TAG, " Number Of Injuries: " + (snapshot?.size() ?: null))
-                if (e != null) {
-                    Log.i(TAG, "Injury Listen failed.", e)
-                    return@addSnapshotListener
-                }
-                if(snapshot !=null)
-                {
-                    snapshot.documents.mapNotNullTo(injuries){
-                        it.toObject(InjuryModel::class.java)
+            db.collection("Injury")
+                    .whereEqualTo("game", gameDoc)
+                    .orderBy("timestamp", Query.Direction.DESCENDING)
+                    .addSnapshotListener addSnapshotListener@{ snapshot, e ->
+                        Log.i(TAG, " Number Of Injuries: " + (snapshot?.size() ?: null))
+                        if (e != null) {
+                            Log.i(TAG, "Injury Listen failed.", e)
+                            return@addSnapshotListener
+                        }
+                        if(snapshot !=null)
+                        {
+                            snapshot.documents.mapNotNullTo(injuries){
+                                it.toObject(InjuryModel::class.java)
+                            }
+                        }
+                        else{
+                            Log.i(TAG, "Injury = null")
+                        }
                     }
-                }
-                else{
-                    Log.i(TAG, "Injury = null")
-                }
-            }
-    }catch (e: Exception){Log.w(TAG,"Fetch Injuries Exception: $e")}
+        }catch (e: Exception){Log.w(TAG,"Fetch Injuries Exception: $e")}
 
-}
+    }
 
-//    Fetch Substitutes
+    //    Fetch Substitutes
     fun fetchSubstitutes(gameRef: String) {
-       try{
-        db = FirebaseFirestore.getInstance()
-        substitutes.clear()
-        var gameDoc = db.collection("Game").document(gameRef)
+        try{
+            db = FirebaseFirestore.getInstance()
+            substitutes.clear()
+            var gameDoc = db.collection("Game").document(gameRef)
 
-        db.collection("Substitute")
-                .whereEqualTo("game", gameDoc)
-                .orderBy("timestamp", Query.Direction.DESCENDING)
-                .addSnapshotListener addSnapshotListener@{ snapshot, e ->
-                Log.i(TAG, " Number Of Subs: " + (snapshot?.size() ?: null))
-                if (e != null) {
-                    Log.i(TAG, "Listen failed. $e", e)
-                    return@addSnapshotListener
-                }
-                if(snapshot !=null)
-                {
-                    snapshot.documents.mapNotNullTo(substitutes){
-                        it.toObject(SubstituteModel::class.java)
+            db.collection("Substitute")
+                    .whereEqualTo("game", gameDoc)
+                    .orderBy("timestamp", Query.Direction.DESCENDING)
+                    .addSnapshotListener addSnapshotListener@{ snapshot, e ->
+                        Log.i(TAG, " Number Of Subs: " + (snapshot?.size() ?: null))
+                        if (e != null) {
+                            Log.i(TAG, "Listen failed. $e", e)
+                            return@addSnapshotListener
+                        }
+                        if(snapshot !=null)
+                        {
+                            snapshot.documents.mapNotNullTo(substitutes){
+                                it.toObject(SubstituteModel::class.java)
+                            }
+                            Log.i(TAG, "fetch Subs : $substitutes")
+                        }
+                        else{
+                            Log.i(TAG, "Substitutes = null")
+                        }
                     }
-                    Log.i(TAG, "fetch Subs : $substitutes")
-                }
-                else{
-                    Log.i(TAG, "Substitutes = null")
-                }
-            }
-       }catch (e: Exception){Log.w(TAG,"Fetch Substitutes Exception: $e")}
+        }catch (e: Exception){Log.w(TAG,"Fetch Substitutes Exception: $e")}
 
-}
+    }
 
     //    Fetch A Team
     fun fetchTeam(gameref: String, teamref: String, team:String)= CoroutineScope(Dispatchers.IO).launch{
@@ -305,11 +322,11 @@ class GamesFireStore(val context: Context): GamesStore {
             var db: FirebaseFirestore = FirebaseFirestore.getInstance()
 
             val teamsheetplayers = db.collection("Game")
-                .document(gameId)
-                .collection("teamsheet")
-                .document(teamId)
-                .collection("players")
-                .get().await()
+                    .document(gameId)
+                    .collection("teamsheet")
+                    .document(teamId)
+                    .collection("players")
+                    .get().await()
 
             if (team == "teamA") {
                 teamAPlayers.clear()
@@ -346,8 +363,6 @@ class GamesFireStore(val context: Context): GamesStore {
             }
         }
     }
-
-
 
     companion object {
         private const val TAG = "Firestore"

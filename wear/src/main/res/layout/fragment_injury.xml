@@ -20,6 +20,8 @@
         android:layout_centerHorizontal="true"
         android:textOff="@string/team_1"
         android:textOn="@string/team_1"
+        android:backgroundTint="@color/button_background_color"
+        android:textColor="@color/black"
         android:textSize="12sp"
         android:textStyle="bold" />
 
@@ -32,6 +34,8 @@
         android:textOff="@string/team_2"
         android:textOn="@string/team_2"
         android:textSize="12sp"
+        android:backgroundTint="@color/button_background_color"
+        android:textColor="@color/black"
         android:textStyle="bold" />
 
 

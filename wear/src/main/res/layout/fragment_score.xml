@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_main"
+    android:id="@+id/fragment_score"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="8dp"
@@ -18,9 +18,10 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+        android:backgroundTint="@color/button_background_color"
+        android:textColor="@color/black"
         android:textOff="@string/team_1"
         android:textOn="@string/team_1"
-
         android:textSize="12sp"
         android:textStyle="bold" />
 
@@ -30,6 +31,8 @@
         android:layout_height="70dp"
         android:layout_toEndOf="@+id/team1"
         android:layout_alignParentTop="true"
+        android:backgroundTint="@color/button_background_color"
+        android:textColor="@color/black"
         android:textOff="@string/team_2"
         android:textOn="@string/team_2"
         android:textSize="12sp"
@@ -42,9 +45,10 @@
         android:layout_alignStart="@+id/team1"
         android:layout_alignEnd="@+id/team1"
         android:layout_below="@id/team1"
+        android:backgroundTint="@color/button_background_color"
+        android:textColor="@color/black"
         android:textOff="@string/goal"
         android:textOn="@string/goal"
-        android:textColor="#009688"
         android:textSize="12sp"
         android:textStyle="bold" />
     <ToggleButton
@@ -54,9 +58,10 @@
         android:layout_alignStart="@+id/team2"
         android:layout_alignEnd="@+id/team2"
         android:layout_below="@id/team2"
+        android:backgroundTint="@color/button_background_color"
+        android:textColor="@color/black"
         android:textOff="@string/point"
         android:textOn="@string/point"
-        android:textColor="#009688"
         android:textSize="12sp"
         android:textStyle="bold" />
 
@@ -89,6 +94,7 @@
         android:autofillHints="@string/zero" />
 
     <Button
+        android:id="@+id/saveScoreBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/player_number_input"

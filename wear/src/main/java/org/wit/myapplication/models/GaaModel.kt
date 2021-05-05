@@ -1,7 +1,6 @@
 package org.wit.myapplication.models
 
 import android.os.Parcelable
-import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.ServerTimestamp
@@ -165,13 +164,13 @@ data class VenueModel(
 
 @Parcelize
 data class ScoreModel(
-    @DocumentId
-    var id:String?=null,
-    var timestamp: Date?=null,
-    var goal:Int?=null,
-    var point: Int?=null,
-    var member: @RawValue DocumentReference? = null,
-    var game: @RawValue DocumentReference? = null
+        @DocumentId
+        var id:String?=null,
+        var timestamp: Date?=null,
+        var goal:Int?=null,
+        var point: Int?=null,
+        var member: @RawValue DocumentReference? = null,
+        var game: @RawValue DocumentReference? = null
 ):Parcelable
 
 @Parcelize

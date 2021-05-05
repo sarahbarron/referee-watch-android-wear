@@ -1,6 +1,7 @@
 package org.wit.myapplication.models
 
 import com.google.firebase.firestore.QuerySnapshot
+import java.lang.reflect.Member
 
 interface GamesStore{
     fun findAllGames(): ArrayList<GameModel>?
@@ -10,6 +11,8 @@ interface GamesStore{
     fun findAllSubstitutes(): ArrayList<SubstituteModel>?
     fun findAllInjuries(): ArrayList<InjuryModel>?
     fun findTeam(id: String): TeamModel?
-    fun findPlayer(id: String): MemberModel?
+    fun findMember(id: String): MemberModel?
+    fun findMemberByJerseyNum(team: String, jerseyNum: Int): MemberModel?
+    fun saveScore(scoreModel: ScoreModel)
 
 }

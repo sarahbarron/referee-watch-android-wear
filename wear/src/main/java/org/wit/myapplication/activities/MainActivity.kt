@@ -19,7 +19,6 @@ import androidx.fragment.app.Fragment
 import androidx.wear.ambient.AmbientModeSupport
 import androidx.wear.widget.drawer.WearableActionDrawerView
 import androidx.wear.widget.drawer.WearableNavigationDrawerView
-import kotlinx.android.synthetic.main.fragment_stopwatch.*
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.startActivity
 import org.wit.myapplication.R
@@ -28,8 +27,8 @@ import org.wit.myapplication.fragments.*
 import org.wit.myapplication.main.MainApp
 import org.wit.myapplication.models.GameModel
 import org.wit.myapplication.service.StopwatchService
-import java.util.*
 import org.wit.myapplication.models.stopwatch.LiveDataViewModel
+import kotlin.collections.ArrayList
 
 /**
  * GAA Referee Main Activity control of navigation
@@ -64,24 +63,30 @@ class MainActivity :AppCompatActivity(),
         // permission needed for notifications
         ActivityCompat.requestPermissions(this, arrayOf<String>(FOREGROUND_SERVICE), PackageManager.PERMISSION_GRANTED)
 
+        // Broadcast Reciever
         val intentFilter = IntentFilter()
         intentFilter.addAction("Counter")
         val broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 val seconds = intent.getIntExtra("Time", 0)
                 model.seconds.value = seconds
-                var hours = (seconds!! / 3600)
-                var minutes = (seconds!! % 3600) / 60
-                var secs = seconds!! % 60
+                val hours = (seconds / 3600)
+                val minutes = (seconds % 3600) / 60
+                val secs = seconds % 60
 
                 val time = String.format("%02d:%02d:%02d", hours, minutes, secs)
                 // update the live data with the new time
                 model.time.value = time
-                timer.text = time
             }
         }
         registerReceiver(broadcastReceiver, intentFilter)
 
+        model.teamAtotalPoints.value = 0
+        model.teamAtotalGoals.value =0
+        model.teamBtotalGoals.value=0
+        model.teamBtotalPoints.value=0
+        model.teamAtotal.value=0
+        model.teamBtotal.value=0
 
 
         Log.d(TAG, "onCreate()")
@@ -100,7 +105,7 @@ class MainActivity :AppCompatActivity(),
         // Initialize content to home fragment.
         watchFragment = StopwatchFragment()
         val args = Bundle()
-        
+
         watchFragment!!.arguments = args
         val fragmentManager = supportFragmentManager
         fragmentManager.beginTransaction().replace(R.id.content_frame, watchFragment!!).commit()
@@ -229,7 +234,6 @@ class MainActivity :AppCompatActivity(),
         Log.d(TAG, "SelectedItem: $selectedItemName")
         when (selectedItemName) {
             "Stopwatch" -> {
-
                 watchFragment = StopwatchFragment()
                 val args = Bundle()
                 watchFragment!!.arguments = args
@@ -273,7 +277,6 @@ class MainActivity :AppCompatActivity(),
 
             else -> HomeFragment()
         }
-
     }
 
     private inner class NavigationAdapter  /* package */(private val mContext: Context) :
@@ -371,30 +374,29 @@ class MainActivity :AppCompatActivity(),
     }
 
 
-   fun fetchDataFromFirebase(game: GameModel) {
-
-           app.firebasestore.fetchTeam(game.id!!, game.teamA?.id!!, "teamA")
-           app.firebasestore.fetchTeam(game.id!!, game.teamB?.id!!, "teamB")
-           app.firebasestore.fetchScores(game.id!!)
-           app.firebasestore.fetchCards(game.id!!)
-           app.firebasestore.fetchSubstitutes(game.id!!)
-           app.firebasestore.fetchInjuries(game.id!!)
-
+    fun fetchDataFromFirebase(game: GameModel) {
+        app.firebasestore.fetchTeam(game.id!!, game.teamA?.id!!, "teamA")
+        app.firebasestore.fetchTeam(game.id!!, game.teamB?.id!!, "teamB")
+        app.firebasestore.fetchScores(game.id!!)
+        app.firebasestore.fetchCards(game.id!!)
+        app.firebasestore.fetchSubstitutes(game.id!!)
+        app.firebasestore.fetchInjuries(game.id!!)
     }
+
 
 
 
     private lateinit var mService:StopwatchService
     private var mBound: Boolean = false
-  //  private lateinit var serviceIntent:Intent
 
+    //  binder connection to the service
     private val connection = object: ServiceConnection {
         override fun onServiceConnected(className:ComponentName, service:IBinder) {
            val binder = service as StopwatchService.LocalBinder
             mService = binder.getService()
             mBound = true
         }
-//        when the service is unexpectedly disconnected
+        // when the service is unexpectedly disconnected
         override fun onServiceDisconnected(name:ComponentName) {
             mBound = false
         }
@@ -409,12 +411,6 @@ class MainActivity :AppCompatActivity(),
             bindService(intent, connection, Context.BIND_AUTO_CREATE)}
         startService(intentService)
     }
-    override fun onStart(){
-        super.onStart()
-        val integerTimeSet = Integer.parseInt(app.stopwatchstore.getTime().toString())
-        Intent(this, StopwatchService::class.java).putExtra("TimeValue", integerTimeSet).putExtra("Running", false).also{intent->
-            bindService(intent, connection, Context.BIND_AUTO_CREATE)}
-        }
 
     override fun onStop(){
         super.onStop()

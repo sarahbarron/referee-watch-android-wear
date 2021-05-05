@@ -11,4 +11,26 @@ class LiveDataViewModel: ViewModel() {
     val time : MutableLiveData<String>by lazy{
         MutableLiveData<String>()
     }
+
+    val teamAtotalGoals: MutableLiveData<Int>by lazy{
+        MutableLiveData<Int>()
+    }
+    val teamAtotalPoints: MutableLiveData<Int>by lazy{
+        MutableLiveData<Int>()
+    }
+    val teamBtotalGoals: MutableLiveData<Int>by lazy{
+        MutableLiveData<Int>()
+    }
+    val teamBtotalPoints: MutableLiveData<Int>by lazy{
+        MutableLiveData<Int>()
+    }
+    val teamAtotal: MutableLiveData<Int>by lazy{
+        MutableLiveData<Int>()
+    }
+    val teamBtotal: MutableLiveData<Int>by lazy{
+        MutableLiveData<Int>()
+    }
 }
+
+
+

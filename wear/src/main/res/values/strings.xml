@@ -52,7 +52,7 @@
     <string name="signout_successful">Successfully signed out!</string>
     <!-- Used by the Google Sign In API for auth. -->
     <string name="server_client_id">33266835235-6nkf0l2tsdk3cqnjfhh8s5nfmvkbedkn.apps.googleusercontent.com</string>
-    <string name="stopwatch_current_time">"00:00:00"</string>
+    <string name="stopwatch_current_time">00:00:00</string>
     <string name="stopwatch_start_btn">Start</string>
     <string name="stopwatch_pause_btn">Pause</string>
     <string name="stopwatch_reset_btn">Reset</string>
@@ -88,4 +88,9 @@
     <string name="blackCard">Black</string>
     <string name="games_list">Games List</string>
     <string name="next">Next</string>
+    <string name="dash">-</string>
+    <string name="zerozero">00</string>
+    <string name="initials">IN:</string>
+    <string name="openpar"> ( </string>
+    <string name="closingpar"> ) </string>
 </resources>
