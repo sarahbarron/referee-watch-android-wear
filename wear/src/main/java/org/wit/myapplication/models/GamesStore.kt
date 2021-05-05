@@ -1,6 +1,7 @@
 package org.wit.myapplication.models
 
 import com.google.firebase.firestore.QuerySnapshot
+import kotlinx.coroutines.Job
 import java.lang.reflect.Member
 
 interface GamesStore{
@@ -14,5 +15,6 @@ interface GamesStore{
     fun findMember(id: String): MemberModel?
     fun findMemberByJerseyNum(team: String, jerseyNum: Int): MemberModel?
     fun saveScore(scoreModel: ScoreModel)
+
 
 }

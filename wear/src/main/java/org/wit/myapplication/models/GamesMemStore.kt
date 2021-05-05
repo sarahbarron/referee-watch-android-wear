@@ -51,7 +51,6 @@ class GamesMemStore : GamesStore {
         TODO("Not yet implemented")
     }
 
-
     fun logAllGames(){
         TODO("Not yet implemented")
     }

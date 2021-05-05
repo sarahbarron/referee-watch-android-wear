@@ -6,13 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import kotlinx.android.synthetic.main.activity_main.view.*
+import kotlinx.android.synthetic.main.fragment_score.*
 import kotlinx.android.synthetic.main.fragment_stopwatch.*
 import org.wit.myapplication.R
 import org.wit.myapplication.main.MainApp
 import org.wit.myapplication.models.stopwatch.LiveDataViewModel
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-
 
 
 class StopwatchFragment : Fragment() {
@@ -31,6 +32,9 @@ class StopwatchFragment : Fragment() {
 
         app = activity?.application as MainApp
         root =inflater.inflate(R.layout.fragment_stopwatch, container, false)
+
+        model.mSelectedTopNav.value=0
+
 
         val timer = Observer<String>{ item -> timer.text = item}
         val teamAGoals = Observer<Int> { item -> teamAGoals.text = item.toString() }
@@ -62,6 +66,18 @@ class StopwatchFragment : Fragment() {
         return root
     }
 
+
+    override fun onResume() {
+        super.onResume()
+        var mWearableNavigationDrawer = root.top_navigation_drawer
+        mWearableNavigationDrawer?.setCurrentItem(0,true)
+        model.mSelectedTopNav.value=0
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+
+    }
 
     companion object {
         private const val TAG = "StopwatchFragment"

@@ -16,6 +16,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.wear.ambient.AmbientModeSupport
 import androidx.wear.widget.drawer.WearableActionDrawerView
 import androidx.wear.widget.drawer.WearableNavigationDrawerView
@@ -28,6 +29,7 @@ import org.wit.myapplication.main.MainApp
 import org.wit.myapplication.models.GameModel
 import org.wit.myapplication.service.StopwatchService
 import org.wit.myapplication.models.stopwatch.LiveDataViewModel
+import java.util.*
 import kotlin.collections.ArrayList
 
 /**
@@ -36,10 +38,12 @@ import kotlin.collections.ArrayList
 class MainActivity :AppCompatActivity(),
     AmbientModeSupport.AmbientCallbackProvider, MenuItem.OnMenuItemClickListener,
     WearableNavigationDrawerView.OnItemSelectedListener {
+
+    private val model: LiveDataViewModel by viewModels()
     private var mWearableNavigationDrawer: WearableNavigationDrawerView? = null
     private var mWearableActionDrawer: WearableActionDrawerView? = null
     private var mTopNav: ArrayList<TopNav>? = null
-    private var mSelectedTopNav = 0
+    private var mSelectedTopNav: Int = 0
     private var subFragment: SubFragment? = null
     private var cardsFragment: CardFragment? = null
     private var scoreFragment: ScoreFragment? = null
@@ -56,7 +60,7 @@ class MainActivity :AppCompatActivity(),
     var game = GameModel()
 
 
-    private val model: LiveDataViewModel by viewModels()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,7 +104,7 @@ class MainActivity :AppCompatActivity(),
         // Enables Ambient mode.
         AmbientModeSupport.attach(this)
         mTopNav = initializeTopNav()
-        mSelectedTopNav = 0
+        model.mSelectedTopNav.value = 0
 
         // Initialize content to home fragment.
         watchFragment = StopwatchFragment()
@@ -156,16 +160,24 @@ class MainActivity :AppCompatActivity(),
         when (itemId) {
 
             R.id.menu_home -> {
+                mWearableNavigationDrawer?.setCurrentItem(0, true)
+                model.mSelectedTopNav.value = 0
                 watchFragment = StopwatchFragment()
                 val args = Bundle()
                 watchFragment!!.arguments = args
                 val fragmentManager = supportFragmentManager
                 fragmentManager.beginTransaction().replace(R.id.content_frame, watchFragment!!)
                         .commit()
+
             }
-            R.id.menu_end_half -> { resetStopWatch()
+            R.id.menu_end_half -> {
+                mWearableNavigationDrawer?.setCurrentItem(0, true)
+                model.mSelectedTopNav.value = 0
+                resetStopWatch()
             }
             R.id.bottom_menu_scores -> {
+                mWearableNavigationDrawer?.setCurrentItem(0, true)
+                model.mSelectedTopNav.value = 0
                 listScoresFragment = ListScoresFragment()
                 val args = Bundle()
                 listScoresFragment!!.arguments = args
@@ -173,8 +185,11 @@ class MainActivity :AppCompatActivity(),
                 mWearableActionDrawer?.controller?.closeDrawer()
                 fragmentManager.beginTransaction().replace(R.id.content_frame, listScoresFragment!!)
                         .commit()
+
             }
             R.id.bottom_menu_cards -> {
+                mWearableNavigationDrawer?.setCurrentItem(0, true)
+                model.mSelectedTopNav.value = 0
                 listCardsFragment = ListCardsFragment()
                 val args = Bundle()
                 listCardsFragment!!.arguments = args
@@ -183,6 +198,8 @@ class MainActivity :AppCompatActivity(),
                         .commit()
             }
             R.id.bottom_menu_subs -> {
+                mWearableNavigationDrawer?.setCurrentItem(0, true)
+                model.mSelectedTopNav.value = 0
                 listSubstitutesFragment = ListSubstitutesFragment()
                 val args = Bundle()
                 listSubstitutesFragment!!.arguments = args
@@ -191,8 +208,11 @@ class MainActivity :AppCompatActivity(),
                         R.id.content_frame,
                         listSubstitutesFragment!!
                 ).commit()
+
             }
             R.id.bottom_menu_injuries -> {
+                mWearableNavigationDrawer?.setCurrentItem(0, true)
+                model.mSelectedTopNav.value = 0
                 listInjuriesFragment = ListInjuriesFragment()
                 val args = Bundle()
                 listInjuriesFragment!!.arguments = args
@@ -201,8 +221,13 @@ class MainActivity :AppCompatActivity(),
                         R.id.content_frame,
                         listInjuriesFragment!!
                 ).commit()
+
             }
-            R.id.bottom_menu_reset_stopwatch -> resetStopWatch()
+            R.id.bottom_menu_reset_stopwatch -> {
+                mWearableNavigationDrawer?.setCurrentItem(0, true)
+                model.mSelectedTopNav.value = 0
+                resetStopWatch()
+            }
             R.id.bottom_menu_gameslist -> startActivity(intentFor<GamesList>())
             R.id.menu_sign_out -> signOut()
 
@@ -229,11 +254,13 @@ class MainActivity :AppCompatActivity(),
                 TAG,
                 "WearableNavigationDrawerView triggered onItemSelected(): $position"
         )
-        mSelectedTopNav = position
-        val selectedItemName: String = mTopNav!![mSelectedTopNav].name
+        model.mSelectedTopNav.value = position
+        val selectedItemName: String = mTopNav!![model.mSelectedTopNav.value!!].name
         Log.d(TAG, "SelectedItem: $selectedItemName")
         when (selectedItemName) {
             "Stopwatch" -> {
+                mWearableNavigationDrawer?.setCurrentItem(0, true)
+                model.mSelectedTopNav.value = 0
                 watchFragment = StopwatchFragment()
                 val args = Bundle()
                 watchFragment!!.arguments = args
@@ -279,7 +306,7 @@ class MainActivity :AppCompatActivity(),
         }
     }
 
-    private inner class NavigationAdapter  /* package */(private val mContext: Context) :
+    private inner class NavigationAdapter (private val mContext: Context) :
         WearableNavigationDrawerView.WearableNavigationDrawerAdapter() {
         override fun getCount(): Int {
             return mTopNav!!.size
@@ -296,6 +323,10 @@ class MainActivity :AppCompatActivity(),
                     packageName
             )
             return mContext.getDrawable(drawableNavigationIconId)!!
+        }
+
+        override fun notifyDataSetChanged() {
+            super.notifyDataSetChanged()
         }
     }
 

@@ -5,20 +5,24 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import org.wit.myapplication.models.*
+import org.wit.myapplication.models.stopwatch.LiveDataViewModel
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.*
 import kotlin.collections.ArrayList
 
 
+
 class GamesFireStore(val context: Context): GamesStore {
 
+    var model: LiveDataViewModel = LiveDataViewModel()
     var games = ArrayList<GameModel>()
     var game = GameModel()
 
@@ -97,9 +101,14 @@ class GamesFireStore(val context: Context): GamesStore {
         return member
     }
 
-    override fun saveScore(scoreModel: ScoreModel) {
+    override fun saveScore(scoreModel: ScoreModel){
+        db.collection("Scores").document().set(scoreModel)
+        scores.add(scoreModel)
+        Log.i(TAG, "firestore save score scoreModel = $scoreModel\nscores = $scores")
 
     }
+
+
 
     // FETCHES FROM FIRESTORE
 
@@ -135,9 +144,6 @@ class GamesFireStore(val context: Context): GamesStore {
             val referee = db.collection("Member").document(userId)
             Log.i(TAG, "UserID: " + userId)
 
-            games.clear()
-
-
             // Get the local date
             var localdate = LocalDate.now()
             // get the date from the start of day
@@ -161,6 +167,7 @@ class GamesFireStore(val context: Context): GamesStore {
                             return@addSnapshotListener
                         }
                         if (snapshot != null) {
+                            games.clear()
                             snapshot.documents.mapNotNullTo(games) {
                                 it.toObject(GameModel::class.java)
                             }
@@ -182,7 +189,6 @@ class GamesFireStore(val context: Context): GamesStore {
     fun fetchScores(gameId: String){
         try {
             db = FirebaseFirestore.getInstance()
-            scores.clear()
             Log.i(TAG, "Fetch Scores game Id $gameId")
             var gameDoc = db.collection("Game").document(gameId)
             db.collection("Scores")
@@ -195,6 +201,7 @@ class GamesFireStore(val context: Context): GamesStore {
                             return@addSnapshotListener
                         }
                         if (snapshot != null) {
+                            scores.clear()
                             snapshot.documents.mapNotNullTo(scores) {
                                 it.toObject(ScoreModel::class.java)
                             }
@@ -209,7 +216,6 @@ class GamesFireStore(val context: Context): GamesStore {
     fun fetchCards(gameRef: String) {
         try {
             db = FirebaseFirestore.getInstance()
-            cards.clear()
             var gameDoc = db.collection("Game").document(gameRef)
             db.collection("Cards")
                     .whereEqualTo("game", gameDoc)
@@ -221,6 +227,7 @@ class GamesFireStore(val context: Context): GamesStore {
                             return@addSnapshotListener
                         }
                         if (snapshot != null) {
+                            cards.clear()
                             snapshot.documents.mapNotNullTo(cards) {
                                 it.toObject(CardModel::class.java)
                             }
@@ -236,7 +243,6 @@ class GamesFireStore(val context: Context): GamesStore {
     fun fetchInjuries(gameRef: String) {
         try{
             db = FirebaseFirestore.getInstance()
-            injuries.clear()
             var gameDoc = db.collection("Game").document(gameRef)
 
             db.collection("Injury")
@@ -250,6 +256,7 @@ class GamesFireStore(val context: Context): GamesStore {
                         }
                         if(snapshot !=null)
                         {
+                            injuries.clear()
                             snapshot.documents.mapNotNullTo(injuries){
                                 it.toObject(InjuryModel::class.java)
                             }
@@ -266,7 +273,6 @@ class GamesFireStore(val context: Context): GamesStore {
     fun fetchSubstitutes(gameRef: String) {
         try{
             db = FirebaseFirestore.getInstance()
-            substitutes.clear()
             var gameDoc = db.collection("Game").document(gameRef)
 
             db.collection("Substitute")
@@ -280,6 +286,7 @@ class GamesFireStore(val context: Context): GamesStore {
                         }
                         if(snapshot !=null)
                         {
+                            substitutes.clear()
                             snapshot.documents.mapNotNullTo(substitutes){
                                 it.toObject(SubstituteModel::class.java)
                             }

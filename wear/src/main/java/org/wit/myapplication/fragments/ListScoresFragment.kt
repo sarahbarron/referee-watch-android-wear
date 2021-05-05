@@ -38,14 +38,13 @@ class ListScoresFragment : Fragment(), ScoreListener {
         root.fragment_list_scores.isEdgeItemsCenteringEnabled = false
 
         // Get Scores
-        app.firebasestore.game.id?.let { getScores(it) }
-
+        getScores()
 
         return root
     }
 
     // Scores Recycler View
-    private fun getScores(gameId: String) {
+    private fun getScores() {
         Log.i(TAG, "getScores")
 
         try{
@@ -56,7 +55,7 @@ class ListScoresFragment : Fragment(), ScoreListener {
                 Log.i(TAG,"GetScores: $scores")
                 uiThread {
                     Log.i(TAG, "GetScores UiThread")
-                    showScores()
+                    showScores(scores!!)
                 }
             }
 
@@ -65,9 +64,10 @@ class ListScoresFragment : Fragment(), ScoreListener {
         }
     }
 
-    fun showScores(){
+    fun showScores(scores: ArrayList<ScoreModel>){
         Log.i(TAG, "showScores")
-        val scores = app.firebasestore.scores
+        val scores = scores
+        Log.i(TAG, "Scores in showScores :  ${scores.size}")
         val teamA = app.firebasestore.teamA
         val teamB = app.firebasestore.teamB
         val players = app.firebasestore.allPlayers

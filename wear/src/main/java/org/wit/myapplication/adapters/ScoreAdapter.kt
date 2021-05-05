@@ -42,37 +42,41 @@ class ScoreAdapter constructor(
 
 
     override fun onBindViewHolder(holder: MainHolder, position: Int) {
-        val score = scores[holder.adapterPosition]
-        val teamAname = teamA.name!!
-        val teamBname = teamB.name!!
-        val teamBid = teamB.id!!
-        val players = players
+        try {
+            val score = scores[holder.adapterPosition]
+            val teamAname = teamA.name!!
+            val teamBname = teamB.name!!
+            val teamBid = teamB.id!!
+            val players = players
 
-        var scoretime= ""
-        var scoretype= ""
-        var playerName= ""
-        var team: String = teamAname
-        var player = MemberModel()
-        if (score.timestamp != null) {
-            var seconds = score.timestamp
-            val pattern ="HH.mm"
-            val simpleDateFormat = SimpleDateFormat(pattern)
-            scoretime = simpleDateFormat.format(seconds)
+            var scoretime = ""
+            var scoretype = ""
+            var playerName = ""
+            var team: String = teamAname
+            var player = MemberModel()
+            if (score.timestamp != null) {
+                var seconds = score.timestamp
+                val pattern = "HH.mm"
+                val simpleDateFormat = SimpleDateFormat(pattern)
+                scoretime = simpleDateFormat.format(seconds)
+            }
+            if (score.goal == 1) scoretype = "Goal"
+            else if (score.point == 1) scoretype = "Point"
+            if (players.size != 0) player = players.find { p -> p.id == score.member?.id }!!
+            if (player.firstName != null || player.lastName != null) playerName = "${player.firstName} ${player.lastName}"
+            if (player.ownClub?.id == teamBid) team = teamBname
+
+            holder.itemView.scoreTime.text = scoretime
+            holder.itemView.score.text = scoretype
+            holder.itemView.scoreTeam.text = team
+            holder.itemView.scorePlayer.text = playerName
+
+            Log.i(TAG, "onBindViewHolderbinding: $score, \nteamBid $teamBid " +
+                    "\nteamAName: $teamAname \nteamBName: $teamBname \nplayers: $players")
+            holder.bind(score, listener)
+        }catch (e:Exception){
+            Log.w(TAG, "onBindViewHolder Try Catch Error: $e")
         }
-        if (score.goal == 1) scoretype = "Goal"
-        else if(score.point == 1) scoretype ="Point"
-        if (players.size != 0) player = players.find{ p->p.id == score.member?.id}!!
-        if (player.firstName !=null || player.lastName !=null ) playerName = "${player.firstName} ${player.lastName}"
-        if (player.ownClub?.id == teamBid) team = teamBname
-
-        holder.itemView.scoreTime.text = scoretime
-        holder.itemView.score.text = scoretype
-        holder.itemView.scoreTeam.text = team
-        holder.itemView.scorePlayer.text = playerName
-
-        Log.i(TAG, "onBindViewHolderbinding: $score, \nteamBid $teamBid " +
-                "\nteamAName: $teamAname \nteamBName: $teamBname \nplayers: $players")
-        holder.bind(score, listener)
     }
 
     override fun getItemCount(): Int = scores.size

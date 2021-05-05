@@ -30,6 +30,10 @@ class LiveDataViewModel: ViewModel() {
     val teamBtotal: MutableLiveData<Int>by lazy{
         MutableLiveData<Int>()
     }
+
+    val mSelectedTopNav: MutableLiveData<Int>by lazy{
+        MutableLiveData<Int>()
+    }
 }
 
 

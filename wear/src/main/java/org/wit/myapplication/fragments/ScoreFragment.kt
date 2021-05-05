@@ -4,6 +4,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,9 +14,16 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
+import androidx.wear.widget.drawer.WearableNavigationDrawerView
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.android.synthetic.*
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.view.*
+import kotlinx.android.synthetic.main.fragment_score.*
 import kotlinx.android.synthetic.main.fragment_score.view.*
+import kotlinx.android.synthetic.main.fragment_stopwatch.*
+import kotlinx.coroutines.delay
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.wit.myapplication.R
@@ -107,40 +115,86 @@ class ScoreFragment() : Fragment(), Parcelable {
     fun saveScoreListener(layout: View) {
 
         val db = FirebaseFirestore.getInstance()
+        var team = ""
+        var memberDocRef: DocumentReference? = null
+        var jerseyInput = 0
+
+        Log.i("Score Fragment", "input text ${layout.player_number_input.text} ::")
+        if(layout.player_number_input.text.toString() != "" )
+        {
+            jerseyInput = Integer.parseInt(layout.player_number_input.text.toString())
+
+        }
+
         layout.saveScoreBtn.setOnClickListener {
-            if(teamA == null && teamB ==null)Toast.makeText(context, "Select A Team", Toast.LENGTH_LONG)
-            if(goal==0 && point==0)Toast.makeText(context, "Select Goal\nor Point", Toast.LENGTH_LONG)
-            var memberDocRef: DocumentReference? = null
-            if (layout.player_number_input.inputType > 0) {
+            if(teamA == null && teamB ==null){
+                Log.i("ScoreFragment", "Select A Team")
+                Toast.makeText(context, "Select A Team", Toast.LENGTH_LONG).show()
+            }
+            else if(goal==0 && point==0){
+                Log.i("ScoreFragment", "Select A Score Type")
+                Toast.makeText(context, "Select Goal\nor Point", Toast.LENGTH_LONG).show()
+            }
+            else if ( jerseyInput > 0 ) {
                 if(teamA != null) {
-                    member = app.firebasestore.findMemberByJerseyNum("teamA", layout.player_number_input.inputType)!!
+                    team="teamA"
+                    member = app.firebasestore.findMemberByJerseyNum("teamA", jerseyInput)!!
+                    Log.i("ScoreFragment","Number inputted: ${jerseyInput}Member: ${member.lastName} ${member.lastName} ${member.id}" )
                 }
                 else if(teamB !=null) {
-                    member = app.firebasestore.findMemberByJerseyNum("teamB", layout.player_number_input.inputType)!!
+                    team="teamB"
+                    member = app.firebasestore.findMemberByJerseyNum("teamB", jerseyInput)!!
+                    Log.i("ScoreFragment","Number inputted: ${jerseyInput}: Member: ${member.firstName} ${member.lastName} ${member.id}" )
 
                 }
                 memberDocRef = db.collection("Member").document(member.id!!)
-
             }
 
-            score.game = db.collection("Game").document(app.firebasestore.game.id!!)
-            score.goal = goal
-            score.point = point
-            score.member = memberDocRef
-            score.timestamp = Date()
-            doAsync {
-                app.firebasestore.saveScore(score)
-//                Toast.makeText(context, "Score Saved", Toast.LENGTH_LONG)
+            if((teamA!=null || teamB!=null) && (goal!=0 || point!=0)) {
+                score.game = db.collection("Game").document(app.firebasestore.game.id!!)
+                score.goal = goal
+                score.point = point
+                score.member = memberDocRef
+                score.timestamp = Date()
+                updateLiveDataScore(team, score)
+                doAsync {
+                    app.firebasestore.saveScore(score)
 
-                uiThread {
-                    val fm: FragmentManager = requireActivity().supportFragmentManager
-                    fm.beginTransaction().replace(R.id.content_frame, StopwatchFragment()).commit()
+                    uiThread {
+                        Toast.makeText(context, "Score Saved", Toast.LENGTH_LONG).show()
+                    }
                 }
             }
 
         }
     }
 
+    fun updateLiveDataScore(team: String, scoreModel: ScoreModel){
+        if(team === "teamA") {
+            if (scoreModel.goal == 1) {
+                val currentGoals = model.teamAtotalGoals.value
+                val newGoals = currentGoals?.plus(1)
+                model.teamAtotalGoals.value = newGoals
+            }
+            if (scoreModel.point == 1) {
+                val currentPoints = model.teamAtotalPoints.value
+                val newPoints = currentPoints?.plus(1)
+                model.teamAtotalGoals.value = newPoints
+            }
+        }
+        else if(team === "teamB") {
+            if (scoreModel.goal == 1) {
+                val currentGoals = model.teamBtotalGoals.value
+                val newGoals = currentGoals?.plus(1)
+                model.teamBtotalGoals.value = newGoals
+            }
+            if (scoreModel.point == 1) {
+                val currentPoints = model.teamBtotalPoints.value
+                val newPoints = currentPoints?.plus(1)
+                model.teamBtotalGoals.value = newPoints
+            }
+        }
+    }
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeParcelable(member, flags)
         parcel.writeParcelable(score, flags)
@@ -162,5 +216,13 @@ class ScoreFragment() : Fragment(), Parcelable {
             return arrayOfNulls(size)
         }
     }
+
+
 }
+
+private fun WearableNavigationDrawerView.notifyDataSetChanged() {
+    TODO("Not yet implemented")
+}
+
+
 
