@@ -2,18 +2,17 @@ package org.wit.myapplication.fragments
 
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.fragment.app.activityViewModels
 import kotlinx.android.synthetic.main.activity_main.view.*
-import kotlinx.android.synthetic.main.fragment_score.*
 import kotlinx.android.synthetic.main.fragment_stopwatch.*
 import org.wit.myapplication.R
 import org.wit.myapplication.main.MainApp
-import org.wit.myapplication.models.stopwatch.LiveDataViewModel
+import org.wit.myapplication.models.LiveDataViewModel
 
 
 class StopwatchFragment : Fragment() {
@@ -21,47 +20,29 @@ class StopwatchFragment : Fragment() {
     //stopwatch
 
     lateinit var app: MainApp
-    lateinit var root: View
-//    private val model: LiveDataViewModel by activityViewModels()
-
-     private val model: LiveDataViewModel by viewModels()
+    private lateinit var root: View
+    private val model: LiveDataViewModel by activityViewModels()
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         app = activity?.application as MainApp
         root =inflater.inflate(R.layout.fragment_stopwatch, container, false)
 
         model.mSelectedTopNav.value=0
 
-
-        val timer = Observer<String>{ item -> timer.text = item}
-        val teamAGoals = Observer<Int> { item -> teamAGoals.text = item.toString() }
-        val teamBGoals = Observer<Int> { item -> teamBGoals.text = item.toString() }
-        val teamAPoints = Observer<Int> { item -> teamAPoints.text = item.toString() }
-        val teamBPoints = Observer<Int> { item -> teamBPoints.text = item.toString() }
-        val teamATotal = Observer<Int> { item -> teamAtotal.text = item.toString() }
-        val teamBTotal = Observer<Int> { item -> teamBtotal.text = item.toString() }
-
-        model.time.observe(viewLifecycleOwner, timer)
-        model.teamAtotalGoals.observe(viewLifecycleOwner, teamAGoals)
-        model.teamBtotalGoals.observe(viewLifecycleOwner, teamBGoals)
-        model.teamAtotalPoints.observe(viewLifecycleOwner, teamAPoints)
-        model.teamBtotalPoints.observe(viewLifecycleOwner, teamBPoints)
-        model.teamAtotal.observe(viewLifecycleOwner, teamATotal)
-        model.teamBtotal.observe(viewLifecycleOwner, teamBTotal)
-
-
-
-//        model.time.observe(viewLifecycleOwner, { item -> timer.text = item })
-//
-//        model.teamAtotalGoals.observe(viewLifecycleOwner, { item-> teamAGoals.text = item.toString()})
-//        model.teamBtotalGoals.observe(viewLifecycleOwner, { item-> teamBGoals.text = item.toString()})
-//        model.teamAtotalPoints.observe(viewLifecycleOwner, { item-> teamAPoints.text = item.toString()})
-//        model.teamBtotalPoints.observe(viewLifecycleOwner, { item-> teamBPoints.text = item.toString()})
-//        model.teamAtotal.observe(viewLifecycleOwner, { item-> teamAtotal.text = item.toString()})
-//        model.teamBtotal.observe(viewLifecycleOwner, { item-> teamBtotal.text = item.toString()})
+        model.teamA.observe(viewLifecycleOwner, { item-> teamAName.text = item.name})
+        Log.i(TAG, "Team A : ${model.teamA.value?.name}")
+        model.teamB.observe(viewLifecycleOwner, { item-> teamBName.text = item.name})
+        Log.i(TAG, "Team B : ${model.teamB.value?.name}")
+        model.time.observe(viewLifecycleOwner, { item -> timer.text = item })
+        model.teamAtotalGoals.observe(viewLifecycleOwner, { item-> teamAGoals.text = item.toString()})
+        model.teamBtotalGoals.observe(viewLifecycleOwner, { item-> teamBGoals.text = item.toString()})
+        model.teamAtotalPoints.observe(viewLifecycleOwner, { item-> teamAPoints.text = item.toString()})
+        model.teamBtotalPoints.observe(viewLifecycleOwner, { item-> teamBPoints.text = item.toString()})
+        model.teamAtotal.observe(viewLifecycleOwner, { item-> teamAtotal.text = item.toString()})
+        model.teamBtotal.observe(viewLifecycleOwner, { item-> teamBtotal.text = item.toString()})
 
         return root
     }
@@ -69,15 +50,11 @@ class StopwatchFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        var mWearableNavigationDrawer = root.top_navigation_drawer
+        val mWearableNavigationDrawer = root.top_navigation_drawer
         mWearableNavigationDrawer?.setCurrentItem(0,true)
         model.mSelectedTopNav.value=0
     }
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
-
-    }
 
     companion object {
         private const val TAG = "StopwatchFragment"

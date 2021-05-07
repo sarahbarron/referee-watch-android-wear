@@ -24,7 +24,7 @@ import org.wit.myapplication.main.MainApp
 import org.wit.myapplication.models.MemberModel
 import org.wit.myapplication.models.ScoreModel
 import org.wit.myapplication.models.TeamModel
-import org.wit.myapplication.models.stopwatch.LiveDataViewModel
+import org.wit.myapplication.models.LiveDataViewModel
 import java.util.*
 
 
@@ -66,7 +66,7 @@ class ScoreFragment() : Fragment(), Parcelable {
         teamAbtn.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 teamBbtn.isChecked = false
-                teamA = app.firebasestore.teamA
+                teamA = model.teamA.value
             } else {
                 teamA = null
             }
@@ -74,7 +74,7 @@ class ScoreFragment() : Fragment(), Parcelable {
         teamBbtn.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 teamAbtn.isChecked = false
-                teamB = app.firebasestore.teamB
+                teamB = model.teamB.value
             } else {
                 teamB = null
             }
@@ -143,8 +143,8 @@ class ScoreFragment() : Fragment(), Parcelable {
                 memberDocRef = db.collection("Member").document(member.id!!)
             }
 
-            if(teamA != null) teamDocRef = db.collection("Team").document(app.firebasestore.teamA.id!!)
-            else if(teamB !=null) teamDocRef = db.collection("Team").document(app.firebasestore.teamB.id!!)
+            if(teamA != null) teamDocRef = db.collection("Team").document(model.teamA.value!!.id.toString())
+            else if(teamB !=null) teamDocRef = db.collection("Team").document(model.teamB.value!!.id.toString())
 
             Log.i("Score Fragment", "TeamDocRef: $teamDocRef.id")
             if((teamA!=null || teamB!=null) && (goal!=0 || point!=0)) {

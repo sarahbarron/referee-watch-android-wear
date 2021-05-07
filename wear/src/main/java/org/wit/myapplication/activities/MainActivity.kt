@@ -16,21 +16,24 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.MutableLiveData
 import androidx.wear.ambient.AmbientModeSupport
 import androidx.wear.widget.drawer.WearableActionDrawerView
 import androidx.wear.widget.drawer.WearableNavigationDrawerView
+import kotlinx.android.synthetic.main.card_games.*
+import kotlinx.coroutines.delay
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.uiThread
 import org.wit.myapplication.R
 import org.wit.myapplication.TopNav
 import org.wit.myapplication.fragments.*
 import org.wit.myapplication.main.MainApp
 import org.wit.myapplication.models.GameModel
 import org.wit.myapplication.service.StopwatchService
-import org.wit.myapplication.models.stopwatch.LiveDataViewModel
-import java.util.*
+import org.wit.myapplication.models.LiveDataViewModel
 import kotlin.collections.ArrayList
+import org.jetbrains.anko.doAsync
+
 
 /**
  * GAA Referee Main Activity control of navigation
@@ -129,6 +132,7 @@ class MainActivity :AppCompatActivity(),
         mWearableActionDrawer?.setOnMenuItemClickListener(this)
 
         startStopwatchListener()
+
     }
 
 
@@ -402,12 +406,20 @@ class MainActivity :AppCompatActivity(),
 
 
     fun fetchDataFromFirebase(game: GameModel) {
-        app.firebasestore.fetchTeam(game.id!!, game.teamA?.id!!, "teamA")
-        app.firebasestore.fetchTeam(game.id!!, game.teamB?.id!!, "teamB")
-        app.firebasestore.fetchScores(game.id!!)
-        app.firebasestore.fetchCards(game.id!!)
-        app.firebasestore.fetchSubstitutes(game.id!!)
-        app.firebasestore.fetchInjuries(game.id!!)
+        doAsync {
+            app.firebasestore.fetchTeam(game.id!!, game.teamA?.id!!, "teamA")
+            app.firebasestore.fetchTeam(game.id!!, game.teamB?.id!!, "teamB")
+            app.firebasestore.fetchScores(game.id!!)
+            app.firebasestore.fetchCards(game.id!!)
+            app.firebasestore.fetchSubstitutes(game.id!!)
+            app.firebasestore.fetchInjuries(game.id!!)
+            Thread.sleep(1000)
+            uiThread {
+                model.teamA.value = app.firebasestore.teamA
+                model.teamB.value = app.firebasestore.teamB
+            }
+        }
+
     }
 
 

@@ -7,20 +7,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.wear.widget.WearableLinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_list_cards.view.*
-import kotlinx.android.synthetic.main.fragment_list_scores.*
-import kotlinx.android.synthetic.main.fragment_list_scores.view.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.wit.myapplication.R
 import org.wit.myapplication.adapters.CardAdapter
 import org.wit.myapplication.adapters.CardListener
-import org.wit.myapplication.adapters.ScoreAdapter
-import org.wit.myapplication.adapters.ScoreListener
 import org.wit.myapplication.main.MainApp
 import org.wit.myapplication.models.CardModel
-import org.wit.myapplication.models.ScoreModel
+import org.wit.myapplication.models.LiveDataViewModel
 import java.lang.Exception
 import java.util.ArrayList
 
@@ -28,6 +25,8 @@ class ListCardsFragment : Fragment(), CardListener {
 
     lateinit var app: MainApp
     lateinit var root: View
+    private val model: LiveDataViewModel by activityViewModels()
+
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -71,11 +70,11 @@ class ListCardsFragment : Fragment(), CardListener {
     fun showCards(){
         Log.i(TAG, "showCards")
         val cards = app.firebasestore.cards
-        val teamA = app.firebasestore.teamA
-        val teamB = app.firebasestore.teamB
+        val teamA = model.teamA.value
+        val teamB = model.teamB.value
         val players = app.firebasestore.allPlayers
         if(cards != null) {
-            root.fragment_list_cards.adapter = CardAdapter(teamA, teamB, players,cards, this)
+            root.fragment_list_cards.adapter = CardAdapter(teamA!!, teamB!!, players,cards, this)
             root.fragment_list_cards.adapter?.notifyDataSetChanged()
         }
     }

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.wear.widget.WearableLinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_list_injuries.view.*
 import org.jetbrains.anko.doAsync
@@ -15,6 +16,7 @@ import org.wit.myapplication.R
 import org.wit.myapplication.adapters.*
 import org.wit.myapplication.main.MainApp
 import org.wit.myapplication.models.InjuryModel
+import org.wit.myapplication.models.LiveDataViewModel
 import java.lang.Exception
 import java.util.ArrayList
 
@@ -22,6 +24,8 @@ class ListInjuriesFragment : Fragment(), InjuryListener {
 
     lateinit var app: MainApp
     lateinit var root: View
+    private val model: LiveDataViewModel by activityViewModels()
+
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -65,11 +69,11 @@ class ListInjuriesFragment : Fragment(), InjuryListener {
     fun showInjuries(){
         Log.i(TAG, "showInjuries")
         val injuries = app.firebasestore.injuries
-        val teamA = app.firebasestore.teamA
-        val teamB = app.firebasestore.teamB
+        val teamA = model.teamA.value
+        val teamB = model.teamB.value
         val players = app.firebasestore.allPlayers
         if(injuries != null) {
-            root.fragment_list_injuries.adapter = InjuryAdapter(teamA, teamB, players,injuries, this)
+            root.fragment_list_injuries.adapter = InjuryAdapter(teamA!!, teamB!!, players,injuries, this)
             root.fragment_list_injuries.adapter?.notifyDataSetChanged()
         }
     }

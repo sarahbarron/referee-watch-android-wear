@@ -7,8 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.wear.widget.WearableLinearLayoutManager
-import kotlinx.android.synthetic.main.fragment_list_scores.*
 import kotlinx.android.synthetic.main.fragment_list_scores.view.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -17,6 +17,7 @@ import org.wit.myapplication.adapters.ScoreAdapter
 import org.wit.myapplication.adapters.ScoreListener
 import org.wit.myapplication.main.MainApp
 import org.wit.myapplication.models.ScoreModel
+import org.wit.myapplication.models.LiveDataViewModel
 import java.lang.Exception
 import java.util.ArrayList
 
@@ -24,6 +25,8 @@ class ListScoresFragment : Fragment(), ScoreListener {
 
     lateinit var app: MainApp
     lateinit var root: View
+    private val model: LiveDataViewModel by activityViewModels()
+
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -67,11 +70,11 @@ class ListScoresFragment : Fragment(), ScoreListener {
         Log.i(TAG, "showScores")
         val scores = scores
         Log.i(TAG, "Scores in showScores :  ${scores.size}")
-        val teamA = app.firebasestore.teamA
-        val teamB = app.firebasestore.teamB
+        val teamA = model.teamA.value
+        val teamB = model.teamB.value
         val players = app.firebasestore.allPlayers
         if(scores != null) {
-            root.fragment_list_scores.adapter = ScoreAdapter(teamA, teamB, players, scores, this)
+            root.fragment_list_scores.adapter = ScoreAdapter(teamA!!, teamB!!, players, scores, this)
             root.fragment_list_scores.adapter?.notifyDataSetChanged()
         }
     }
