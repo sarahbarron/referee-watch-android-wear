@@ -118,8 +118,9 @@ class ScoreFragment() : Fragment(), Parcelable {
             if(layout.player_number_input.text.toString() != "" )
             {
                 jerseyInput = Integer.parseInt(root.player_number_input.text.toString())
-
+                Log.i("Score Fragment", "JerseyInput $jerseyInput")
             }
+
             if(teamA == null && teamB ==null){
                 Log.i("ScoreFragment", "Select A Team")
                 Toast.makeText(context, "Select A Team", Toast.LENGTH_LONG).show()
@@ -130,12 +131,10 @@ class ScoreFragment() : Fragment(), Parcelable {
             }
             else if ( jerseyInput > 0 ) {
                 if(teamA != null) {
-                    team="teamA"
                     member = app.firebasestore.findMemberByJerseyNum("teamA", jerseyInput)!!
                     Log.i("ScoreFragment","Number inputted: ${jerseyInput}Member: ${member.lastName} ${member.lastName} ${member.id}" )
                 }
                 else if(teamB !=null) {
-                    team="teamB"
                     member = app.firebasestore.findMemberByJerseyNum("teamB", jerseyInput)!!
                     Log.i("ScoreFragment","Number inputted: ${jerseyInput}: Member: ${member.firstName} ${member.lastName} ${member.id}" )
 
@@ -143,8 +142,15 @@ class ScoreFragment() : Fragment(), Parcelable {
                 memberDocRef = db.collection("Member").document(member.id!!)
             }
 
-            if(teamA != null) teamDocRef = db.collection("Team").document(model.teamA.value!!.id.toString())
-            else if(teamB !=null) teamDocRef = db.collection("Team").document(model.teamB.value!!.id.toString())
+            if(teamA != null) {
+                team = "teamA"
+                teamDocRef = db.collection("Team").document(model.teamA.value!!.id.toString())
+            }
+            else if(teamB !=null)
+            {
+                team = "teamB"
+                teamDocRef = db.collection("Team").document(model.teamB.value!!.id.toString())
+            }
 
             Log.i("Score Fragment", "TeamDocRef: $teamDocRef.id")
             if((teamA!=null || teamB!=null) && (goal!=0 || point!=0)) {
@@ -154,6 +160,7 @@ class ScoreFragment() : Fragment(), Parcelable {
                 score.member = memberDocRef
                 score.team = teamDocRef
                 score.timestamp = Date()
+                Log.i("Score Fragment", "Update Live Data Score ${team.length} : $score")
                 updateLiveDataScore(team, score)
                 doAsync {
                     app.firebasestore.saveScore(score)
@@ -168,30 +175,44 @@ class ScoreFragment() : Fragment(), Parcelable {
     }
 
     fun updateLiveDataScore(team: String, scoreModel: ScoreModel){
+
         if(team === "teamA") {
+            var scoreValue = 0
             if (scoreModel.goal == 1) {
                 val currentGoals = model.teamAtotalGoals.value
                 val newGoals = currentGoals?.plus(1)
                 model.teamAtotalGoals.value = newGoals
+                scoreValue = 3
             }
             if (scoreModel.point == 1) {
                 val currentPoints = model.teamAtotalPoints.value
                 val newPoints = currentPoints?.plus(1)
-                model.teamAtotalGoals.value = newPoints
+                model.teamAtotalPoints.value = newPoints
+                scoreValue = 1
             }
+            val currentTotal = model.teamAtotal.value
+            val newTotal = currentTotal?.plus(scoreValue)
+            model.teamAtotal.value = newTotal
         }
         else if(team === "teamB") {
+            var scoreValue = 0
             if (scoreModel.goal == 1) {
                 val currentGoals = model.teamBtotalGoals.value
                 val newGoals = currentGoals?.plus(1)
                 model.teamBtotalGoals.value = newGoals
+                scoreValue = 3
             }
             if (scoreModel.point == 1) {
                 val currentPoints = model.teamBtotalPoints.value
                 val newPoints = currentPoints?.plus(1)
-                model.teamBtotalGoals.value = newPoints
+                model.teamBtotalPoints.value = newPoints
+                scoreValue = 1
             }
+            val currentTotal = model.teamBtotal.value
+            val newTotal = currentTotal?.plus(scoreValue)
+            model.teamBtotal.value = newTotal
         }
+
     }
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeParcelable(member, flags)

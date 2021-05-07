@@ -11,7 +11,6 @@ import kotlinx.android.synthetic.main.fragment_stopwatch.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
 import org.wit.myapplication.models.*
-import org.wit.myapplication.models.LiveDataViewModel
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.*
@@ -32,6 +31,10 @@ class GamesFireStore(val context: Context) : GamesStore {
     var allPlayers = ArrayList<MemberModel>()
 
     var scores = ArrayList<ScoreModel>()
+    var aStartGoals = 0
+    var aStartPoints = 0
+    var bStartGoals = 0
+    var bStartPoints = 0
     var cards = ArrayList<CardModel>()
     var injuries = ArrayList<InjuryModel>()
     var substitutes = ArrayList<SubstituteModel>()
