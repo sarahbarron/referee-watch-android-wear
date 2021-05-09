@@ -55,7 +55,7 @@
         android:textOff="@string/yellowCard"
         android:textOn="@string/yellowCard"
         android:backgroundTint="@color/button_background_color"
-        android:textColor="@color/black"
+        android:textColor="#ffff00"
         android:textSize="10dp"
         android:textStyle="bold" />
 
@@ -70,7 +70,7 @@
         android:textOff="@string/redCard"
         android:textOn="@string/redCard"
         android:backgroundTint="@color/button_background_color"
-        android:textColor="@color/black"
+        android:textColor="@color/dark_red"
         android:textSize="10dp"
         android:textStyle="bold" />
 
