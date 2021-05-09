@@ -162,6 +162,11 @@ class ScoreFragment() : Fragment(), Parcelable {
                                 "Number inputted: ${jerseyInput}: Member: ${member.firstName} ${member.lastName} ${member.id}"
                             )
                         }
+                        else Toast.makeText(
+                            context,
+                            "Player $jerseyInput \nNot On The Field",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }
 
