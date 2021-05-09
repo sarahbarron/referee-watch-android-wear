@@ -132,7 +132,8 @@ data class TeamsheetPlayerModel(
     @DocumentId
     var id: String? = null,
     var fieldPosition: Int? = null,
-    var jerseyNumber: Int? = null
+    var jerseyNumber: Int? = null,
+    var onField: Boolean = false
 ): Parcelable
 @Parcelize
 data class TeamModel(

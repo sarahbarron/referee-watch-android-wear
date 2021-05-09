@@ -1,5 +1,7 @@
 package org.wit.myapplication.fragments
 
+import android.app.Activity
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcel
@@ -8,6 +10,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.annotation.RequiresApi
@@ -16,17 +19,22 @@ import androidx.fragment.app.activityViewModels
 import androidx.wear.widget.drawer.WearableNavigationDrawerView
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.android.synthetic.main.fragment_cards.*
+import kotlinx.android.synthetic.main.fragment_cards.player_number_input
+import kotlinx.android.synthetic.main.fragment_score.*
 import kotlinx.android.synthetic.main.fragment_score.view.*
+import kotlinx.android.synthetic.main.fragment_score.view.team1
+import kotlinx.android.synthetic.main.fragment_score.view.team2
+import kotlinx.android.synthetic.main.fragment_sub.view.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.wit.myapplication.R
 import org.wit.myapplication.main.MainApp
+import org.wit.myapplication.models.LiveDataViewModel
 import org.wit.myapplication.models.MemberModel
 import org.wit.myapplication.models.ScoreModel
 import org.wit.myapplication.models.TeamModel
-import org.wit.myapplication.models.LiveDataViewModel
 import java.util.*
-
 
 
 class ScoreFragment() : Fragment(), Parcelable {
@@ -62,6 +70,7 @@ class ScoreFragment() : Fragment(), Parcelable {
         val teamBbtn: ToggleButton = root.team2
         val goalBtn: ToggleButton = root.goal
         val pointBtn: ToggleButton = root.point
+
 
         teamAbtn.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
@@ -111,8 +120,28 @@ class ScoreFragment() : Fragment(), Parcelable {
         var teamDocRef: DocumentReference? = null
         var memberDocRef: DocumentReference? = null
         var jerseyInput = 0
+        var onField = false
 
 
+//        layout.player_number_input.setOnClickListener{
+//            player_number_input.showSoftInputOnFocus
+//            if(teamA!=null || teamB != null) {
+//                if(teamA!=null) team = "teamA"
+//                else if (teamB !=null) team = "teamB"
+//                jerseyInput = Integer.parseInt(root.player_number_input.text.toString())
+//                onField =app.firebasestore.isPlayerOnTheField(team, jerseyInput)
+//                if(!onField){
+//                    Toast.makeText(context, "Player $jerseyInput \nNot On The Field", Toast.LENGTH_LONG).show()
+//                }
+//                hideSoftKeyboard(requireActivity())
+//            }
+//            else {
+//                hideSoftKeyboard(requireActivity())
+//                Toast.makeText(context, "Input a Team \nFirst", Toast.LENGTH_LONG).show()
+//                player_number_input.setText("")
+//                jerseyInput = 0
+//            }
+//        }
         layout.saveScoreBtn.setOnClickListener {
             Log.i("Score Fragment", "input text ${root.player_number_input.text} ::")
             if(layout.player_number_input.text.toString() != "" )
@@ -131,15 +160,29 @@ class ScoreFragment() : Fragment(), Parcelable {
             }
             else if ( jerseyInput > 0 ) {
                 if(teamA != null) {
-                    member = app.firebasestore.findMemberByJerseyNum("teamA", jerseyInput)!!
-                    Log.i("ScoreFragment","Number inputted: ${jerseyInput}Member: ${member.lastName} ${member.lastName} ${member.id}" )
+                    onField = app.firebasestore.isPlayerOnTheField("teamA", jerseyInput)
+
+                    if(onField){
+                        member = app.firebasestore.findMemberByJerseyNum("teamA", jerseyInput)!!
+                        memberDocRef = db.collection("Member").document(member.id!!)
+                        Log.i(
+                            "ScoreFragment",
+                            "Number inputted: ${jerseyInput}Member: ${member.lastName} ${member.lastName} ${member.id}"
+                        )
+                    }
+                    else Toast.makeText(context, "Player $jerseyInput \nNot On The Field", Toast.LENGTH_LONG).show()
                 }
                 else if(teamB !=null) {
-                    member = app.firebasestore.findMemberByJerseyNum("teamB", jerseyInput)!!
-                    Log.i("ScoreFragment","Number inputted: ${jerseyInput}: Member: ${member.firstName} ${member.lastName} ${member.id}" )
-
+                    onField = app.firebasestore.isPlayerOnTheField("teamB", jerseyInput)
+                    if(onField) {
+                        member = app.firebasestore.findMemberByJerseyNum("teamB", jerseyInput)!!
+                        memberDocRef = db.collection("Member").document(member.id!!)
+                        Log.i(
+                            "ScoreFragment",
+                            "Number inputted: ${jerseyInput}: Member: ${member.firstName} ${member.lastName} ${member.id}"
+                        )
+                    }
                 }
-                memberDocRef = db.collection("Member").document(member.id!!)
             }
 
             if(teamA != null) {
@@ -153,7 +196,7 @@ class ScoreFragment() : Fragment(), Parcelable {
             }
 
             Log.i("Score Fragment", "TeamDocRef: $teamDocRef.id")
-            if((teamA!=null || teamB!=null) && (goal!=0 || point!=0)) {
+            if((teamA!=null || teamB!=null) && (goal!=0 || point!=0) && (jerseyInput===0 || onField)) {
                 score.game = db.collection("Game").document(app.firebasestore.game.id!!)
                 score.goal = goal
                 score.point = point
@@ -237,6 +280,18 @@ class ScoreFragment() : Fragment(), Parcelable {
     }
 
 
+}
+
+fun hideSoftKeyboard(activity: Activity) {
+    val inputMethodManager = activity.getSystemService(
+        INPUT_METHOD_SERVICE
+    ) as InputMethodManager
+    if (inputMethodManager.isAcceptingText) {
+        inputMethodManager.hideSoftInputFromWindow(
+            activity.currentFocus!!.windowToken,
+            0
+        )
+    }
 }
 
 private fun WearableNavigationDrawerView.notifyDataSetChanged() {

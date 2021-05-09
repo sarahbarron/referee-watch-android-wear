@@ -70,7 +70,7 @@
     <!--    fragments -->
     <string name="team_1">Team 1</string>
     <string name="team_2">Team 2</string>
-    <string name="player_no">Player No.</string>
+    <string name="player_no">Player Num : </string>
     <string name="zero">0</string>
     <string name="note">Note</string>
     <string name="save">Save</string>

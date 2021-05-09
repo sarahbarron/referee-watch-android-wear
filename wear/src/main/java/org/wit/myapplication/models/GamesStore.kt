@@ -15,6 +15,5 @@ interface GamesStore{
     fun findMember(id: String): MemberModel?
     fun findMemberByJerseyNum(team: String, jerseyNum: Int): MemberModel?
     fun saveScore(scoreModel: ScoreModel)
-
-
+    fun isPlayerOnTheField(team: String, jerseyNum: Int): Boolean
 }

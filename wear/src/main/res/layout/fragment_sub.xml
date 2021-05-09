@@ -51,6 +51,7 @@
         android:layout_marginBottom="8dp"
         android:gravity="center"
         android:text="Player ON"
+        android:textStyle="bold"
         android:textSize="20dp"
         android:textColor="@color/green"/>
 
@@ -83,6 +84,7 @@
         android:layout_marginRight="8dp"
         android:gravity="center"
         android:text="Player OFF"
+        android:textStyle="bold"
         android:textSize="20dp"
         android:textColor="@color/red_a200"/>
 
@@ -90,7 +92,7 @@
         android:id="@+id/player_off_number_input"
         android:layout_width="50dp"
         android:layout_height="70dp"
-        android:layout_alignRight="@+id/player_number_text"
+        android:layout_alignRight="@+id/player_off_number_text"
         android:layout_below="@id/player_on_number_input"
         android:layout_alignParentRight="true"
         android:layout_centerHorizontal="true"

@@ -105,6 +105,16 @@ class GamesFireStore(val context: Context) : GamesStore {
 
     }
 
+    override fun isPlayerOnTheField(team: String, jerseyNum: Int) : Boolean {
+        var player: TeamsheetPlayerModel? = null
+        if(team === "teamA")player = teamAPlayers.find { p -> p.jerseyNumber == jerseyNum }
+        if(team === "teamB")player = teamBPlayers.find { p -> p.jerseyNumber == jerseyNum }
+
+        if(player != null) if(player.onField) return true
+
+        return false
+    }
+
 
     // FETCHES FROM FIRESTORE
 
