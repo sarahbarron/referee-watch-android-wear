@@ -3,7 +3,6 @@ package org.wit.myapplication.models.firebase
 import android.content.Context
 import android.os.Build
 import android.util.Log
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -106,11 +105,23 @@ class GamesFireStore(val context: Context) : GamesStore {
             Log.i(TAG, "firestore save score scoreModel = $scoreModel\nscores = $scores")
         }
         catch(e:java.lang.Exception){
-            Log.i(TAG, "Error Saving Score")
+            Log.w(TAG, "Error Saving Score: $e")
             return false
         }
         return true
 
+    }
+
+    override fun saveCard(cardModel: CardModel): Boolean {
+        try{
+            db.collection("Cards").document().set(cardModel)
+            cards.add(cardModel)
+        }catch (e: Exception)
+        {
+            Log.w(TAG, "Error saving Card : $e")
+            return false
+        }
+        return true
     }
 
     override fun isPlayerOnTheField(team: String, jerseyNum: Int) : Boolean {

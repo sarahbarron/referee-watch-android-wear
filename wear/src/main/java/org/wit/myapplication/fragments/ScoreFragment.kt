@@ -1,7 +1,6 @@
 package org.wit.myapplication.fragments
 
-import android.app.Activity
-import android.content.Context.INPUT_METHOD_SERVICE
+
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcel
@@ -10,7 +9,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.annotation.RequiresApi
@@ -19,13 +17,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.wear.widget.drawer.WearableNavigationDrawerView
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.android.synthetic.main.fragment_cards.*
-import kotlinx.android.synthetic.main.fragment_cards.player_number_input
-import kotlinx.android.synthetic.main.fragment_score.*
 import kotlinx.android.synthetic.main.fragment_score.view.*
 import kotlinx.android.synthetic.main.fragment_score.view.team1
 import kotlinx.android.synthetic.main.fragment_score.view.team2
-import kotlinx.android.synthetic.main.fragment_sub.view.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.wit.myapplication.R
@@ -50,6 +44,12 @@ class ScoreFragment() : Fragment(), Parcelable {
     var point: Int? = 0
     var playerNumber: Int = 0
 
+    lateinit var teamAbtn: ToggleButton
+    lateinit var teamBbtn: ToggleButton
+    lateinit var goalBtn: ToggleButton
+    lateinit var pointBtn: ToggleButton
+
+
     constructor(parcel: Parcel) : this() {
         member = parcel.readParcelable(MemberModel::class.java.classLoader)!!
         score = parcel.readParcelable(ScoreModel::class.java.classLoader)!!
@@ -64,14 +64,18 @@ class ScoreFragment() : Fragment(), Parcelable {
     ): View? {
         app = activity?.application as MainApp
         root = inflater.inflate(R.layout.fragment_score, container, false)
+        teamSelectedListener(root)
+        scoreSelectedListener(root)
+        saveScoreListener(root)
+
+        return root
+    }
 
 
-        val teamAbtn: ToggleButton = root.team1
-        val teamBbtn: ToggleButton = root.team2
-        val goalBtn: ToggleButton = root.goal
-        val pointBtn: ToggleButton = root.point
-
-
+    fun teamSelectedListener(view: View){
+        teamAbtn = view.team1
+        teamBbtn = view.team2
+        // Toogle Button Listening for a Team to be selected
         teamAbtn.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 teamBbtn.isChecked = false
@@ -88,8 +92,12 @@ class ScoreFragment() : Fragment(), Parcelable {
                 teamB = null
             }
         }
+    }
 
-
+    fun scoreSelectedListener(view:View){
+        goalBtn = view.goal
+        pointBtn = view.point
+        // Toogle Button Listening for a Score Type to be selected
         goalBtn.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 pointBtn.isChecked = false
@@ -106,12 +114,7 @@ class ScoreFragment() : Fragment(), Parcelable {
                 point = 0
             }
         }
-        saveScoreListener(root)
-
-        return root
     }
-
-
     @RequiresApi(Build.VERSION_CODES.O)
     fun saveScoreListener(layout: View) {
 
@@ -204,7 +207,7 @@ class ScoreFragment() : Fragment(), Parcelable {
                     }
                 }
             }catch (e: Exception){
-                Log.i("SCORE Fragment", "Error Saving Score")
+                Log.w("SCORE Fragment", "Error Saving Score: $e")
                 Toast.makeText(
                     context,
                     "Error Saving\nTry Again",

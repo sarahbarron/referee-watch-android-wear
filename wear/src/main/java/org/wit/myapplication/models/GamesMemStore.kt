@@ -51,6 +51,10 @@ class GamesMemStore : GamesStore {
         TODO("Not yet implemented")
     }
 
+    override fun saveCard(cardModel: CardModel): Boolean {
+        TODO("Not yet implemented")
+    }
+
     override fun isPlayerOnTheField(team: String, jerseyNum: Int):Boolean {
         TODO("Not yet implemented")
     }
