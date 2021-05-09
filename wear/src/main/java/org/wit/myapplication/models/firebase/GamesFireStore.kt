@@ -3,6 +3,7 @@ package org.wit.myapplication.models.firebase
 import android.content.Context
 import android.os.Build
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -98,20 +99,32 @@ class GamesFireStore(val context: Context) : GamesStore {
         return member
     }
 
-    override fun saveScore(scoreModel: ScoreModel) {
-        db.collection("Scores").document().set(scoreModel)
-        scores.add(scoreModel)
-        Log.i(TAG, "firestore save score scoreModel = $scoreModel\nscores = $scores")
+    override fun saveScore(scoreModel: ScoreModel) : Boolean {
+        try {
+            db.collection("Scores").document().set(scoreModel)
+            scores.add(scoreModel)
+            Log.i(TAG, "firestore save score scoreModel = $scoreModel\nscores = $scores")
+        }
+        catch(e:java.lang.Exception){
+            Log.i(TAG, "Error Saving Score")
+            return false
+        }
+        return true
 
     }
 
     override fun isPlayerOnTheField(team: String, jerseyNum: Int) : Boolean {
-        var player: TeamsheetPlayerModel? = null
-        if(team === "teamA")player = teamAPlayers.find { p -> p.jerseyNumber == jerseyNum }
-        if(team === "teamB")player = teamBPlayers.find { p -> p.jerseyNumber == jerseyNum }
+        try {
+            var player: TeamsheetPlayerModel? = null
+            if (team === "teamA") player = teamAPlayers.find { p -> p.jerseyNumber == jerseyNum }
+            if (team === "teamB") player = teamBPlayers.find { p -> p.jerseyNumber == jerseyNum }
 
-        if(player != null) if(player.onField) return true
+            if (player != null) if (player.onField) return true
 
+
+        }catch(e: Exception){
+            Log.i(TAG, "Error finding if player is on the field")
+        }
         return false
     }
 
@@ -374,18 +387,22 @@ class GamesFireStore(val context: Context) : GamesStore {
     //    Fetch Teamsheet Players
     fun fetchPlayers(teamsheet: ArrayList<TeamsheetPlayerModel>) =
         CoroutineScope(Dispatchers.IO).launch {
-            var db: FirebaseFirestore = FirebaseFirestore.getInstance()
-            Log.i(TAG, "FetchPlayers \nTeamsheet: $teamsheet")
+            try {
+                var db: FirebaseFirestore = FirebaseFirestore.getInstance()
+                Log.i(TAG, "FetchPlayers \nTeamsheet: $teamsheet")
 
-            for (player in teamsheet) {
-                try {
-                    val member = db.collection("Member").document(player.id!!).get().await()
-                    val p = member.toObject(MemberModel::class.java)!!
-                    allPlayers.add(p)
-                    Log.i(TAG, "Player $p")
-                } catch (e: Exception) {
-                    Log.w(TAG, "fetch players exception: $e")
+                for (player in teamsheet) {
+                    try {
+                        val member = db.collection("Member").document(player.id!!).get().await()
+                        val p = member.toObject(MemberModel::class.java)!!
+                        allPlayers.add(p)
+                        Log.i(TAG, "Player $p")
+                    } catch (e: Exception) {
+                        Log.w(TAG, "fetch players exception: $e")
+                    }
                 }
+            }catch(e: Exception){
+                Log.i(TAG, "Error fetching players")
             }
         }
 

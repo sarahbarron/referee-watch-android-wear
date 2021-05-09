@@ -47,7 +47,7 @@ class GamesMemStore : GamesStore {
         TODO("Not yet implemented")
     }
 
-    override fun saveScore(scoreModel: ScoreModel) {
+    override fun saveScore(scoreModel: ScoreModel) : Boolean {
         TODO("Not yet implemented")
     }
 

@@ -122,138 +122,138 @@ class ScoreFragment() : Fragment(), Parcelable {
         var jerseyInput = 0
         var onField = false
 
-
-//        layout.player_number_input.setOnClickListener{
-//            player_number_input.showSoftInputOnFocus
-//            if(teamA!=null || teamB != null) {
-//                if(teamA!=null) team = "teamA"
-//                else if (teamB !=null) team = "teamB"
-//                jerseyInput = Integer.parseInt(root.player_number_input.text.toString())
-//                onField =app.firebasestore.isPlayerOnTheField(team, jerseyInput)
-//                if(!onField){
-//                    Toast.makeText(context, "Player $jerseyInput \nNot On The Field", Toast.LENGTH_LONG).show()
-//                }
-//                hideSoftKeyboard(requireActivity())
-//            }
-//            else {
-//                hideSoftKeyboard(requireActivity())
-//                Toast.makeText(context, "Input a Team \nFirst", Toast.LENGTH_LONG).show()
-//                player_number_input.setText("")
-//                jerseyInput = 0
-//            }
-//        }
         layout.saveScoreBtn.setOnClickListener {
-            Log.i("Score Fragment", "input text ${root.player_number_input.text} ::")
-            if(layout.player_number_input.text.toString() != "" )
-            {
-                jerseyInput = Integer.parseInt(root.player_number_input.text.toString())
-                Log.i("Score Fragment", "JerseyInput $jerseyInput")
-            }
-
-            if(teamA == null && teamB ==null){
-                Log.i("ScoreFragment", "Select A Team")
-                Toast.makeText(context, "Select A Team", Toast.LENGTH_LONG).show()
-            }
-            else if(goal==0 && point==0){
-                Log.i("ScoreFragment", "Select A Score Type")
-                Toast.makeText(context, "Select Goal\nor Point", Toast.LENGTH_LONG).show()
-            }
-            else if ( jerseyInput > 0 ) {
-                if(teamA != null) {
-                    onField = app.firebasestore.isPlayerOnTheField("teamA", jerseyInput)
-
-                    if(onField){
-                        member = app.firebasestore.findMemberByJerseyNum("teamA", jerseyInput)!!
-                        memberDocRef = db.collection("Member").document(member.id!!)
-                        Log.i(
-                            "ScoreFragment",
-                            "Number inputted: ${jerseyInput}Member: ${member.lastName} ${member.lastName} ${member.id}"
-                        )
-                    }
-                    else Toast.makeText(context, "Player $jerseyInput \nNot On The Field", Toast.LENGTH_LONG).show()
+            try {
+                Log.i("Score Fragment", "input text ${root.player_number_input.text} ::")
+                if (layout.player_number_input.text.toString() != "") {
+                    jerseyInput = Integer.parseInt(root.player_number_input.text.toString())
+                    Log.i("Score Fragment", "JerseyInput $jerseyInput")
                 }
-                else if(teamB !=null) {
-                    onField = app.firebasestore.isPlayerOnTheField("teamB", jerseyInput)
-                    if(onField) {
-                        member = app.firebasestore.findMemberByJerseyNum("teamB", jerseyInput)!!
-                        memberDocRef = db.collection("Member").document(member.id!!)
-                        Log.i(
-                            "ScoreFragment",
-                            "Number inputted: ${jerseyInput}: Member: ${member.firstName} ${member.lastName} ${member.id}"
-                        )
-                    }
-                }
-            }
 
-            if(teamA != null) {
-                team = "teamA"
-                teamDocRef = db.collection("Team").document(model.teamA.value!!.id.toString())
-            }
-            else if(teamB !=null)
-            {
-                team = "teamB"
-                teamDocRef = db.collection("Team").document(model.teamB.value!!.id.toString())
-            }
+                if (teamA == null && teamB == null) {
+                    Log.i("ScoreFragment", "Select A Team")
+                    Toast.makeText(context, "Select A Team", Toast.LENGTH_LONG).show()
+                } else if (goal == 0 && point == 0) {
+                    Log.i("ScoreFragment", "Select A Score Type")
+                    Toast.makeText(context, "Select Goal\nor Point", Toast.LENGTH_LONG).show()
+                } else if (jerseyInput > 0) {
+                    if (teamA != null) {
+                        onField = app.firebasestore.isPlayerOnTheField("teamA", jerseyInput)
 
-            Log.i("Score Fragment", "TeamDocRef: $teamDocRef.id")
-            if((teamA!=null || teamB!=null) && (goal!=0 || point!=0) && (jerseyInput===0 || onField)) {
-                score.game = db.collection("Game").document(app.firebasestore.game.id!!)
-                score.goal = goal
-                score.point = point
-                score.member = memberDocRef
-                score.team = teamDocRef
-                score.timestamp = Date()
-                Log.i("Score Fragment", "Update Live Data Score ${team.length} : $score")
-                updateLiveDataScore(team, score)
-                doAsync {
-                    app.firebasestore.saveScore(score)
-
-                    uiThread {
-                        Toast.makeText(context, "Score Saved", Toast.LENGTH_LONG).show()
+                        if (onField) {
+                            member = app.firebasestore.findMemberByJerseyNum("teamA", jerseyInput)!!
+                            memberDocRef = db.collection("Member").document(member.id!!)
+                            Log.i(
+                                "ScoreFragment",
+                                "Number inputted: ${jerseyInput}Member: ${member.lastName} ${member.lastName} ${member.id}"
+                            )
+                        } else Toast.makeText(
+                            context,
+                            "Player $jerseyInput \nNot On The Field",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } else if (teamB != null) {
+                        onField = app.firebasestore.isPlayerOnTheField("teamB", jerseyInput)
+                        if (onField) {
+                            member = app.firebasestore.findMemberByJerseyNum("teamB", jerseyInput)!!
+                            memberDocRef = db.collection("Member").document(member.id!!)
+                            Log.i(
+                                "ScoreFragment",
+                                "Number inputted: ${jerseyInput}: Member: ${member.firstName} ${member.lastName} ${member.id}"
+                            )
+                        }
                     }
                 }
-            }
 
+                if (teamA != null) {
+                    team = "teamA"
+                    teamDocRef = db.collection("Team").document(model.teamA.value!!.id.toString())
+                } else if (teamB != null) {
+                    team = "teamB"
+                    teamDocRef = db.collection("Team").document(model.teamB.value!!.id.toString())
+                }
+
+                Log.i("Score Fragment", "TeamDocRef: $teamDocRef.id")
+                if ((teamA != null || teamB != null) && (goal != 0 || point != 0) && (jerseyInput === 0 || onField)) {
+                    score.game = db.collection("Game").document(app.firebasestore.game.id!!)
+                    score.goal = goal
+                    score.point = point
+                    score.member = memberDocRef
+                    score.team = teamDocRef
+                    score.timestamp = Date()
+                    Log.i("Score Fragment", "Update Live Data Score ${team.length} : $score")
+                    updateLiveDataScore(team, score)
+                    doAsync {
+                        val scoreSaved = app.firebasestore.saveScore(score)
+
+                        uiThread {
+                            if (scoreSaved)
+                                Toast.makeText(context, "Score Saved", Toast.LENGTH_LONG).show()
+                            else
+                                Toast.makeText(
+                                    context,
+                                    "Error Saving\nTry Again",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                        }
+                    }
+                }
+            }catch (e: Exception){
+                Log.i("SCORE Fragment", "Error Saving Score")
+                Toast.makeText(
+                    context,
+                    "Error Saving\nTry Again",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
     }
 
     fun updateLiveDataScore(team: String, scoreModel: ScoreModel){
 
-        if(team === "teamA") {
-            var scoreValue = 0
-            if (scoreModel.goal == 1) {
-                val currentGoals = model.teamAtotalGoals.value
-                val newGoals = currentGoals?.plus(1)
-                model.teamAtotalGoals.value = newGoals
-                scoreValue = 3
+        try {
+            if (team === "teamA") {
+                var scoreValue = 0
+                if (scoreModel.goal == 1) {
+                    val currentGoals = model.teamAtotalGoals.value
+                    val newGoals = currentGoals?.plus(1)
+                    model.teamAtotalGoals.value = newGoals
+                    scoreValue = 3
+                }
+                if (scoreModel.point == 1) {
+                    val currentPoints = model.teamAtotalPoints.value
+                    val newPoints = currentPoints?.plus(1)
+                    model.teamAtotalPoints.value = newPoints
+                    scoreValue = 1
+                }
+                val currentTotal = model.teamAtotal.value
+                val newTotal = currentTotal?.plus(scoreValue)
+                model.teamAtotal.value = newTotal
+            } else if (team === "teamB") {
+                var scoreValue = 0
+                if (scoreModel.goal == 1) {
+                    val currentGoals = model.teamBtotalGoals.value
+                    val newGoals = currentGoals?.plus(1)
+                    model.teamBtotalGoals.value = newGoals
+                    scoreValue = 3
+                }
+                if (scoreModel.point == 1) {
+                    val currentPoints = model.teamBtotalPoints.value
+                    val newPoints = currentPoints?.plus(1)
+                    model.teamBtotalPoints.value = newPoints
+                    scoreValue = 1
+                }
+                val currentTotal = model.teamBtotal.value
+                val newTotal = currentTotal?.plus(scoreValue)
+                model.teamBtotal.value = newTotal
             }
-            if (scoreModel.point == 1) {
-                val currentPoints = model.teamAtotalPoints.value
-                val newPoints = currentPoints?.plus(1)
-                model.teamAtotalPoints.value = newPoints
-                scoreValue = 1
-            }
-            val currentTotal = model.teamAtotal.value
-            val newTotal = currentTotal?.plus(scoreValue)
-            model.teamAtotal.value = newTotal
-        }
-        else if(team === "teamB") {
-            var scoreValue = 0
-            if (scoreModel.goal == 1) {
-                val currentGoals = model.teamBtotalGoals.value
-                val newGoals = currentGoals?.plus(1)
-                model.teamBtotalGoals.value = newGoals
-                scoreValue = 3
-            }
-            if (scoreModel.point == 1) {
-                val currentPoints = model.teamBtotalPoints.value
-                val newPoints = currentPoints?.plus(1)
-                model.teamBtotalPoints.value = newPoints
-                scoreValue = 1
-            }
-            val currentTotal = model.teamBtotal.value
-            val newTotal = currentTotal?.plus(scoreValue)
-            model.teamBtotal.value = newTotal
+        }catch (e:Exception){
+            Log.i("SCORE Fragment", "Error updating Live scores")
+            Toast.makeText(
+                context,
+                "Error: updating\nlive scores",
+                Toast.LENGTH_LONG
+            ).show()
         }
 
     }
@@ -280,18 +280,6 @@ class ScoreFragment() : Fragment(), Parcelable {
     }
 
 
-}
-
-fun hideSoftKeyboard(activity: Activity) {
-    val inputMethodManager = activity.getSystemService(
-        INPUT_METHOD_SERVICE
-    ) as InputMethodManager
-    if (inputMethodManager.isAcceptingText) {
-        inputMethodManager.hideSoftInputFromWindow(
-            activity.currentFocus!!.windowToken,
-            0
-        )
-    }
 }
 
 private fun WearableNavigationDrawerView.notifyDataSetChanged() {
