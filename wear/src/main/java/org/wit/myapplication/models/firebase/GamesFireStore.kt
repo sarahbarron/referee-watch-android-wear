@@ -5,6 +5,7 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.fragment_stopwatch.*
@@ -123,6 +124,13 @@ class GamesFireStore(val context: Context) : GamesStore {
         }
         return true
     }
+
+    override fun checkIfPlayerHasABlackOrYellowCard(memberDocRef: DocumentReference):Boolean {
+        val card = cards.find { p -> p.member == memberDocRef }
+        if(card?.color === "black" || card?.color === "yellow") return true
+        return false
+    }
+
 
     override fun isPlayerOnTheField(team: String, jerseyNum: Int) : Boolean {
         try {

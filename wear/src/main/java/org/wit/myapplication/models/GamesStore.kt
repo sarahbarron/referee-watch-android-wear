@@ -1,5 +1,6 @@
 package org.wit.myapplication.models
 
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.Job
 import java.lang.reflect.Member
@@ -16,5 +17,6 @@ interface GamesStore{
     fun findMemberByJerseyNum(team: String, jerseyNum: Int): MemberModel?
     fun saveScore(scoreModel: ScoreModel) : Boolean
     fun saveCard(cardModel: CardModel): Boolean
+    fun checkIfPlayerHasABlackOrYellowCard(memberDocRef: DocumentReference): Boolean
     fun isPlayerOnTheField(team: String, jerseyNum: Int): Boolean
 }
