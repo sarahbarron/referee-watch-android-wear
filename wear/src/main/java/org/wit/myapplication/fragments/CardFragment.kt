@@ -156,6 +156,8 @@ class CardFragment : Fragment() {
             }
             Log.i(TAG, "Spoken Text $spokenText")
             arrayOfNotes.add(spokenText!!)
+            Log.i(TAG, "Spoken Text Array $arrayOfNotes")
+
         }
     }
 
@@ -171,6 +173,7 @@ class CardFragment : Fragment() {
             try{
                 // get the integer input of for the jersey number
                 val jerseynum = root.card_player_number_input.text.toString()
+                val textNote = root.card_note_input.text
                 if (jerseynum != "") {
                     jerseyInput = convertJerseyNumToInt(jerseynum)
                 }
@@ -234,34 +237,80 @@ class CardFragment : Fragment() {
                     team = "teamB"
                     teamDocRef = db.collection("Team").document(model.teamB.value!!.id.toString())
                 }
+
+                // Add text notes to the card notes
+
+                if(textNote.isNotEmpty()){
+                    if(note.length === 0){
+                        note = "$textNote"
+                    }
+                    else {
+                        note = "$note. $textNote"
+                    }
+                }
+
+                // Add voice notes to the card notes
                 if(arrayOfNotes.size>0){
-                    for(note in arrayOfNotes){
-                        team += ". $note"
+                    for(n in arrayOfNotes){
+                        if(note.length===0)
+                        {
+                            Log.i(TAG, "This is the first voice Note")
+
+                            note = n
+                        }
+                        else {
+                            Log.i(TAG, "More voice Notes")
+                            note = "$note. $n"
+                        }
                     }
                 }
 
                 // if the team, card color and player have been inputted save the card
-                if((teamA !=null || teamB != null) &&(yellowCard || redCard || blackCard) && onField)
-                {
+                if(onField && (teamA !=null || teamB != null) &&(yellowCard || redCard || blackCard)) {
                     card.game = db.collection("Game").document(app.firebasestore.game.id!!)
                     card.member = memberDocRef
                     card.team = teamDocRef
                     card.color = cardColor
                     card.timestamp = Date()
                     card.note = note
-                }
 
-                doAsync {
-                    val cardSaved = app.firebasestore.saveCard(card)
-                    uiThread {
-                        if(cardSaved)
-                            Toast.makeText(context, "Card Saved", Toast.LENGTH_LONG).show()
-                        else
-                        Toast.makeText(
-                            context,
-                            "Error Saving\nTry Again",
-                            Toast.LENGTH_LONG
-                        ).show()
+
+                    Log.i(TAG, "Card: $card")
+                    doAsync {
+                        val cardSaved = app.firebasestore.saveCard(card)
+                        uiThread {
+                            if (cardSaved) {
+                                view.card_team1.isChecked = false
+                                view.card_team2.isChecked = false
+                                view.card_yellow.isChecked = false
+                                view.card_red.isChecked = false
+                                view.card_black.isChecked = false
+                                view.card_note_input.setText("")
+                                view.card_player_number_input.setText("")
+                                arrayOfNotes.clear()
+                                member = MemberModel()
+                                card = CardModel()
+                                teamA= null
+                                teamB= null
+                                yellowCard = false
+                                redCard = false
+                                blackCard = false
+                                cardColor = ""
+                                note= ""
+                                team = ""
+                                teamDocRef = null
+                                memberDocRef = null
+                                jerseyInput = 0
+                                onField = false
+                                Toast.makeText(context, "Card Saved", Toast.LENGTH_LONG).show()
+                            }
+                            else
+                                Toast.makeText(
+                                    context,
+                                    "Error Saving\nTry Again",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                        }
                     }
                 }
             }catch(e:Exception){

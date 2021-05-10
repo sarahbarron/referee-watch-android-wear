@@ -122,27 +122,61 @@
         android:inputType="number"
         android:hint="0"
         android:textAlignment="center"
+        android:gravity="center"
         />
+    <TextView
+        android:id="@+id/card_note_text"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_below="@id/card_player_number_text"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textAlignment="center"
+        android:paddingTop="8dp"
+        android:text="Add a voice or text note"
+        />
+    <ImageButton
+        android:id="@+id/card_voice_note_btn"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="8dp"
+        android:layout_below="@id/card_player_number_text"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_mic"
+        android:background="@null"
+        android:scaleType="fitCenter"
+        />
+    <EditText
+        android:id="@+id/card_note_input"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp"
+        android:padding="8dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/card_note_text"
+        android:background="@color/grey"
+        android:hint="Input text note here"
+        android:textColor="@color/white"
+        />
+
 
     <Button
         android:id="@+id/saveCardBtn"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_below="@id/card_player_number_input"
+        android:layout_below="@id/card_note_input"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:background="@color/green"
         android:layout_marginBottom="70dp"
         android:text="Save Card" />
-    <ImageButton
-        android:id="@+id/card_voice_note_btn"
-        android:layout_width="100dp"
-        android:layout_height="150dp"
-        android:layout_below="@id/saveCardBtn"
-        android:src="@drawable/ic_mic"
-        android:background="@null"
-        android:scaleType="fitCenter"
 
-
-        />
 </RelativeLayout>
