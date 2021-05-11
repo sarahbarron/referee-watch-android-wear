@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.wear.widget.drawer.WearableNavigationDrawerView
 import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.android.synthetic.main.fragment_stopwatch.*
 import org.wit.myapplication.R
@@ -22,15 +23,20 @@ class StopwatchFragment : Fragment() {
     lateinit var app: MainApp
     private lateinit var root: View
     private val model: LiveDataViewModel by activityViewModels()
+   // private var mWearableNavigationDrawer: WearableNavigationDrawerView? =null
+
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
 
         app = activity?.application as MainApp
+        // Inflate the layout for this fragment
+        container?.removeAllViews();
         root =inflater.inflate(R.layout.fragment_stopwatch, container, false)
+       // model.mSelectedTopNav.value=0
+        //mWearableNavigationDrawer?.setCurrentItem(0,true)
 
-        model.mSelectedTopNav.value=0
 
         model.teamA.observe(viewLifecycleOwner, { item-> teamAName.text = item.name})
         Log.i(TAG, "Team A : ${model.teamA.value?.name}")

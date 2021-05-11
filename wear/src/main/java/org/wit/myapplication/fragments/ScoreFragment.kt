@@ -13,6 +13,7 @@ import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.activityViewModels
 import androidx.wear.widget.drawer.WearableNavigationDrawerView
 import com.google.firebase.firestore.DocumentReference
@@ -195,8 +196,15 @@ class ScoreFragment() : Fragment(), Parcelable {
                         val scoreSaved = app.firebasestore.saveScore(score)
 
                         uiThread {
-                            if (scoreSaved)
+                            if (scoreSaved) {
                                 Toast.makeText(context, "Score Saved", Toast.LENGTH_LONG).show()
+                                // redirect to stopwatch fragment
+//                                childFragmentManager.beginTransaction().replace(R.id.fragment_score,StopwatchFragment()).commit()
+//                                val fragmentTransaction = parentFragmentManager.beginTransaction()
+//                                fragmentTransaction.replace(R.id.fragment_score, StopwatchFragment())
+//                                fragmentTransaction.addToBackStack(null)
+//                                fragmentTransaction.commit()
+                            }
                             else
                                 Toast.makeText(
                                     context,

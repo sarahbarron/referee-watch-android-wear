@@ -19,8 +19,6 @@ import androidx.fragment.app.Fragment
 import androidx.wear.ambient.AmbientModeSupport
 import androidx.wear.widget.drawer.WearableActionDrawerView
 import androidx.wear.widget.drawer.WearableNavigationDrawerView
-import kotlinx.android.synthetic.main.card_games.*
-import kotlinx.coroutines.delay
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.uiThread
@@ -106,6 +104,7 @@ class MainActivity :AppCompatActivity(),
         // Enables Ambient mode.
         AmbientModeSupport.attach(this)
         mTopNav = initializeTopNav()
+
         model.mSelectedTopNav.value = 0
 
         // Initialize content to home fragment.
@@ -257,9 +256,12 @@ class MainActivity :AppCompatActivity(),
                 TAG,
                 "WearableNavigationDrawerView triggered onItemSelected(): $position"
         )
+
         model.mSelectedTopNav.value = position
         val selectedItemName: String = mTopNav!![model.mSelectedTopNav.value!!].name
         Log.d(TAG, "SelectedItem: $selectedItemName")
+
+
         when (selectedItemName) {
             "Stopwatch" -> {
                 mWearableNavigationDrawer?.setCurrentItem(0, true)
