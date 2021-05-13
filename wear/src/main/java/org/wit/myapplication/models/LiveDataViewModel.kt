@@ -43,6 +43,7 @@ class LiveDataViewModel: ViewModel() {
     val teamB: MutableLiveData<TeamModel> by lazy{
         MutableLiveData<TeamModel>()
     }
+
 }
 
 

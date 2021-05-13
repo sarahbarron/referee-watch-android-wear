@@ -416,6 +416,7 @@ class MainActivity :AppCompatActivity(),
             app.firebasestore.fetchSubstitutes(game.id!!)
             app.firebasestore.fetchInjuries(game.id!!)
             Thread.sleep(1000)
+            app.firebasestore.sport = (app.firebasestore.teamA.sportType?.id ?: "").trim()
             uiThread {
                 model.teamA.value = app.firebasestore.teamA
                 model.teamB.value = app.firebasestore.teamB

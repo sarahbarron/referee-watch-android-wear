@@ -17,6 +17,11 @@ interface GamesStore{
     fun findMemberByJerseyNum(team: String, jerseyNum: Int): MemberModel?
     fun saveScore(scoreModel: ScoreModel) : Boolean
     fun saveCard(cardModel: CardModel): Boolean
-    fun checkIfPlayerHasABlackOrYellowCard(memberDocRef: DocumentReference): Boolean
+    fun saveSub(substituteModel: SubstituteModel):Boolean
+    fun updateBlackCardSubs(team: String)
+    fun isTeamAllowedFootballBlackCardSubs(team: String):Boolean
+    fun isTeamAllowedNormalSubs(team:String):Boolean
+    fun updateNormalSubs(team: String)
+    fun checkIfPlayerIsOnASecondCard(memberDocRef: DocumentReference): Boolean
     fun isPlayerOnTheField(team: String, jerseyNum: Int): Boolean
 }

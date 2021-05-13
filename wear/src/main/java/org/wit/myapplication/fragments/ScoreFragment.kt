@@ -13,14 +13,11 @@ import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.activityViewModels
 import androidx.wear.widget.drawer.WearableNavigationDrawerView
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_score.view.*
-import kotlinx.android.synthetic.main.fragment_score.view.team1
-import kotlinx.android.synthetic.main.fragment_score.view.team2
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.wit.myapplication.R
@@ -74,8 +71,8 @@ class ScoreFragment() : Fragment(), Parcelable {
 
 
     fun teamSelectedListener(view: View){
-        teamAbtn = view.team1
-        teamBbtn = view.team2
+        teamAbtn = view.score_team1
+        teamBbtn = view.score_team2
         // Toogle Button Listening for a Team to be selected
         teamAbtn.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
@@ -128,9 +125,9 @@ class ScoreFragment() : Fragment(), Parcelable {
 
         layout.saveScoreBtn.setOnClickListener {
             try {
-                Log.i("Score Fragment", "input text ${root.player_number_input.text} ::")
-                if (layout.player_number_input.text.toString() != "") {
-                    jerseyInput = Integer.parseInt(root.player_number_input.text.toString())
+                Log.i("Score Fragment", "input text ${layout.score_player_number_input.text} ::")
+                if (layout.score_player_number_input.text.toString() != "") {
+                    jerseyInput = Integer.parseInt(layout.score_player_number_input.text.toString())
                     Log.i("Score Fragment", "JerseyInput $jerseyInput")
                 }
 

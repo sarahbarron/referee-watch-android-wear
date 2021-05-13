@@ -56,7 +56,28 @@ class GamesMemStore : GamesStore {
         TODO("Not yet implemented")
     }
 
-    override fun checkIfPlayerHasABlackOrYellowCard(memberDocRef: DocumentReference): Boolean {
+    override fun saveSub(substituteModel: SubstituteModel): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun updateBlackCardSubs(team: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun isTeamAllowedFootballBlackCardSubs(team: String): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun isTeamAllowedNormalSubs(team: String): Boolean {
+        TODO("Not yet implemented")
+    }
+
+
+    override fun updateNormalSubs(team: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun checkIfPlayerIsOnASecondCard(memberDocRef: DocumentReference): Boolean {
         TODO("Not yet implemented")
     }
 

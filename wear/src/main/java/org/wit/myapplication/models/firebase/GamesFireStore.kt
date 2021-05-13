@@ -40,6 +40,15 @@ class GamesFireStore(val context: Context) : GamesStore {
     var injuries = ArrayList<InjuryModel>()
     var substitutes = ArrayList<SubstituteModel>()
 
+    var teamASubs = 0
+    var teamBSubs = 0
+    var teamABlackCardSubs = 0
+    var teamBBlackCardSubs = 0
+    var sport =""
+    var hurlingSubsAllowed = 5
+    var footballSubsAllowed = 6
+    var footballBlackCardSubsAllowed=3
+
 
     lateinit var userId: String
     lateinit var db: FirebaseFirestore
@@ -88,11 +97,11 @@ class GamesFireStore(val context: Context) : GamesStore {
 
     override fun findMemberByJerseyNum(team: String, jerseyNum: Int): MemberModel? {
         var member = MemberModel()
-        if (team === "teamA") {
+        if (team == "teamA") {
             val teamsheetPlayer = teamAPlayers.find { p -> p.jerseyNumber == jerseyNum }
             member = allPlayers.find { p -> p.id == teamsheetPlayer?.id }!!
         }
-        if (team === "teamB") {
+        if (team == "teamB") {
             val teamsheetPlayer = teamBPlayers.find { p -> p.jerseyNumber == jerseyNum }
             member = allPlayers.find { p -> p.id == teamsheetPlayer?.id }!!
         }
@@ -125,9 +134,71 @@ class GamesFireStore(val context: Context) : GamesStore {
         return true
     }
 
-    override fun checkIfPlayerHasABlackOrYellowCard(memberDocRef: DocumentReference):Boolean {
-        val card = cards.find { p -> p.member == memberDocRef }
-        if(card?.color === "black" || card?.color === "yellow") return true
+    override fun saveSub(substituteModel: SubstituteModel): Boolean {
+        try{
+            db.collection("Substitute").document().set(substituteModel)
+            substitutes.add(substituteModel)
+        }catch (e: Exception)
+        {
+            Log.w(TAG, "Error saving  Substitute : $e")
+            return false
+        }
+        return true
+    }
+
+    override fun updateBlackCardSubs(team: String) {
+        if(team=="teamA") teamABlackCardSubs +=1
+        else if(team=="teamB") teamBBlackCardSubs +=1
+        Log.i(TAG, "BLACK CARD team $team: $teamABlackCardSubs, $teamBBlackCardSubs ")
+    }
+
+    override fun isTeamAllowedFootballBlackCardSubs(team: String):Boolean {
+        if(team == "teamA"){
+            if(teamABlackCardSubs>=footballBlackCardSubsAllowed)
+                return false
+        }
+        else if(team == "teamB"){
+            if(teamBBlackCardSubs>=footballBlackCardSubsAllowed)
+                return false
+        }
+        return true
+    }
+
+    override fun isTeamAllowedNormalSubs(team: String):Boolean{
+        if(sport == "Hurling") {
+            if (team == "teamA") {
+                if (teamASubs >= hurlingSubsAllowed)
+                    return false
+            }
+            else if (team == "teamB") {
+                if (teamBSubs >= hurlingSubsAllowed)
+                    return false
+            }
+        }
+        else if(sport == "Gaelic Football"){
+            if (team == "teamA") {
+                if (teamASubs >= footballSubsAllowed)
+                    return false
+            }
+            else if (team == "teamB") {
+                if (teamBSubs >= footballSubsAllowed)
+                    return false
+            }
+        }
+        return false
+    }
+
+    override fun updateNormalSubs(team: String) {
+        if(team=="teamA") teamASubs +=1
+        else if (team=="teamB") teamBSubs +=1
+        Log.i(TAG, "NORMAL CARDS team $team: $teamASubs, $teamBSubs")
+
+    }
+
+    override fun checkIfPlayerIsOnASecondCard(memberDocRef: DocumentReference):Boolean {
+        val memberCards = cards.filter { p -> p.member == memberDocRef }
+        if(memberCards.size>1) return true
+
         return false
     }
 
@@ -135,8 +206,8 @@ class GamesFireStore(val context: Context) : GamesStore {
     override fun isPlayerOnTheField(team: String, jerseyNum: Int) : Boolean {
         try {
             var player: TeamsheetPlayerModel? = null
-            if (team === "teamA") player = teamAPlayers.find { p -> p.jerseyNumber == jerseyNum }
-            if (team === "teamB") player = teamBPlayers.find { p -> p.jerseyNumber == jerseyNum }
+            if (team == "teamA") player = teamAPlayers.find { p -> p.jerseyNumber == jerseyNum }
+            if (team == "teamB") player = teamBPlayers.find { p -> p.jerseyNumber == jerseyNum }
 
             if (player != null) if (player.onField) return true
 

@@ -195,6 +195,7 @@ data class InjuryModel(
     var timestamp: Date?=null,
     var note: String? =null,
     var member: @RawValue DocumentReference? = null,
+    var team: @RawValue DocumentReference? = null,
     var game: @RawValue DocumentReference? = null
 ):Parcelable
 
@@ -205,6 +206,8 @@ data class SubstituteModel(
     var timestamp: Date?=null,
     var playerOn:  @RawValue DocumentReference? = null,
     var playerOff: @RawValue DocumentReference? = null,
+    var team: @RawValue DocumentReference? = null,
     var bloodsub: Boolean = false,
+    var blackcard: Boolean = false,
     var game: @RawValue DocumentReference? = null
 ):Parcelable
