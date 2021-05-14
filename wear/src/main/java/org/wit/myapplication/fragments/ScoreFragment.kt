@@ -18,6 +18,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.wear.widget.drawer.WearableNavigationDrawerView
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import convertJerseyNumToInt
 import kotlinx.android.synthetic.main.fragment_injury.view.*
 import kotlinx.android.synthetic.main.fragment_score.view.*
 import org.jetbrains.anko.doAsync
@@ -142,17 +143,20 @@ class ScoreFragment(): Fragment(), Parcelable {
 
         layout.saveScoreBtn.setOnClickListener {
             try {
-                Log.i("Score Fragment", "input text ${layout.score_player_number_input.text} ::")
+                Log.i(TAG, "input text ${layout.score_player_number_input.text} ::")
                 if (layout.score_player_number_input.text.toString() != "") {
-                    jerseyInput = Integer.parseInt(layout.score_player_number_input.text.toString())
-                    Log.i("Score Fragment", "JerseyInput $jerseyInput")
+                    val jerseynum = layout.score_player_number_input.text.toString()
+                    if(jerseynum.isNotEmpty()) {
+                        jerseyInput = convertJerseyNumToInt(jerseynum)
+                    }
+                    Log.i(TAG, "JerseyInput $jerseyInput")
                 }
 
                 if (teamA == null && teamB == null) {
-                    Log.i("ScoreFragment", "Select A Team")
+                    Log.i(TAG, "Select A Team")
                     Toast.makeText(context, "Select A Team", Toast.LENGTH_LONG).show()
                 } else if (goal == 0 && point == 0) {
-                    Log.i("ScoreFragment", "Select A Score Type")
+                    Log.i(TAG, "Select A Score Type")
                     Toast.makeText(context, "Select Goal\nor Point", Toast.LENGTH_LONG).show()
                 } else if (jerseyInput > 0) {
                     if (teamA != null) {
@@ -160,9 +164,10 @@ class ScoreFragment(): Fragment(), Parcelable {
 
                         if (onField) {
                             member = app.firebasestore.findMemberByJerseyNum("teamA", jerseyInput)!!
-                            memberDocRef = db.collection("Member").document(member.id!!)
+                            if(member.id !=null)
+                                memberDocRef = db.collection("Member").document(member.id!!)
                             Log.i(
-                                "ScoreFragment",
+                                TAG,
                                 "Number inputted: ${jerseyInput}Member: ${member.lastName} ${member.lastName} ${member.id}"
                             )
                         } else Toast.makeText(
@@ -174,9 +179,10 @@ class ScoreFragment(): Fragment(), Parcelable {
                         onField = app.firebasestore.isPlayerOnTheField("teamB", jerseyInput)
                         if (onField) {
                             member = app.firebasestore.findMemberByJerseyNum("teamB", jerseyInput)!!
-                            memberDocRef = db.collection("Member").document(member.id!!)
+                            if(member.id != null)
+                                memberDocRef = db.collection("Member").document(member.id!!)
                             Log.i(
-                                "ScoreFragment",
+                                TAG,
                                 "Number inputted: ${jerseyInput}: Member: ${member.firstName} ${member.lastName} ${member.id}"
                             )
                         } else Toast.makeText(
@@ -195,7 +201,7 @@ class ScoreFragment(): Fragment(), Parcelable {
                     teamDocRef = db.collection("Team").document(model.teamB.value!!.id.toString())
                 }
 
-                Log.i("Score Fragment", "TeamDocRef: $teamDocRef.id")
+                Log.i(TAG, "TeamDocRef: $teamDocRef.id")
                 if ((teamA != null || teamB != null) && (goal != 0 || point != 0) && (jerseyInput === 0 || onField)) {
                     score.game = db.collection("Game").document(app.firebasestore.game.id!!)
                     score.goal = goal
@@ -203,7 +209,7 @@ class ScoreFragment(): Fragment(), Parcelable {
                     score.member = memberDocRef
                     score.team = teamDocRef
                     score.timestamp = Date()
-                    Log.i("Score Fragment", "Update Live Data Score ${team.length} : $score")
+                    Log.i(TAG, "Update Live Data Score ${team.length} : $score")
                     updateLiveDataScore(team, score)
                     doAsync {
                         val scoreSaved = app.firebasestore.saveScore(score)
@@ -227,7 +233,7 @@ class ScoreFragment(): Fragment(), Parcelable {
                     }
                 }
             } catch (e: Exception) {
-                Log.w("SCORE Fragment", "Error Saving Score: $e")
+                Log.w(TAG, "Error Saving Score: $e")
                 Toast.makeText(
                     context,
                     "Error Saving\nTry Again",
@@ -276,7 +282,7 @@ class ScoreFragment(): Fragment(), Parcelable {
                 model.teamBtotal.value = newTotal
             }
         } catch (e: Exception) {
-            Log.i("SCORE Fragment", "Error updating Live scores")
+            Log.i(TAG, "Error updating Live scores")
             Toast.makeText(
                 context,
                 "Error: updating\nlive scores",
@@ -299,6 +305,7 @@ class ScoreFragment(): Fragment(), Parcelable {
     }
 
     companion object CREATOR : Parcelable.Creator<ScoreFragment> {
+        private const val TAG = "Score Fragment"
         override fun createFromParcel(parcel: Parcel): ScoreFragment {
             return ScoreFragment(parcel)
         }
@@ -309,9 +316,13 @@ class ScoreFragment(): Fragment(), Parcelable {
     }
 
 
+
+
+
     private fun WearableNavigationDrawerView.notifyDataSetChanged() {
         TODO("Not yet implemented")
     }
+
 }
 
 

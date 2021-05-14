@@ -11,8 +11,10 @@ import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.google.firebase.database.snapshot.BooleanNode
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import convertJerseyNumToInt
 import kotlinx.android.synthetic.main.fragment_cards.view.*
 import kotlinx.android.synthetic.main.fragment_score.view.*
 import kotlinx.android.synthetic.main.fragment_sub.*
@@ -51,21 +53,21 @@ class SubFragment : Fragment() {
 
         val teamAName = app.firebasestore.teamA.name
         val teamBName = app.firebasestore.teamB.name
-        if(teamAName !=null && teamBName!=null) {
+        if (teamAName != null && teamBName != null) {
             root.sub_team1.text = teamAName
             root.sub_team2.text = teamBName
             root.sub_team1.textOn = teamAName
             root.sub_team1.textOff = teamAName
             root.sub_team2.textOn = teamBName
-            root.sub_team2.textOff =teamBName
+            root.sub_team2.textOff = teamBName
         }
         teamButtonListener(root)
         saveSubListener(root)
         blackCardCheckedListner(root)
 
         val sport = app.firebasestore.sport
-        if(sport == "Hurling"){
-          //  root.sub_blackcard_checkbox.isEnabled = false
+        if (sport == "Hurling") {
+            //  root.sub_blackcard_checkbox.isEnabled = false
 
         }
         return root
@@ -97,186 +99,92 @@ class SubFragment : Fragment() {
         }
     }
 
-
     //    Listener for a click on the save card button
     fun saveSubListener(view: View) {
         val db = FirebaseFirestore.getInstance()
         var teamDocRef: DocumentReference? = null
-        var team = ""
+        var team: String? = null
         var memberOnDocRef: DocumentReference? = null
         var memberOffDocRef: DocumentReference? = null
-        var playerOnJerseyInput = 0
-        var playerOffJerseyInput = 0
-        var playerOnOnField: Boolean? = null
-        var playerOffOnField: Boolean? = null
-        var jerseyOn: String
-        var jerseyOff: String
-        var bloodsub: Boolean
-        var blackcard: Boolean
-        var allowedSubs: Boolean = true
+        var playerComingOnAlreadyTheOnField: Boolean?
+        var playerGoingOffIsTheOnField: Boolean?
+        var jerseyNumOn: Int? = null
+        var jerseyNumOff: Int? = null
+        var bloodsub = false
+        var blackcard = false
+        var allowedSubs = false
 
         view.btnSaveSub.setOnClickListener {
             try {
-                // get the input jersey numbers
-                jerseyOn = view.sub_player_on_number_input.text.toString()
-                jerseyOff = view.sub_player_off_number_input.text.toString()
-
-                // get the input for bloodsub and blackcard checkboxes
-                bloodsub = view.sub_bloodsub_checkbox.isChecked
-                blackcard = view.sub_blackcard_checkbox.isChecked
-                Log.i(TAG, "Blackcard = $blackcard, Bloodsub=$bloodsub")
-
-                // if their is jersey number inputs convert the string to an int
-                if (jerseyOn != "") playerOnJerseyInput = convertJerseyNumToInt(jerseyOn)
-                if (jerseyOff != "") playerOffJerseyInput = convertJerseyNumToInt(jerseyOff)
-
-                // assign the team document to either teamA or teamB
+                // Check if a team has been selected and get the selected teams document reference
                 if (teamA != null) {
                     teamDocRef = db.collection("Team").document(model.teamA.value!!.id.toString())
                     team = "teamA"
                 } else if (teamB != null) {
                     teamDocRef = db.collection("Team").document(model.teamB.value!!.id.toString())
                     team = "teamB"
+                } else alertReferee("Select A Team")
+
+
+                // If a team has been selected check if the team is allowed more subs
+                if (team == "teamA" || team == "teamB") {
+                    bloodsub = view.sub_bloodsub_checkbox.isChecked
+                    blackcard = view.sub_blackcard_checkbox.isChecked
+                    if (!bloodsub!! && !blackcard!!)
+                        allowedSubs = checkIfTeamIsAllowedMoreNormalSubs(team!!)
+                    else if(bloodsub) allowedSubs = true
+
+                    // Check if this team is allowed more subs
+                    if (!allowedSubs) {
+                        alertReferee("Maximum Subs Used\n Don't Allow Substitution")
+                        resetSubstitute()
+                    }
                 }
 
-
-                // if user doesn't select a team prompt for selection
-                if (teamA === null && teamB === null) {
-                    Log.i(TAG, "Select A Team")
-                    Toast.makeText(context, "Select A Team", Toast.LENGTH_LONG).show()
-                }
-                // Once the ref has selected a team & if the substitution is not a bloodsub
-                //  Check is the team allowed a substitution or are they at max
-                else if (!bloodsub && !blackcard) {
-
-                        allowedSubs = checkIfTeamIsAllowedMoreNormalSubs(team)
-                        if (!allowedSubs) {
-                            Toast.makeText(
-                                context,
-                                "Substitution NOT Allowed\nMax Subs\nalready used",
-                                Toast.LENGTH_LONG
-                            )
-                                .show()
-                            resetSubstitute()
-                        }
-
-                }
+                // If subs are allowed continue
                 if (allowedSubs) {
-                    Log.i(TAG, "Substitues Are Allowed")
-                    // Check for jersey number inputs for both player going off and player coming on
-                    if (jerseyOn == "" || jerseyOff == "" || playerOnJerseyInput === 0 || playerOffJerseyInput === 0) {
-                        if (jerseyOn == "" && jerseyOff == "" && playerOnJerseyInput === 0 && playerOffJerseyInput === 0) {
-                            Log.i(TAG, "Input Jersey Numbers")
-                            Toast.makeText(
-                                context,
-                                "Input Player Jersey Numbers",
-                                Toast.LENGTH_LONG
-                            )
-                                .show()
-                        } else if (playerOnJerseyInput === 0 || jerseyOn == "") {
-                            Log.i(TAG, "Input Player On Jersey Number")
-                            Toast.makeText(
-                                context,
-                                "Input Player On\nJersey Number",
-                                Toast.LENGTH_LONG
-                            )
-                                .show()
-                        } else if (playerOffJerseyInput === 0 || jerseyOff == "") {
-                            Log.i(TAG, "Input Player Off Jersey Number")
-                            Toast.makeText(
-                                context,
-                                "Input Player Off\nJersey Number",
-                                Toast.LENGTH_LONG
-                            )
-                                .show()
-                        }
-                    }
-                    /* if player on has been inputted and player off has been inputted
-                    check that the player going off is on the field and team sheet,
-                    check if the player coming on
-                    is not on the field and is on the team sheet.
-                 */
-                    else if (playerOnJerseyInput > 0 && playerOffJerseyInput > 0) {
+                    // Get the Jersey Input, check that its not empty and return the int value or null
+                    jerseyNumOn = getJerseyOn(view.sub_player_on_number_input.text.toString())
+                    jerseyNumOff = getJerseyOff(view.sub_player_off_number_input.text.toString())
 
-                        var onDocRef: DocumentReference? = getMember(team, playerOnJerseyInput)
-                        var offDocRef: DocumentReference? = getMember(team, playerOffJerseyInput)
-
-                        Log.i(TAG, "DocRef ON : $onDocRef, DocRef OFF : $offDocRef")
-
-                        /* if the member is on the teamsheet otherwise send a message to tell the
-                        referee the player is not on the team sheet
-                        if the player is on the teamsheet check if the player is on the field
-                        or a substitute
-                    * */
-                        if (onDocRef != null) {
-                            playerOnOnField =
-                                app.firebasestore.isPlayerOnTheField(team, playerOnJerseyInput)
-
-                        } else {
-                            Toast.makeText(
-                                context,
-                                "A player with\nJersey Number: $playerOnJerseyInput\nis not on the teamsheet",
-                                Toast.LENGTH_LONG
-                            )
-                                .show()
-                        }
-                        if (offDocRef != null) {
-                            playerOffOnField =
-                                app.firebasestore.isPlayerOnTheField(team, playerOffJerseyInput)
-
-                        } else {
-                            Toast.makeText(
-                                context,
-                                "A player with\nJersey Number: $playerOnJerseyInput\nis not on the teamsheet",
-                                Toast.LENGTH_LONG
-                            )
-                                .show()
-                        }
-
-                        /* If the player coming on is on the field already send a message to the
-                    referee to to tell them the player is already on the field of play
-                    * */
-                        if (playerOnOnField != null && playerOffOnField != null) {
-
-                            if (playerOnOnField!!) {
-                                Toast.makeText(
-                                    context,
-                                    "Player coming ON:\nNumber $playerOnJerseyInput\nIs already on the field",
-                                    Toast.LENGTH_LONG
-                                )
-                                    .show()
-                            }
-
-                            /*
-                        If the player going off the field is not on the field send a message to the
-                        referee to tell them the player is not currently on the field of play
+                    if(jerseyNumOn == null && jerseyNumOff == null) alertReferee("Input Jersey Numbers")
+                    else if(jerseyNumOn == null) alertReferee("Input Jersey Number\nFor Player Coming On")
+                    else if(jerseyNumOff == null)alertReferee("Input Jersey Number\nFor Player Going Off")
+                    else{
+                        /* get the member document reference of the number inputted or null if
+                        the number inputted isn't on the team sheet
                          */
-                            else if (!playerOffOnField!!)
-                                Toast.makeText(
-                                    context,
-                                    "Player going Off:\nNumber $playerOffJerseyInput\n Is not on the field",
-                                    Toast.LENGTH_LONG
-                                )
-                                    .show()
+                        memberOnDocRef = getMemberDocRef(team!!, jerseyNumOn!!)
+                        memberOffDocRef = getMemberDocRef(team!!, jerseyNumOff!!)
 
-                            // otherwise assign the document references
-                            else {
-                                memberOnDocRef = onDocRef
-                                memberOffDocRef = offDocRef
-                                Log.i(
-                                    TAG,
-                                    "MemberDocRef On : $memberOnDocRef,  Off : $memberOffDocRef"
-                                )
+                        if(memberOnDocRef == null && memberOffDocRef == null)alertReferee("Player $jerseyNumOn && Player $jerseyNumOff are not on the teamsheet")
+                        else if(memberOnDocRef == null)alertReferee("Player $jerseyNumOn is not on the teamsheet")
+                        else if(memberOffDocRef == null)alertReferee("Player $jerseyNumOff is not on the teamsheet")
+                        // check if the player is currently on the field
+                        else{
+                            playerComingOnAlreadyTheOnField =
+                                app.firebasestore.isPlayerOnTheField(team!!, jerseyNumOn!!)
+                            playerGoingOffIsTheOnField =
+                                app.firebasestore.isPlayerOnTheField(team!!, jerseyNumOff!!)
 
+                            if(playerComingOnAlreadyTheOnField!! && !playerGoingOffIsTheOnField!!) {
+                                alertReferee("Check Jersey\nNumbers Inputted\nfor Player On \nand Player Off")
+                                memberOnDocRef = null
+                                memberOffDocRef = null
+                            }
+                            else if (playerComingOnAlreadyTheOnField!!) {
+                                alertReferee("Check Input\nPlayer On: $jerseyNumOn\nIs Already ON the field")
+                                memberOnDocRef = null
+                            }
+                            else if (!playerGoingOffIsTheOnField!!) {
+                                alertReferee("Check Input\nPlayer OFF: $jerseyNumOff\nIs NOT on the field")
+                                memberOffDocRef = null
                             }
                         }
                     }
                 }
 
-                /* If the Player coming on and Player going off have been inputted correctly
-                    and the team has been selected save the substitution
-                * */
-                if (memberOnDocRef != null && memberOffDocRef != null && (teamA != null || teamB != null)) {
+                if (teamDocRef != null && memberOnDocRef != null && memberOffDocRef != null && allowedSubs) {
                     sub.game = db.collection("Game").document(app.firebasestore.game.id!!)
                     sub.playerOn = memberOnDocRef
                     sub.playerOff = memberOffDocRef
@@ -285,62 +193,67 @@ class SubFragment : Fragment() {
                     sub.blackcard = blackcard
                     sub.timestamp = Date()
 
-                    Log.i(TAG, "Sub: $sub")
-
                     doAsync {
 
                         val subSaved = app.firebasestore.saveSub(sub)
 
-                        // Update the number of substitutes used
-                        if(blackcard) app.firebasestore.updateBlackCardSubs(team)
-                        else app.firebasestore.updateNormalSubs(team)
-
+                        if (subSaved) {
+                            // Update the number of substitutes used
+                            if (blackcard) app.firebasestore.updateBlackCardSubs(team!!)
+                            else app.firebasestore.updateNormalSubs(team!!)
+                            app.firebasestore.setPlayerOffField(team!!, jerseyNumOff!!)
+                            app.firebasestore.setPlayerOnField(team!!, jerseyNumOn!!)
+                            resetSubstitute()
+                        }
 
                         uiThread {
-                            if (subSaved) {
-                                Toast.makeText(context, "Sub Saved", Toast.LENGTH_LONG).show()
-                                resetSubstitute()
-                                app.firebasestore.setPlayerOffField(team, playerOffJerseyInput)
-                                app.firebasestore.setPlayerOnField(team, playerOnJerseyInput)
-                            } else
-                                Toast.makeText(
-                                    context,
-                                    "Error Saving\nTry Again",
-                                    Toast.LENGTH_LONG
-                                ).show()
+
+                            if(subSaved) alertReferee("Sub Saved")
+                            else alertReferee("Sub NOT Saved")
                         }
                     }
                 }
+
             } catch (e: Exception) {
-                Log.w(TAG, "Error saving Substitute: $e")
-                Toast.makeText(
-                    context,
-                    "Error Saving\nTry Again",
-                    Toast.LENGTH_LONG
-                ).show()
+                Log.w(TAG, "Exception: when saving sub $e")
             }
         }
     }
 
+    fun getJerseyOn(jerseyText: String): Int? {
+        if (jerseyText.isBlank()) {
+            return null
+        }
+        return convertJerseyNumToInt(jerseyText)
+    }
 
-    //    Return the member document reference  from teams heet A
-    fun getMember(team: String, jerseyInput: Int): DocumentReference? {
+    fun getJerseyOff(jerseyText: String): Int? {
+        if (jerseyText.isBlank()) {
+            return null
+        }
+        return convertJerseyNumToInt(jerseyText)
+    }
+
+    //        Return the member document reference  from teams heet A
+    fun getMemberDocRef(team: String, jerseyInput: Int): DocumentReference? {
 
         val db = FirebaseFirestore.getInstance()
         var memberDocRef: DocumentReference?
         member = app.firebasestore.findMemberByJerseyNum(team, jerseyInput)!!
-        memberDocRef = db.collection("Member").document(member.id!!)
+        if (member.id != null) {
+            memberDocRef = db.collection("Member").document(member.id!!)
+            return memberDocRef
+        }
         Log.i(
             TAG,
-            "Number inputted: ${jerseyInput}Member: ${member.firstName} ${member.lastName} ${member.id}"
+            "GetMember: Number inputted: ${jerseyInput}Member: ${member.firstName} ${member.lastName} ${member.id}"
         )
-        return memberDocRef
+        return null
     }
 
 
-    // Convert the Jersey Number input String value to an integer
-    fun convertJerseyNumToInt(jerseyNum: String): Int {
-        return Integer.parseInt(jerseyNum)
+    fun alertReferee(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
 
     /* Check if the Team is allowed another normal substitution or are they at max
@@ -362,14 +275,14 @@ class SubFragment : Fragment() {
         return false
     }
 
-    fun blackCardCheckedListner(view:View) {
+    fun blackCardCheckedListner(view: View) {
         view.sub_blackcard_checkbox.setOnClickListener {
             var team: String? = null
             var allowedBlackCardSubs: Boolean? = null
             if (teamA != null) team = "teamA"
             if (teamB != null) team = "teamB"
             if (view.sub_blackcard_checkbox.isChecked) {
-                Log.i(TAG,"Black Card Ticked, team $team")
+                Log.i(TAG, "Black Card Ticked, team $team")
 
                 if (team != null) {
                     allowedBlackCardSubs = checkIfTeamIsAllowedMoreBlackCardSubs(team)
@@ -386,7 +299,7 @@ class SubFragment : Fragment() {
 
                 if (allowedBlackCardSubs != null) {
                     if (!allowedBlackCardSubs) {
-                        Log.i(TAG,"Print a message to say sub not allowed")
+                        Log.i(TAG, "Print a message to say sub not allowed")
                         Toast.makeText(
                             context,
                             "Max Black Card Subs\nalready used\n\nPlayer Can't be Replaced",
@@ -400,6 +313,7 @@ class SubFragment : Fragment() {
 
         }
     }
+
     /* Check if the Team is allowed another black card substitution or are they at max
    return true if the team is allowed another sub or flase if the team is not allowed another sub*/
     fun checkIfTeamIsAllowedMoreBlackCardSubs(team: String): Boolean {
@@ -408,7 +322,7 @@ class SubFragment : Fragment() {
         if (team == "teamA") numberOfSubsUsed = app.firebasestore.teamABlackCardSubs
         else if (team == "teamB") numberOfSubsUsed = app.firebasestore.teamBBlackCardSubs
 
-        Log.i(TAG,"$numberOfSubsUsed < $numberOfSubsAllowed")
+        Log.i(TAG, "$numberOfSubsUsed < $numberOfSubsAllowed")
         if (numberOfSubsUsed < numberOfSubsAllowed) return true
 
         return false

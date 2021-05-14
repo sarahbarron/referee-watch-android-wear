@@ -302,7 +302,7 @@ class MainActivity :AppCompatActivity(),
             "Injury" -> {
                 injuryFragment = InjuryFragment()
                 val args = Bundle()
-                subFragment!!.arguments = args
+                injuryFragment!!.arguments = args
                 val fragmentManager = supportFragmentManager
                 fragmentManager.beginTransaction().replace(R.id.content_frame, injuryFragment!!)
                         .commit()

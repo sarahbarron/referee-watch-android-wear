@@ -11,6 +11,7 @@ import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.fragment_stopwatch.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
+import org.wit.myapplication.Team
 import org.wit.myapplication.models.*
 import java.time.LocalDate
 import java.time.ZoneId
@@ -36,10 +37,10 @@ class GamesFireStore(val context: Context) : GamesStore {
     var injuries = ArrayList<InjuryModel>()
     var substitutes = ArrayList<SubstituteModel>()
 
-    var teamASubs = 0
+    var teamASubs = 5
     var teamBSubs = 0
     var teamABlackCardSubs = 0
-    var teamBBlackCardSubs = 0
+    var teamBBlackCardSubs = 3
     var sport = ""
     var hurlingSubsAllowed = 5
     var footballSubsAllowed = 6
@@ -48,6 +49,7 @@ class GamesFireStore(val context: Context) : GamesStore {
 
     lateinit var userId: String
     lateinit var db: FirebaseFirestore
+
 
 
     override fun findAllGames(): ArrayList<GameModel> {
@@ -93,13 +95,16 @@ class GamesFireStore(val context: Context) : GamesStore {
 
     override fun findMemberByJerseyNum(team: String, jerseyNum: Int): MemberModel? {
         var member = MemberModel()
+
         if (team == "teamA") {
-            val teamsheetPlayer = teamAPlayers.find { p -> p.jerseyNumber == jerseyNum }
-            member = allPlayers.find { p -> p.id == teamsheetPlayer?.id }!!
+            var teamsheetPlayer = teamAPlayers.find { p -> p.jerseyNumber == jerseyNum }
+            if(teamsheetPlayer != null)
+                member = allPlayers.find { p -> p.id == teamsheetPlayer?.id }!!
         }
         if (team == "teamB") {
-            val teamsheetPlayer = teamBPlayers.find { p -> p.jerseyNumber == jerseyNum }
-            member = allPlayers.find { p -> p.id == teamsheetPlayer?.id }!!
+            var teamsheetPlayer = teamBPlayers.find { p -> p.jerseyNumber == jerseyNum }
+            if(teamsheetPlayer !=null)
+                member = allPlayers.find { p -> p.id == teamsheetPlayer?.id }!!
         }
         return member
     }
@@ -134,6 +139,17 @@ class GamesFireStore(val context: Context) : GamesStore {
             substitutes.add(substituteModel)
         } catch (e: Exception) {
             Log.w(TAG, "Error saving  Substitute : $e")
+            return false
+        }
+        return true
+    }
+
+    override fun saveInjury(injuryModel: InjuryModel): Boolean {
+        try{
+            db.collection("Injury").document().set(injuryModel)
+            injuries.add(injuryModel)
+        }catch (e:java.lang.Exception){
+            Log.w(TAG, "Error Saving Injury")
             return false
         }
         return true
@@ -268,6 +284,19 @@ class GamesFireStore(val context: Context) : GamesStore {
 
         } catch (e: Exception) {
             Log.i(TAG, "Error finding if player is on the field")
+        }
+        return false
+    }
+
+    override fun isPlayerOnTheTeamSheet(team: String, jerseyNum: Int): Boolean {
+        try {
+            var player: TeamsheetPlayerModel? = null
+            if (team == "teamA") player = teamAPlayers.find { p -> p.jerseyNumber == jerseyNum }
+            if (team == "teamB") player = teamBPlayers.find { p -> p.jerseyNumber == jerseyNum }
+
+            if (player != null) return true
+        }catch (e:java.lang.Exception){
+            Log.i(TAG, "Error finding player on the teamsheet")
         }
         return false
     }

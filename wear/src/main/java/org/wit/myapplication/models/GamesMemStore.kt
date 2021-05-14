@@ -60,6 +60,10 @@ class GamesMemStore : GamesStore {
         TODO("Not yet implemented")
     }
 
+    override fun saveInjury(injuryModel: InjuryModel): Boolean {
+        TODO("Not yet implemented")
+    }
+
     override fun setPlayerOnField(team: String, jerseyNum: Int) {
         TODO("Not yet implemented")
     }
@@ -93,6 +97,11 @@ class GamesMemStore : GamesStore {
     override fun isPlayerOnTheField(team: String, jerseyNum: Int):Boolean {
         TODO("Not yet implemented")
     }
+
+    override fun isPlayerOnTheTeamSheet(team: String, jerseyNum: Int): Boolean {
+        TODO("Not yet implemented")
+    }
+
 
     fun logAllGames(){
         TODO("Not yet implemented")

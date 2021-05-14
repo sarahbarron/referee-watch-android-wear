@@ -202,7 +202,7 @@
     <Button
         android:id="@+id/saveCardBtn"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:layout_below="@id/hr4"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"

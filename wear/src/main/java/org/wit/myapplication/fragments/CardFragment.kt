@@ -15,6 +15,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import convertJerseyNumToInt
+import getVoiceAndTextNote
 import kotlinx.android.synthetic.main.fragment_cards.view.*
 import kotlinx.android.synthetic.main.fragment_injury.view.*
 import kotlinx.android.synthetic.main.fragment_score.view.*
@@ -29,6 +31,7 @@ import java.lang.Exception
 import java.util.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import setBackgroundBlack
 
 
 @Suppress("DEPRECATION")
@@ -198,6 +201,7 @@ class CardFragment : Fragment() {
         var memberDocRef: DocumentReference? = null
         var jerseyInput = 0
         var onField = false
+        var onTeamsheet=false
         var team = ""
 
         view.saveCardBtn.setOnClickListener {
@@ -205,12 +209,15 @@ class CardFragment : Fragment() {
             try {
                 // get the integer input of for the jersey number
                 val jerseynum = root.card_player_number_input.text.toString()
-                val textNote = root.card_note_input.text
+                val textNote = root.card_note_input.text.toString()
 
+                // convert the jersey number input into an integer
                 if (jerseynum != "") {
                     jerseyInput = convertJerseyNumToInt(jerseynum)
                     Log.i(TAG, "Jersey Num: $jerseynum")
                 }
+
+
                 // assign the team document to either teamA or teamB
                 if (teamA != null) {
                     team = "teamA"
@@ -221,22 +228,11 @@ class CardFragment : Fragment() {
                     team = "teamB"
                     teamDocRef = db.collection("Team").document(app.firebasestore.game.teamB!!.id)
                     Log.i(TAG, "Team: $team, Team Doc: $teamDocRef")
-
                 }
 
-                // Add text notes to the card notes
-                if (textNote.isNotEmpty()) {
-                    getTextNotes(textNote.toString())
-                    Log.i(TAG, "Text Note: $note")
-
-                }
-
-                // Add voice notes to the card notes
-                if (arrayOfNotes.size > 0) {
-                    getVoiceNotes()
-                    Log.i(TAG, "Voice Note: $note")
-
-                }
+                // if there are voice or text notes combine them into a string Note
+                if (textNote.isNotEmpty() || arrayOfNotes.size > 0)
+                    note = getVoiceAndTextNote(arrayOfNotes, textNote)
 
                 // if user doesn't select a team prompt for selection
                 if (teamA == null && teamB == null) {
@@ -247,15 +243,32 @@ class CardFragment : Fragment() {
                 else if (!yellowCard && !redCard && !blackCard) {
                     Log.i(TAG, "Select A Card Type")
                     Toast.makeText(context, "Select Yellow\nRed or Black", Toast.LENGTH_LONG).show()
-                } else if (jerseynum == "" || jerseyInput === 0) {
+                }
+                // If user doesn't input a jersey number prompt for a jersey num
+                else if (jerseynum == "" || jerseyInput === 0) {
                     Log.i(TAG, "Input a player number")
                     Toast.makeText(context, "Input Players\nJersey Number", Toast.LENGTH_LONG)
                         .show()
                 }
                 // If a user enters a jersey number check if the player is on the field for the team
                 else if (jerseyInput > 0 && jerseynum != "" && team != null) {
+
                     memberDocRef = getMember(team!!, jerseyInput)
-                    onField = app.firebasestore.isPlayerOnTheField(team, jerseyInput)
+                   // if the player is not on the teamsheet alert referee
+                    if (memberDocRef==null)
+                    {
+                        Toast.makeText(
+                            context,
+                            "Player Number: $jerseyInput\nIs NOT on the teamsheet",
+                            Toast.LENGTH_LONG
+                        )
+                            .show()
+                    }
+                    // otherwise check if the player is on the field of play
+                    else {
+                        onField = app.firebasestore.isPlayerOnTheField(team, jerseyInput)
+                    }
+                    // alert the referee if the player is not on the field of play
                     if (!onField) {
                         Toast.makeText(
                             context,
@@ -360,39 +373,21 @@ class CardFragment : Fragment() {
 
     }
 
-    //  Concat all voice notes from the array to a String
-    fun getVoiceNotes() {
-        for (n in arrayOfNotes) {
-            if (note.length === 0) {
-                note = n
-            } else {
-                note = "$note. $n"
-            }
-        }
-    }
-
-    //    Contcat text note to the String note
-    fun getTextNotes(textNote: String) {
-        if (note.length === 0) {
-            note = "$textNote"
-        } else {
-            note = "$note. $textNote"
-        }
-    }
-
-
     //        Return the member document reference  from teams heet A
     fun getMember(team: String, jerseyInput: Int): DocumentReference? {
 
         val db = FirebaseFirestore.getInstance()
         var memberDocRef: DocumentReference?
         member = app.firebasestore.findMemberByJerseyNum(team, jerseyInput)!!
-        memberDocRef = db.collection("Member").document(member.id!!)
+        if(member.id !=null) {
+            memberDocRef = db.collection("Member").document(member.id!!)
+            return memberDocRef
+        }
         Log.i(
             TAG,
             "GetMember: Number inputted: ${jerseyInput}Member: ${member.firstName} ${member.lastName} ${member.id}"
         )
-        return memberDocRef
+        return null
     }
 
 
@@ -415,21 +410,6 @@ class CardFragment : Fragment() {
         blackCard = false
         cardColor = ""
         note = ""
-    }
-
-    // Convert the Jersey Number input String value to an integer
-    fun convertJerseyNumToInt(jerseyNum: String): Int {
-        return Integer.parseInt(jerseyNum)
-    }
-
-    /* After a Red card has been given and the background has been set to red
-        use a coroutine to delay for 5 seconds before changing the color back to black
-    * */
-    fun setBackgroundBlack(view: View) {
-        GlobalScope.launch {
-            delay(5000)
-            view.setBackgroundColor(Color.BLACK)
-        }
     }
 
     companion object {

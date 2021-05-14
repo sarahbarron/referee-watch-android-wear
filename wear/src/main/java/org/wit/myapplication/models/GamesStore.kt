@@ -18,6 +18,7 @@ interface GamesStore{
     fun saveScore(scoreModel: ScoreModel) : Boolean
     fun saveCard(cardModel: CardModel): Boolean
     fun saveSub(substituteModel: SubstituteModel):Boolean
+    fun saveInjury(injuryModel: InjuryModel):Boolean
     fun setPlayerOnField(team: String, jerseyNum: Int)
     fun setPlayerOffField(team: String, jerseyNum:Int)
     fun updateBlackCardSubs(team: String)
@@ -26,4 +27,6 @@ interface GamesStore{
     fun updateNormalSubs(team: String)
     fun checkIfPlayerIsOnASecondCard(memberDocRef: DocumentReference): Boolean
     fun isPlayerOnTheField(team: String, jerseyNum: Int): Boolean
+    fun isPlayerOnTheTeamSheet(team:String, jerseyNum: Int):Boolean
+
 }
