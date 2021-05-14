@@ -14,6 +14,7 @@ import androidx.fragment.app.activityViewModels
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_cards.view.*
+import kotlinx.android.synthetic.main.fragment_score.view.*
 import kotlinx.android.synthetic.main.fragment_sub.*
 import kotlinx.android.synthetic.main.fragment_sub.view.*
 import org.jetbrains.anko.doAsync
@@ -48,8 +49,12 @@ class SubFragment : Fragment() {
         app = activity?.application as MainApp
         root = inflater.inflate(R.layout.fragment_sub, container, false)
 
-        model.teamA.observe(viewLifecycleOwner, { item-> root.sub_team1.text = item.name})
-        model.teamB.observe(viewLifecycleOwner, { item-> root.sub_team2.text = item.name})
+        root.sub_team1.text = app.firebasestore.teamA.name
+        root.sub_team2.text = app.firebasestore.teamB.name
+        root.sub_team1.textOn = app.firebasestore.teamA.name
+        root.sub_team1.textOff = app.firebasestore.teamA.name
+        root.sub_team2.textOn = app.firebasestore.teamB.name
+        root.sub_team2.textOff = app.firebasestore.teamB.name
         teamButtonListener(root)
         saveSubListener(root)
         blackCardCheckedListner(root)
@@ -72,6 +77,7 @@ class SubFragment : Fragment() {
             if (isChecked) {
                 teamBbtn.isChecked = false
                 teamA = model.teamA.value
+
             } else {
                 teamA = null
             }
@@ -80,6 +86,7 @@ class SubFragment : Fragment() {
             if (isChecked) {
                 teamAbtn.isChecked = false
                 teamB = model.teamB.value
+
             } else {
                 teamB = null
             }

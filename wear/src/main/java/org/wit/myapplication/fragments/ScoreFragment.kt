@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.annotation.RequiresApi
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.wear.widget.drawer.WearableNavigationDrawerView
@@ -22,6 +23,7 @@ import kotlinx.android.synthetic.main.fragment_score.view.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.wit.myapplication.R
+import org.wit.myapplication.activities.MainActivity
 import org.wit.myapplication.main.MainApp
 import org.wit.myapplication.models.LiveDataViewModel
 import org.wit.myapplication.models.MemberModel
@@ -63,8 +65,15 @@ class ScoreFragment(): Fragment(), Parcelable {
     ): View? {
         app = activity?.application as MainApp
         root = inflater.inflate(R.layout.fragment_score, container, false)
-        model.teamA.observe(viewLifecycleOwner, { item-> root.score_team1.text = item.name})
-        model.teamB.observe(viewLifecycleOwner, { item-> root.score_team2.text = item.name})
+
+        // Set the team name text on buttons
+        root.score_team1.text = app.firebasestore.teamA.name
+        root.score_team2.text = app.firebasestore.teamB.name
+        root.score_team1.textOn = app.firebasestore.teamA.name
+        root.score_team1.textOff = app.firebasestore.teamA.name
+        root.score_team2.textOn = app.firebasestore.teamB.name
+        root.score_team2.textOff = app.firebasestore.teamB.name
+
         teamSelectedListener(root)
         scoreSelectedListener(root)
         saveScoreListener(root)

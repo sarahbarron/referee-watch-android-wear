@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment_score"
@@ -21,8 +22,6 @@
         android:layout_centerHorizontal="true"
         android:backgroundTint="@color/button_background_color"
         android:textColor="@color/black"
-        android:textOff="@string/team_1"
-        android:textOn="@string/team_1"
         android:textSize="12sp"
         android:textStyle="bold" />
 
@@ -34,8 +33,6 @@
         android:layout_alignParentTop="true"
         android:backgroundTint="@color/button_background_color"
         android:textColor="@color/black"
-        android:textOff="@string/team_2"
-        android:textOn="@string/team_2"
         android:textSize="12sp"
         android:textStyle="bold" />
     <View

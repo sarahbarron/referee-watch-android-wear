@@ -23,6 +23,7 @@
         android:textOff="@string/team_1"
         android:textOn="@string/team_1"
         android:textSize="12sp"
+        android:textStyle="bold"
         />
 
     <ToggleButton
@@ -36,6 +37,7 @@
         android:backgroundTint="@color/button_background_color"
         android:textColor="@color/black"
         android:textSize="12sp"
+        android:textStyle="bold"
         />
 
     <View

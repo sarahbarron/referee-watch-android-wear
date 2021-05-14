@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import kotlinx.android.synthetic.main.fragment_injury.view.*
+import kotlinx.android.synthetic.main.fragment_score.view.*
 import org.wit.myapplication.R
 import org.wit.myapplication.main.MainApp
 import org.wit.myapplication.models.LiveDataViewModel
@@ -25,9 +26,12 @@ class InjuryFragment : Fragment() {
 
         app = activity?.application as MainApp
         root = inflater.inflate(R.layout.fragment_injury, container, false)
-
-        model.teamA.observe(viewLifecycleOwner, { item-> root.injury_team1.text = item.name})
-        model.teamB.observe(viewLifecycleOwner, { item-> root.injury_team2.text = item.name})
+        root.injury_team1.text = app.firebasestore.teamA.name
+        root.injury_team2.text = app.firebasestore.teamB.name
+        root.injury_team1.textOn = app.firebasestore.teamA.name
+        root.injury_team1.textOff = app.firebasestore.teamA.name
+        root.injury_team2.textOn = app.firebasestore.teamB.name
+        root.injury_team2.textOff = app.firebasestore.teamB.name
         return root
     }
 

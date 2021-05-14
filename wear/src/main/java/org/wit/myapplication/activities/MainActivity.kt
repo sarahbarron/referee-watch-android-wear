@@ -67,6 +67,7 @@ class MainActivity :AppCompatActivity(),
         // permission needed for notifications
         ActivityCompat.requestPermissions(this, arrayOf<String>(FOREGROUND_SERVICE), PackageManager.PERMISSION_GRANTED)
 
+
         // Broadcast Reciever
         val intentFilter = IntentFilter()
         intentFilter.addAction("Counter")

@@ -37,6 +37,13 @@
         android:backgroundTint="@color/button_background_color"
         android:textColor="@color/black"
         android:textStyle="bold" />
+    <View
+        android:id="@+id/hr1"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:padding="4dp"
+        android:layout_below="@id/injury_team1"
+        android:background="@color/semitransparent_grey" />
 
 
     <TextView
@@ -70,25 +77,70 @@
         android:hint="@string/zero"
         android:textAlignment="center"
         android:autofillHints="0" />
-
-    <Button
-        android:id="@+id/injury_note"
+    <View
+        android:id="@+id/hr2"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_alignStart="@+id/injury_player_number_text"
-        android:layout_alignEnd="@+id/injury_player_number_text"
-        android:layout_below="@id/injury_player_number_text"
-        android:background="@color/blue_a400"
+        android:layout_height="2dp"
+        android:padding="4dp"
+        android:layout_below="@id/injury_player_number_input"
+        android:background="@color/semitransparent_grey" />
+
+
+    <TextView
+        android:id="@+id/injury_note_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/hr2"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="70dp"
-        android:text="@string/note" />
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textAlignment="center"
+        android:paddingTop="8dp"
+        android:text="Add a voice/text note"
+        />
+    <ImageButton
+        android:id="@+id/injury_voice_note_btn"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="8dp"
+        android:layout_below="@id/injury_note_text"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/ic_mic"
+        android:background="@null"
+        android:scaleType="fitCenter"
+        />
+    <EditText
+        android:id="@+id/injury_note_input"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp"
+        android:textAlignment="center"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/injury_note_text"
+        android:background="@color/grey"
+        android:hint="TEXT"
+        android:textColor="@color/white"
+        />
+
+    <View
+        android:id="@+id/hr3"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:padding="2dp"
+        android:layout_below="@id/injury_voice_note_btn"
+        android:background="@color/semitransparent_grey" />
     <Button
         android:id="@+id/saveInjuryBtn"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_alignStart="@+id/injury_player_number_input"
-        android:layout_alignEnd="@+id/injury_player_number_input"
-        android:layout_below="@id/injury_player_number_input"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/hr3"
         android:background="@color/green"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="70dp"
