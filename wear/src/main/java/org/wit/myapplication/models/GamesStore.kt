@@ -18,6 +18,8 @@ interface GamesStore{
     fun saveScore(scoreModel: ScoreModel) : Boolean
     fun saveCard(cardModel: CardModel): Boolean
     fun saveSub(substituteModel: SubstituteModel):Boolean
+    fun setPlayerOnField(team: String, jerseyNum: Int)
+    fun setPlayerOffField(team: String, jerseyNum:Int)
     fun updateBlackCardSubs(team: String)
     fun isTeamAllowedFootballBlackCardSubs(team: String):Boolean
     fun isTeamAllowedNormalSubs(team:String):Boolean

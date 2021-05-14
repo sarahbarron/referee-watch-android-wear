@@ -17,6 +17,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.wear.widget.drawer.WearableNavigationDrawerView
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.android.synthetic.main.fragment_injury.view.*
 import kotlinx.android.synthetic.main.fragment_score.view.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -29,7 +30,7 @@ import org.wit.myapplication.models.TeamModel
 import java.util.*
 
 
-class ScoreFragment() : Fragment(), Parcelable {
+class ScoreFragment(): Fragment(), Parcelable {
 
     lateinit var app: MainApp
     lateinit var root: View
@@ -58,10 +59,12 @@ class ScoreFragment() : Fragment(), Parcelable {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         app = activity?.application as MainApp
         root = inflater.inflate(R.layout.fragment_score, container, false)
+        model.teamA.observe(viewLifecycleOwner, { item-> root.score_team1.text = item.name})
+        model.teamB.observe(viewLifecycleOwner, { item-> root.score_team2.text = item.name})
         teamSelectedListener(root)
         scoreSelectedListener(root)
         saveScoreListener(root)
@@ -70,7 +73,7 @@ class ScoreFragment() : Fragment(), Parcelable {
     }
 
 
-    fun teamSelectedListener(view: View){
+    fun teamSelectedListener(view: View) {
         teamAbtn = view.score_team1
         teamBbtn = view.score_team2
         // Toogle Button Listening for a Team to be selected
@@ -92,7 +95,7 @@ class ScoreFragment() : Fragment(), Parcelable {
         }
     }
 
-    fun scoreSelectedListener(view:View){
+    fun scoreSelectedListener(view: View) {
         goalBtn = view.goal
         pointBtn = view.point
         // Toogle Button Listening for a Score Type to be selected
@@ -113,11 +116,12 @@ class ScoreFragment() : Fragment(), Parcelable {
             }
         }
     }
+
     @RequiresApi(Build.VERSION_CODES.O)
     fun saveScoreListener(layout: View) {
 
         val db = FirebaseFirestore.getInstance()
-        var team =""
+        var team = ""
         var teamDocRef: DocumentReference? = null
         var memberDocRef: DocumentReference? = null
         var jerseyInput = 0
@@ -162,8 +166,7 @@ class ScoreFragment() : Fragment(), Parcelable {
                                 "ScoreFragment",
                                 "Number inputted: ${jerseyInput}: Member: ${member.firstName} ${member.lastName} ${member.id}"
                             )
-                        }
-                        else Toast.makeText(
+                        } else Toast.makeText(
                             context,
                             "Player $jerseyInput \nNot On The Field",
                             Toast.LENGTH_LONG
@@ -201,8 +204,7 @@ class ScoreFragment() : Fragment(), Parcelable {
 //                                fragmentTransaction.replace(R.id.fragment_score, StopwatchFragment())
 //                                fragmentTransaction.addToBackStack(null)
 //                                fragmentTransaction.commit()
-                            }
-                            else
+                            } else
                                 Toast.makeText(
                                     context,
                                     "Error Saving\nTry Again",
@@ -211,7 +213,7 @@ class ScoreFragment() : Fragment(), Parcelable {
                         }
                     }
                 }
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 Log.w("SCORE Fragment", "Error Saving Score: $e")
                 Toast.makeText(
                     context,
@@ -222,7 +224,7 @@ class ScoreFragment() : Fragment(), Parcelable {
         }
     }
 
-    fun updateLiveDataScore(team: String, scoreModel: ScoreModel){
+    fun updateLiveDataScore(team: String, scoreModel: ScoreModel) {
 
         try {
             if (team === "teamA") {
@@ -260,7 +262,7 @@ class ScoreFragment() : Fragment(), Parcelable {
                 val newTotal = currentTotal?.plus(scoreValue)
                 model.teamBtotal.value = newTotal
             }
-        }catch (e:Exception){
+        } catch (e: Exception) {
             Log.i("SCORE Fragment", "Error updating Live scores")
             Toast.makeText(
                 context,
@@ -270,6 +272,7 @@ class ScoreFragment() : Fragment(), Parcelable {
         }
 
     }
+
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeParcelable(member, flags)
         parcel.writeParcelable(score, flags)
@@ -293,10 +296,9 @@ class ScoreFragment() : Fragment(), Parcelable {
     }
 
 
-}
-
-private fun WearableNavigationDrawerView.notifyDataSetChanged() {
-    TODO("Not yet implemented")
+    private fun WearableNavigationDrawerView.notifyDataSetChanged() {
+        TODO("Not yet implemented")
+    }
 }
 
 

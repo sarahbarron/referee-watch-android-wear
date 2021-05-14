@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.android.synthetic.main.fragment_cards.view.*
 import kotlinx.android.synthetic.main.fragment_sub.*
 import kotlinx.android.synthetic.main.fragment_sub.view.*
 import org.jetbrains.anko.doAsync
@@ -47,6 +48,8 @@ class SubFragment : Fragment() {
         app = activity?.application as MainApp
         root = inflater.inflate(R.layout.fragment_sub, container, false)
 
+        model.teamA.observe(viewLifecycleOwner, { item-> root.sub_team1.text = item.name})
+        model.teamB.observe(viewLifecycleOwner, { item-> root.sub_team2.text = item.name})
         teamButtonListener(root)
         saveSubListener(root)
         blackCardCheckedListner(root)
@@ -54,6 +57,7 @@ class SubFragment : Fragment() {
         val sport = app.firebasestore.sport
         if(sport == "Hurling"){
           //  root.sub_blackcard_checkbox.isEnabled = false
+
         }
         return root
     }
@@ -285,6 +289,8 @@ class SubFragment : Fragment() {
                             if (subSaved) {
                                 Toast.makeText(context, "Sub Saved", Toast.LENGTH_LONG).show()
                                 resetSubstitute()
+                                app.firebasestore.setPlayerOffField(team, playerOffJerseyInput)
+                                app.firebasestore.setPlayerOnField(team, playerOnJerseyInput)
                             } else
                                 Toast.makeText(
                                     context,
@@ -356,7 +362,6 @@ class SubFragment : Fragment() {
 
                 if (team != null) {
                     allowedBlackCardSubs = checkIfTeamIsAllowedMoreBlackCardSubs(team)
-                    Log.i(TAG,"AllowedBlackCardSubs should = false : $allowedBlackCardSubs")
 
                 } else {
                     Toast.makeText(

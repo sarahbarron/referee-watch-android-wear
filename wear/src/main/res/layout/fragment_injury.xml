@@ -12,7 +12,7 @@
     >
 
     <ToggleButton
-        android:id="@+id/team1"
+        android:id="@+id/injury_team1"
         android:layout_width="90dp"
         android:layout_height="60dp"
         android:layout_alignParentStart="true"
@@ -26,10 +26,10 @@
         android:textStyle="bold" />
 
     <ToggleButton
-        android:id="@+id/team2"
+        android:id="@+id/injury_team2"
         android:layout_width="90dp"
         android:layout_height="60dp"
-        android:layout_toEndOf="@+id/team1"
+        android:layout_toEndOf="@+id/injury_team1"
         android:layout_alignParentTop="true"
         android:textOff="@string/team_2"
         android:textOn="@string/team_2"
@@ -40,14 +40,14 @@
 
 
     <TextView
-        android:id="@+id/player_number_text"
+        android:id="@+id/injury_player_number_text"
         android:layout_width="80dp"
         android:layout_height="60dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:layout_alignStart="@+id/team1"
-        android:layout_alignEnd="@+id/team1"
-        android:layout_below="@id/team1"
+        android:layout_alignStart="@+id/injury_team1"
+        android:layout_alignEnd="@+id/injury_team1"
+        android:layout_below="@id/injury_team1"
         android:paddingTop="10dp"
         android:textSize="16dp"
         android:textStyle="bold"
@@ -56,14 +56,14 @@
         android:textAlignment="center" />
 
     <EditText
-        android:id="@+id/player_number_input"
+        android:id="@+id/injury_player_number_input"
         android:layout_width="70dp"
         android:layout_height="60dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:layout_alignStart="@+id/team2"
-        android:layout_alignEnd="@+id/team2"
-        android:layout_below="@id/team2"
+        android:layout_alignStart="@+id/injury_team2"
+        android:layout_alignEnd="@+id/injury_team2"
+        android:layout_below="@id/injury_team2"
         android:layout_centerHorizontal="true"
         android:background="@color/grey"
         android:inputType="number"
@@ -75,19 +75,20 @@
         android:id="@+id/injury_note"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_alignStart="@+id/player_number_text"
-        android:layout_alignEnd="@+id/player_number_text"
-        android:layout_below="@id/player_number_text"
+        android:layout_alignStart="@+id/injury_player_number_text"
+        android:layout_alignEnd="@+id/injury_player_number_text"
+        android:layout_below="@id/injury_player_number_text"
         android:background="@color/blue_a400"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="70dp"
         android:text="@string/note" />
     <Button
+        android:id="@+id/saveInjuryBtn"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_alignStart="@+id/player_number_input"
-        android:layout_alignEnd="@+id/player_number_input"
-        android:layout_below="@id/player_number_input"
+        android:layout_alignStart="@+id/injury_player_number_input"
+        android:layout_alignEnd="@+id/injury_player_number_input"
+        android:layout_below="@id/injury_player_number_input"
         android:background="@color/green"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="70dp"

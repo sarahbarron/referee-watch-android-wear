@@ -16,6 +16,10 @@ import androidx.fragment.app.activityViewModels
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_cards.view.*
+import kotlinx.android.synthetic.main.fragment_stopwatch.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.wit.myapplication.R
 import org.wit.myapplication.main.MainApp
 import org.wit.myapplication.models.*
@@ -23,7 +27,6 @@ import java.lang.Exception
 import java.util.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
-import kotlin.concurrent.schedule
 
 
 @Suppress("DEPRECATION")
@@ -45,7 +48,7 @@ class CardFragment : Fragment() {
     var cardColor = ""
     var arrayOfNotes = arrayListOf<String>()
     var note: String = ""
-    var team: String? = null
+
 
     lateinit var teamAbtn: ToggleButton
     lateinit var teamBbtn: ToggleButton
@@ -59,6 +62,8 @@ class CardFragment : Fragment() {
         app = activity?.application as MainApp
         root = inflater.inflate(R.layout.fragment_cards, container, false)
 
+        model.teamA.observe(viewLifecycleOwner, { item-> root.card_team1.text = item.name})
+        model.teamB.observe(viewLifecycleOwner, { item-> root.card_team2.text = item.name})
         teamButtonListener(root)
         cardButtonListener(root)
         saveCardListener(root)
@@ -78,7 +83,6 @@ class CardFragment : Fragment() {
             if (isChecked) {
                 teamBbtn.isChecked = false
                 teamA = model.teamA.value
-                team = "teamA"
             } else {
                 teamA = null
             }
@@ -87,7 +91,6 @@ class CardFragment : Fragment() {
             if (isChecked) {
                 teamAbtn.isChecked = false
                 teamB = model.teamB.value
-                team = "teamB"
             } else {
                 teamB = null
             }
@@ -183,6 +186,7 @@ class CardFragment : Fragment() {
         var memberDocRef: DocumentReference? = null
         var jerseyInput = 0
         var onField = false
+        var team = ""
 
         view.saveCardBtn.setOnClickListener {
 
@@ -190,8 +194,36 @@ class CardFragment : Fragment() {
                 // get the integer input of for the jersey number
                 val jerseynum = root.card_player_number_input.text.toString()
                 val textNote = root.card_note_input.text
+
                 if (jerseynum != "") {
                     jerseyInput = convertJerseyNumToInt(jerseynum)
+                    Log.i(TAG, "Jersey Num: $jerseynum")
+                }
+                // assign the team document to either teamA or teamB
+                if (teamA != null) {
+                    team = "teamA"
+                    teamDocRef = db.collection("Team").document(app.firebasestore.game.teamA!!.id)
+                    Log.i(TAG, "Team: $team, Team Doc: $teamDocRef")
+
+                } else if (teamB != null) {
+                    team = "teamB"
+                    teamDocRef = db.collection("Team").document(app.firebasestore.game.teamB!!.id)
+                    Log.i(TAG, "Team: $team, Team Doc: $teamDocRef")
+
+                }
+
+                // Add text notes to the card notes
+                if (textNote.isNotEmpty()) {
+                    getTextNotes(textNote.toString())
+                    Log.i(TAG, "Text Note: $note")
+
+                }
+
+                // Add voice notes to the card notes
+                if (arrayOfNotes.size > 0) {
+                    getVoiceNotes()
+                    Log.i(TAG, "Voice Note: $note")
+
                 }
 
                 // if user doesn't select a team prompt for selection
@@ -199,45 +231,33 @@ class CardFragment : Fragment() {
                     Log.i(TAG, "Select A Team")
                     Toast.makeText(context, "Select A Team", Toast.LENGTH_LONG).show()
                 }
-
                 // if user doesn't select a card prompt for selection
                 else if (!yellowCard && !redCard && !blackCard) {
                     Log.i(TAG, "Select A Card Type")
                     Toast.makeText(context, "Select Yellow\nRed or Black", Toast.LENGTH_LONG).show()
-                } else if (jerseynum === "" || jerseyInput === 0) {
-                    Log.i(TAG, "Select A Card Type")
+                } else if (jerseynum == "" || jerseyInput === 0) {
+                    Log.i(TAG, "Input a player number")
                     Toast.makeText(context, "Input Players\nJersey Number", Toast.LENGTH_LONG)
                         .show()
                 }
                 // If a user enters a jersey number check if the player is on the field for the team
-                else if (jerseyInput > 0) {
-                    if (teamA != null) {
-                        memberDocRef = getMemberForTeamA(jerseyInput)
-                    } else if (teamB != null) {
-                        memberDocRef = getMemberForTeamB(jerseyInput)
+                else if (jerseyInput > 0 && jerseynum != "" && team != null) {
+                    memberDocRef = getMember(team!!, jerseyInput)
+                    onField = app.firebasestore.isPlayerOnTheField(team, jerseyInput)
+                    if (!onField) {
+                        Toast.makeText(
+                            context,
+                            "Player $jerseyInput\nIs NOT on the Field",
+                            Toast.LENGTH_LONG
+                        )
+                            .show()
                     }
-                    if (memberDocRef != null) onField = true
+                    Log.i(TAG, "Member Doc Ref: $memberDocRef : onField: $onField")
                 }
 
-                // assign the team document to either teamA or teamB
-                if (teamA != null) {
-                    teamDocRef = db.collection("Team").document(app.firebasestore.game.teamA!!.id)
-                } else if (teamB != null) {
-                    teamDocRef = db.collection("Team").document(app.firebasestore.game.teamB!!.id)
-                }
-
-                // Add text notes to the card notes
-                if (textNote.isNotEmpty()) {
-                    getTextNotes(textNote.toString())
-                }
-
-                // Add voice notes to the card notes
-                if (arrayOfNotes.size > 0) {
-                    getVoiceNotes()
-                }
 
                 // if the team, card color and player have been inputted save the card
-                if (onField && (teamA != null || teamB != null) && (yellowCard || redCard || blackCard)) {
+                if (onField && memberDocRef != null && (teamA != null || teamB != null) && (yellowCard || redCard || blackCard)) {
                     card.game = db.collection("Game").document(app.firebasestore.game.id!!)
                     card.member = memberDocRef
                     card.team = teamDocRef
@@ -248,64 +268,76 @@ class CardFragment : Fragment() {
 
                     Log.i(TAG, "Card: $card")
                     doAsync {
-                        val cardSaved = app.firebasestore.saveCard(card)
+                        try {
+                            val cardSaved = app.firebasestore.saveCard(card)
 
-                        uiThread {
-                            if (cardSaved) {
-                                Toast.makeText(context, "Card Saved", Toast.LENGTH_LONG).show()
+                            uiThread {
+                                if (cardSaved) {
+                                    Toast.makeText(context, "Card Saved", Toast.LENGTH_LONG).show()
 
-                                if (card.color == "red") {
-                                    view.setBackgroundColor(Color.RED)
-                                    Toast.makeText(
-                                        context,
-                                        "CARD SAVED\n\nSend Player Off",
-                                        Toast.LENGTH_LONG
-                                    ).show()
-                                } else if (app.firebasestore.checkIfPlayerIsOnASecondCard(
-                                        memberDocRef!!
-                                    )
-                                ) {
-                                    view.setBackgroundColor(Color.RED)
-                                    Toast.makeText(
-                                        context,
-                                        "CARD SAVED \n\n 2nd Card =\nRED\n\nSend Player Off",
-                                        Toast.LENGTH_LONG
-                                    ).show()
-                                } else if (card.color === "black") {
-                                    val allowedASub =
-                                        app.firebasestore.isTeamAllowedFootballBlackCardSubs(team!!)
-                                    if (allowedASub)
+                                    // update the number of cards issued to a team
+                                    if (card.color == "red") {
                                         Toast.makeText(
                                             context,
-                                            "CARD SAVED\n\nSend Player Off\n\nReplacement Player Allowed",
+                                            "CARD SAVED\n\nSend Player Off",
                                             Toast.LENGTH_LONG
                                         ).show()
-                                    else
+                                        app.firebasestore.setPlayerOffField(team, jerseyInput )
+                                    }
+                                    /* Check if a player is already on a yellow or black card
+                                        if the player is the player must be sent off.
+                                        alert the referee
+                                    * */
+                                    else if (app.firebasestore.checkIfPlayerIsOnASecondCard(
+                                            memberDocRef!!)) {
+                                        view.setBackgroundColor(Color.RED)
                                         Toast.makeText(
                                             context,
-                                            "CARD SAVED\n\nMax Subs Used\n\nSub Not Allowed",
+                                            "CARD SAVED\n\n 2nd Card = RED\n\nSend Player Off",
                                             Toast.LENGTH_LONG
-                                        )
-                                            .show()
-                                }
+                                        ).show()
+                                        setBackgroundBlack(view)
+                                        app.firebasestore.setPlayerOffField(team, jerseyInput )
+                                    }
+                                    /* If it is a black card check if the player can be
+                                    substituted or not and alert the referee
+                                    * */
+                                    else if (card.color === "black") {
+                                        val allowedASub =
+                                            app.firebasestore.isTeamAllowedFootballBlackCardSubs(
+                                                team!!
+                                            )
+                                        if (allowedASub)
+                                            Toast.makeText(
+                                                context,
+                                                "BLACK CARD SAVED\n\nReplacement ALLOWED",
+                                                Toast.LENGTH_LONG
+                                            ).show()
+                                        else
+                                            Toast.makeText(
+                                                context,
+                                                "CARD SAVED\n\nMax Subs Used\n\nReplacement NOT Allowed",
+                                                Toast.LENGTH_LONG
+                                            )
+                                                .show()
+                                        app.firebasestore.setPlayerOffField(team, jerseyInput )
 
-                                resetCardToBlank()
-                                Timer().schedule(3000) {
-                                    view.setBackgroundColor(Color.BLACK)
-                                }
-
-
-                            } else
-                                Toast.makeText(
-                                    context,
-                                    "Error Saving\nTry Again",
-                                    Toast.LENGTH_LONG
-                                ).show()
+                                    }
+                                    resetCardToBlank()
+                                } else
+                                    Toast.makeText(
+                                        context,
+                                        "Error Saving\nTry Again",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                            }
+                        } catch (e: Exception) {
+                            Log.w(TAG, "Exception saving card : $e")
                         }
                     }
                 }
             } catch (e: Exception) {
-                Log.w(TAG, "Error saving Card: $e")
+                Log.w(TAG, "Error saving Card Exception: $e")
                 Toast.makeText(
                     context,
                     "Error Saving\nTry Again",
@@ -320,11 +352,8 @@ class CardFragment : Fragment() {
     fun getVoiceNotes() {
         for (n in arrayOfNotes) {
             if (note.length === 0) {
-                Log.i(TAG, "This is the first voice Note")
-
                 note = n
             } else {
-                Log.i(TAG, "More voice Notes")
                 note = "$note. $n"
             }
         }
@@ -339,49 +368,18 @@ class CardFragment : Fragment() {
         }
     }
 
-    //    Return the member document reference  from teams heet A
-    fun getMemberForTeamA(jerseyInput: Int): DocumentReference? {
+
+    //        Return the member document reference  from teams heet A
+    fun getMember(team: String, jerseyInput: Int): DocumentReference? {
 
         val db = FirebaseFirestore.getInstance()
-        var memberDocRef: DocumentReference? = null
-
-        var onField = app.firebasestore.isPlayerOnTheField("teamA", jerseyInput)
-
-        if (onField) {
-            member = app.firebasestore.findMemberByJerseyNum("teamA", jerseyInput)!!
-            memberDocRef = db.collection("Member").document(member.id!!)
-            Log.i(
-                "ScoreFragment",
-                "Number inputted: ${jerseyInput}Member: ${member.lastName} ${member.lastName} ${member.id}"
-            )
-        } else Toast.makeText(
-            context,
-            "Player $jerseyInput \nNot On The Field",
-            Toast.LENGTH_LONG
-        ).show()
-
-        return memberDocRef
-    }
-
-    //Return the member document reference from team sheet B
-    fun getMemberForTeamB(jerseyInput: Int): DocumentReference? {
-
-        val db = FirebaseFirestore.getInstance()
-        var memberDocRef: DocumentReference? = null
-        var onField = app.firebasestore.isPlayerOnTheField("teamB", jerseyInput)
-        if (onField) {
-            member = app.firebasestore.findMemberByJerseyNum("teamB", jerseyInput)!!
-            memberDocRef = db.collection("Member").document(member.id!!)
-            Log.i(
-                "ScoreFragment",
-                "Number inputted: ${jerseyInput}: Member: ${member.firstName} ${member.lastName} ${member.id}"
-            )
-        } else Toast.makeText(
-            context,
-            "Player $jerseyInput \nNot On The Field",
-            Toast.LENGTH_LONG
-        ).show()
-
+        var memberDocRef: DocumentReference?
+        member = app.firebasestore.findMemberByJerseyNum(team, jerseyInput)!!
+        memberDocRef = db.collection("Member").document(member.id!!)
+        Log.i(
+            TAG,
+            "GetMember: Number inputted: ${jerseyInput}Member: ${member.firstName} ${member.lastName} ${member.id}"
+        )
         return memberDocRef
     }
 
@@ -405,12 +403,21 @@ class CardFragment : Fragment() {
         blackCard = false
         cardColor = ""
         note = ""
-
     }
 
     // Convert the Jersey Number input String value to an integer
     fun convertJerseyNumToInt(jerseyNum: String): Int {
         return Integer.parseInt(jerseyNum)
+    }
+
+    /* After a Red card has been given and the background has been set to red
+        use a coroutine to delay for 5 seconds before changing the color back to black
+    * */
+    fun setBackgroundBlack(view: View) {
+        GlobalScope.launch {
+            delay(5000)
+            view.setBackgroundColor(Color.BLACK)
+        }
     }
 
     companion object {

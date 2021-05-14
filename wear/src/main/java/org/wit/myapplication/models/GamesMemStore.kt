@@ -60,6 +60,14 @@ class GamesMemStore : GamesStore {
         TODO("Not yet implemented")
     }
 
+    override fun setPlayerOnField(team: String, jerseyNum: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override fun setPlayerOffField(team: String, jerseyNum: Int) {
+        TODO("Not yet implemented")
+    }
+
     override fun updateBlackCardSubs(team: String) {
         TODO("Not yet implemented")
     }
