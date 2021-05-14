@@ -26,12 +26,17 @@ class InjuryFragment : Fragment() {
 
         app = activity?.application as MainApp
         root = inflater.inflate(R.layout.fragment_injury, container, false)
-        root.injury_team1.text = app.firebasestore.teamA.name
-        root.injury_team2.text = app.firebasestore.teamB.name
-        root.injury_team1.textOn = app.firebasestore.teamA.name
-        root.injury_team1.textOff = app.firebasestore.teamA.name
-        root.injury_team2.textOn = app.firebasestore.teamB.name
-        root.injury_team2.textOff = app.firebasestore.teamB.name
+
+        val teamAName = app.firebasestore.teamA.name
+        val teamBName = app.firebasestore.teamB.name
+        if(teamAName !=null && teamBName!=null) {
+            root.injury_team1.text = teamAName
+            root.injury_team2.text = teamBName
+            root.injury_team1.textOn = teamAName
+            root.injury_team1.textOff = teamAName
+            root.injury_team2.textOn = teamBName
+            root.injury_team2.textOff = teamBName
+        }
         return root
     }
 

@@ -64,13 +64,16 @@ class CardFragment : Fragment() {
         app = activity?.application as MainApp
         root = inflater.inflate(R.layout.fragment_cards, container, false)
 
-        root.card_team1.text = app.firebasestore.teamA.name
-        root.card_team2.text = app.firebasestore.teamB.name
-        root.card_team1.textOn = app.firebasestore.teamA.name
-        root.card_team1.textOff = app.firebasestore.teamA.name
-        root.card_team2.textOn = app.firebasestore.teamB.name
-        root.card_team2.textOff = app.firebasestore.teamB.name
-
+        val teamAName = app.firebasestore.teamA.name
+        val teamBName = app.firebasestore.teamB.name
+        if(teamAName !=null && teamBName!=null) {
+            root.card_team1.text = teamAName
+            root.card_team2.text = teamBName
+            root.card_team1.textOn = teamAName
+            root.card_team1.textOff = teamAName
+            root.card_team2.textOn = teamBName
+            root.card_team2.textOff = teamBName
+        }
         teamButtonListener(root)
         cardButtonListener(root)
         saveCardListener(root)

@@ -66,13 +66,17 @@ class ScoreFragment(): Fragment(), Parcelable {
         app = activity?.application as MainApp
         root = inflater.inflate(R.layout.fragment_score, container, false)
 
-        // Set the team name text on buttons
-        root.score_team1.text = app.firebasestore.teamA.name
-        root.score_team2.text = app.firebasestore.teamB.name
-        root.score_team1.textOn = app.firebasestore.teamA.name
-        root.score_team1.textOff = app.firebasestore.teamA.name
-        root.score_team2.textOn = app.firebasestore.teamB.name
-        root.score_team2.textOff = app.firebasestore.teamB.name
+        val teamAName = app.firebasestore.teamA.name
+        val teamBName = app.firebasestore.teamB.name
+        if(teamAName!=null && teamBName!=null){
+            // Set the team name text on buttons
+            root.score_team1.text = teamAName
+            root.score_team2.text = teamBName
+            root.score_team1.textOn = teamAName
+            root.score_team1.textOff = teamAName
+            root.score_team2.textOn = teamBName
+            root.score_team2.textOff = teamBName
+        }
 
         teamSelectedListener(root)
         scoreSelectedListener(root)

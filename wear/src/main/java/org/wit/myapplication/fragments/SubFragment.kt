@@ -49,12 +49,16 @@ class SubFragment : Fragment() {
         app = activity?.application as MainApp
         root = inflater.inflate(R.layout.fragment_sub, container, false)
 
-        root.sub_team1.text = app.firebasestore.teamA.name
-        root.sub_team2.text = app.firebasestore.teamB.name
-        root.sub_team1.textOn = app.firebasestore.teamA.name
-        root.sub_team1.textOff = app.firebasestore.teamA.name
-        root.sub_team2.textOn = app.firebasestore.teamB.name
-        root.sub_team2.textOff = app.firebasestore.teamB.name
+        val teamAName = app.firebasestore.teamA.name
+        val teamBName = app.firebasestore.teamB.name
+        if(teamAName !=null && teamBName!=null) {
+            root.sub_team1.text = teamAName
+            root.sub_team2.text = teamBName
+            root.sub_team1.textOn = teamAName
+            root.sub_team1.textOff = teamAName
+            root.sub_team2.textOn = teamBName
+            root.sub_team2.textOff =teamBName
+        }
         teamButtonListener(root)
         saveSubListener(root)
         blackCardCheckedListner(root)
