@@ -28,5 +28,8 @@ interface GamesStore{
     fun checkIfPlayerIsOnASecondCard(memberDocRef: DocumentReference): Boolean
     fun isPlayerOnTheField(team: String, jerseyNum: Int): Boolean
     fun isPlayerOnTheTeamSheet(team:String, jerseyNum: Int):Boolean
-
+    fun updateTeamAGoalTotal()
+    fun updateTeamBGoalTotal()
+    fun updateTeamAPointsTotal()
+    fun updateTeamBPointsTotal()
 }

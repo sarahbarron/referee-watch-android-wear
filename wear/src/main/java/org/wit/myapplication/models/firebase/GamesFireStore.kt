@@ -6,12 +6,12 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.fragment_stopwatch.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
-import org.wit.myapplication.Team
 import org.wit.myapplication.models.*
 import java.time.LocalDate
 import java.time.ZoneId
@@ -49,7 +49,6 @@ class GamesFireStore(val context: Context) : GamesStore {
 
     lateinit var userId: String
     lateinit var db: FirebaseFirestore
-
 
 
     override fun findAllGames(): ArrayList<GameModel> {
@@ -112,14 +111,14 @@ class GamesFireStore(val context: Context) : GamesStore {
     override fun saveScore(scoreModel: ScoreModel): Boolean {
         try {
             db.collection("Scores").document().set(scoreModel)
-            scores.add(scoreModel)
+          //  scores.add(scoreModel)
             Log.i(TAG, "firestore save score scoreModel = $scoreModel\nscores = $scores")
+            return true
         } catch (e: java.lang.Exception) {
             Log.w(TAG, "Error Saving Score: $e")
-            return false
-        }
-        return true
 
+        }
+        return false
     }
 
     override fun saveCard(cardModel: CardModel): Boolean {
@@ -301,6 +300,26 @@ class GamesFireStore(val context: Context) : GamesStore {
         return false
     }
 
+    override fun updateTeamAGoalTotal() {
+        game.id?.let { db.collection("Game").document(it) }
+            ?.update("teamATotalGoals", FieldValue.increment(1));
+    }
+
+    override fun updateTeamBGoalTotal() {
+        game.id?.let { db.collection("Game").document(it) }
+            ?.update("teamBTotalGoals", FieldValue.increment(1));
+    }
+
+    override fun updateTeamAPointsTotal() {
+        game.id?.let { db.collection("Game").document(it) }
+            ?.update("teamATotalPoints", FieldValue.increment(1));
+    }
+
+    override fun updateTeamBPointsTotal() {
+        game.id?.let { db.collection("Game").document(it) }
+            ?.update("teamBTotalPoints", FieldValue.increment(1));
+    }
+
 
     // FETCHES FROM FIRESTORE
 
@@ -378,33 +397,33 @@ class GamesFireStore(val context: Context) : GamesStore {
 
 
     // Fetch A Scores
-    fun fetchScores(gameId: String) {
-        try {
-            db = FirebaseFirestore.getInstance()
-            Log.i(TAG, "Fetch Scores game Id $gameId")
-            var gameDoc = db.collection("Game").document(gameId)
-            db.collection("Scores")
-                .whereEqualTo("game", gameDoc)
-                .orderBy("timestamp", Query.Direction.DESCENDING)
-                .addSnapshotListener addSnapshotListener@{ snapshot, e ->
-                    Log.i(TAG, " Number Of Scores : " + (snapshot?.size() ?: null))
-                    if (e != null) {
-                        Log.i(TAG, "Listen failed.", e)
-                        return@addSnapshotListener
-                    }
-                    if (snapshot != null) {
-                        scores.clear()
-                        snapshot.documents.mapNotNullTo(scores) {
-                            it.toObject(ScoreModel::class.java)
-                        }
-                    } else {
-                        Log.i(TAG, "Scores = null")
-                    }
-                }
-        } catch (e: Exception) {
-            Log.w(TAG, "Fetch Team Exception: $e")
-        }
-    }
+//    fun fetchScores(gameId: String)  {
+//        try {
+//            db = FirebaseFirestore.getInstance()
+//            Log.i(TAG, "Fetch Scores game Id $gameId")
+//            var gameDoc = db.collection("Game").document(gameId)
+//            db.collection("Scores")
+//                .whereEqualTo("game", gameDoc)
+//                .orderBy("timestamp", Query.Direction.DESCENDING)
+//                .addSnapshotListener addSnapshotListener@{ snapshot, e ->
+//                    Log.i(TAG, " Number Of Scores : " + (snapshot?.size() ?: null))
+//                    if (e != null) {
+//                        Log.i(TAG, "Listen failed.", e)
+//                        return@addSnapshotListener
+//                    }
+//                    if (snapshot != null) {
+//                        scores.clear()
+//                        snapshot.documents.mapNotNullTo(scores) {
+//                            it.toObject(ScoreModel::class.java)
+//                        }
+//                    } else {
+//                        Log.i(TAG, "Scores = null")
+//                    }
+//                }
+//        } catch (e: Exception) {
+//            Log.w(TAG, "Fetch Team Exception: $e")
+//        }
+//    }
 
     //    Fetch Cards
     fun fetchCards(gameRef: String) {

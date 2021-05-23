@@ -26,36 +26,43 @@
         android:id="@+id/btnStart"
         android:onClick="onClickStart"
         android:layout_width="80dp"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_below="@+id/timer"
         android:layout_alignParentStart="true"
         android:layout_marginTop="2dp"
-        android:backgroundTint="@color/common_google_signin_btn_text_light"
         android:layout_centerHorizontal="false"
         android:contentDescription="@string/stopwatch_start_btn"
         android:src="@drawable/ic_start"
-        android:tint="#009688" />
+        android:tint="#009688"
+        android:background="@color/black"
+        android:scaleX="1.5"
+        android:scaleY="1.5"
+        />
 
 
     <ImageButton
         android:id="@+id/btnPause"
         android:onClick="onClickPause"
         android:layout_width="80dp"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_below="@+id/timer"
         android:layout_alignParentEnd="true"
         android:layout_centerHorizontal="false"
         android:layout_marginTop="2dp"
-        android:backgroundTint="@color/common_google_signin_btn_text_light"
         android:contentDescription="@string/stopwatch_reset_btn"
         android:src="@drawable/ic_pause"
-        android:tint="@color/orange" />
+        android:tint="@color/orange"
+        android:background="@color/black"
+        android:scaleY="1.5"
+        android:scaleX="1.5"
+        />
 
     <TextView
         android:id="@+id/teamAName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/btnStart"
+        android:layout_marginTop="8dp"
         android:layout_marginStart="8dp"
         android:text="@string/team_1"
         android:textColor="@color/white"
@@ -69,6 +76,8 @@
         android:layout_toRightOf="@id/teamAName"
         android:layout_toLeftOf="@id/teamBName"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+
         android:textAlignment="center"
         android:text="@string/versus"
         android:textColor="@color/white"
@@ -80,7 +89,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/btnStart"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
         android:text="@string/team_2"
         android:textColor="@color/white"
         android:textSize="15sp"
@@ -217,7 +227,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/teamBName"
         android:layout_toLeftOf="@id/teamBclose"
-        android:layout_marginStart="2dp"
+        android:layout_marginEnd="2dp"
         android:text="@string/zerozero"
         android:textColor="@color/white"
         android:textSize="16sp"
@@ -233,6 +243,7 @@
         android:text="@string/closingpar"
         android:layout_below="@id/teamBName"
         android:layout_alignParentEnd="true"
+        android:layout_marginEnd="8dp"
         />
 
 

@@ -102,6 +102,22 @@ class GamesMemStore : GamesStore {
         TODO("Not yet implemented")
     }
 
+    override fun updateTeamAGoalTotal() {
+        TODO("Not yet implemented")
+    }
+
+    override fun updateTeamBGoalTotal() {
+        TODO("Not yet implemented")
+    }
+
+    override fun updateTeamAPointsTotal() {
+        TODO("Not yet implemented")
+    }
+
+    override fun updateTeamBPointsTotal() {
+        TODO("Not yet implemented")
+    }
+
 
     fun logAllGames(){
         TODO("Not yet implemented")

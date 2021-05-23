@@ -21,15 +21,13 @@ import com.google.firebase.firestore.FirebaseFirestore
 import convertJerseyNumToInt
 import kotlinx.android.synthetic.main.fragment_injury.view.*
 import kotlinx.android.synthetic.main.fragment_score.view.*
+import kotlinx.android.synthetic.main.fragment_sub.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.wit.myapplication.R
 import org.wit.myapplication.activities.MainActivity
 import org.wit.myapplication.main.MainApp
-import org.wit.myapplication.models.LiveDataViewModel
-import org.wit.myapplication.models.MemberModel
-import org.wit.myapplication.models.ScoreModel
-import org.wit.myapplication.models.TeamModel
+import org.wit.myapplication.models.*
 import java.util.*
 
 
@@ -211,12 +209,18 @@ class ScoreFragment(): Fragment(), Parcelable {
                     score.timestamp = Date()
                     Log.i(TAG, "Update Live Data Score ${team.length} : $score")
                     updateLiveDataScore(team, score)
+
                     doAsync {
                         val scoreSaved = app.firebasestore.saveScore(score)
-
                         uiThread {
                             if (scoreSaved) {
                                 Toast.makeText(context, "Score Saved", Toast.LENGTH_LONG).show()
+                                resetScore()
+                                team = ""
+                                teamDocRef= null
+                                memberDocRef= null
+                                jerseyInput = 0
+                                onField = false
                                 // redirect to stopwatch fragment
 //                                childFragmentManager.beginTransaction().replace(R.id.fragment_score,StopwatchFragment()).commit()
 //                                val fragmentTransaction = parentFragmentManager.beginTransaction()
@@ -253,12 +257,14 @@ class ScoreFragment(): Fragment(), Parcelable {
                     val newGoals = currentGoals?.plus(1)
                     model.teamAtotalGoals.value = newGoals
                     scoreValue = 3
+                    app.firebasestore.updateTeamAGoalTotal()
                 }
                 if (scoreModel.point == 1) {
                     val currentPoints = model.teamAtotalPoints.value
                     val newPoints = currentPoints?.plus(1)
                     model.teamAtotalPoints.value = newPoints
                     scoreValue = 1
+                    app.firebasestore.updateTeamAPointsTotal()
                 }
                 val currentTotal = model.teamAtotal.value
                 val newTotal = currentTotal?.plus(scoreValue)
@@ -270,12 +276,14 @@ class ScoreFragment(): Fragment(), Parcelable {
                     val newGoals = currentGoals?.plus(1)
                     model.teamBtotalGoals.value = newGoals
                     scoreValue = 3
+                    app.firebasestore.updateTeamBGoalTotal()
                 }
                 if (scoreModel.point == 1) {
                     val currentPoints = model.teamBtotalPoints.value
                     val newPoints = currentPoints?.plus(1)
                     model.teamBtotalPoints.value = newPoints
                     scoreValue = 1
+                    app.firebasestore.updateTeamBPointsTotal()
                 }
                 val currentTotal = model.teamBtotal.value
                 val newTotal = currentTotal?.plus(scoreValue)
@@ -315,6 +323,20 @@ class ScoreFragment(): Fragment(), Parcelable {
         }
     }
 
+    //    Reset the form to blank
+    fun resetScore() {
+        score = ScoreModel()
+        member = MemberModel()
+        teamA = null
+        teamB = null
+        goal = 0
+        point = 0
+        root.score_team1.isChecked = false
+        root.score_team2.isChecked = false
+        root.score_player_number_input.setText("")
+        root.goal.isChecked = false
+        root.point.isChecked = false
+    }
 
 
 
