@@ -207,10 +207,11 @@ class ScoreFragment(): Fragment(), Parcelable {
                     score.member = memberDocRef
                     score.team = teamDocRef
                     score.timestamp = Date()
-                    Log.i(TAG, "Update Live Data Score ${team.length} : $score")
-                    updateLiveDataScore(team, score)
+                    Log.i(TAG, "Update Live Data Score ${team} : $score")
+                    val updateScore = updateLiveDataScore(team, score)
 
                     doAsync {
+
                         val scoreSaved = app.firebasestore.saveScore(score)
                         uiThread {
                             if (scoreSaved) {
