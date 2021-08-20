@@ -569,7 +569,7 @@ class GamesFireStore(val context: Context) : GamesStore {
                                     it.toObject(TeamsheetPlayerModel::class.java)
                                 }
                                 fetchPlayers(teamAPlayers)
-                                Log.i(TAG, "FETCH TEAM A PLAYERS $teamAPlayers")
+                                Log.i(TAG, "FETCH TEAM A PLAYERS $teamAPlayers.size")
                             }
                             if (team == "teamB") {
                                 teamBPlayers.clear()
@@ -577,7 +577,7 @@ class GamesFireStore(val context: Context) : GamesStore {
                                     it.toObject(TeamsheetPlayerModel::class.java)
                                 }
                                 fetchPlayers(teamBPlayers)
-                                Log.i(TAG, "FETCH TEAM B PLAYERS $teamBPlayers")
+                                Log.i(TAG, "FETCH TEAM B PLAYERS $teamBPlayers.size")
                             }
                         }
                     }

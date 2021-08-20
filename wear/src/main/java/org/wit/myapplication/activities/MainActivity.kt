@@ -230,74 +230,107 @@ class MainActivity :AppCompatActivity(),
                 }
             }
             R.id.menu_teamA_teamsheet ->{
-                mWearableNavigationDrawer?.setCurrentItem(0, true)
-                model.mSelectedTopNav.value = 0
-                listTeamsheetAFragment = ListTeamsheetAFragment()
-                val args = Bundle()
-                listTeamsheetAFragment!!.arguments = args
-                val fragmentManager = supportFragmentManager
-                fragmentManager.beginTransaction().replace(R.id.content_frame, listTeamsheetAFragment!!)
-                    .commit()
+                if(app.firebasestore.teamAPlayers.size>0) {
+                    mWearableNavigationDrawer?.setCurrentItem(0, true)
+                    model.mSelectedTopNav.value = 0
+                    listTeamsheetAFragment = ListTeamsheetAFragment()
+                    val args = Bundle()
+                    listTeamsheetAFragment!!.arguments = args
+                    val fragmentManager = supportFragmentManager
+                    fragmentManager.beginTransaction()
+                        .replace(R.id.content_frame, listTeamsheetAFragment!!)
+                        .commit()
+                }
+                else{
+                    toastMessage = "No Teamsheet Available"
+                }
 
             }
 
             R.id.menu_teamB_teamsheet->{
-                mWearableNavigationDrawer?.setCurrentItem(0, true)
-                model.mSelectedTopNav.value = 0
-                listTeamsheetBFragment = ListTeamsheetBFragment()
-                val args = Bundle()
-                listTeamsheetBFragment!!.arguments = args
-                val fragmentManager = supportFragmentManager
-                fragmentManager.beginTransaction().replace(R.id.content_frame, listTeamsheetBFragment!!)
-                    .commit()
+                if(app.firebasestore.teamBPlayers.size>0) {
+                    mWearableNavigationDrawer?.setCurrentItem(0, true)
+                    model.mSelectedTopNav.value = 0
+                    listTeamsheetBFragment = ListTeamsheetBFragment()
+                    val args = Bundle()
+                    listTeamsheetBFragment!!.arguments = args
+                    val fragmentManager = supportFragmentManager
+                    fragmentManager.beginTransaction()
+                        .replace(R.id.content_frame, listTeamsheetBFragment!!)
+                        .commit()
+                }  else{
+                    toastMessage = "No Teamsheet Available"
+                }
 
             }
 
             R.id.bottom_menu_scores -> {
-                mWearableNavigationDrawer?.setCurrentItem(0, true)
-                model.mSelectedTopNav.value = 0
-                listScoresFragment = ListScoresFragment()
-                val args = Bundle()
-                listScoresFragment!!.arguments = args
-                val fragmentManager = supportFragmentManager
-                mWearableActionDrawer?.controller?.closeDrawer()
-                fragmentManager.beginTransaction().replace(R.id.content_frame, listScoresFragment!!)
+                if(app.firebasestore.scores.size>0) {
+                    mWearableNavigationDrawer?.setCurrentItem(0, true)
+                    model.mSelectedTopNav.value = 0
+                    listScoresFragment = ListScoresFragment()
+                    val args = Bundle()
+                    listScoresFragment!!.arguments = args
+                    val fragmentManager = supportFragmentManager
+                    mWearableActionDrawer?.controller?.closeDrawer()
+                    fragmentManager.beginTransaction()
+                        .replace(R.id.content_frame, listScoresFragment!!)
                         .commit()
+                }
+                else{
+                    toastMessage = "No Scores To View"
+                }
 
             }
             R.id.bottom_menu_cards -> {
-                mWearableNavigationDrawer?.setCurrentItem(0, true)
-                model.mSelectedTopNav.value = 0
-                listCardsFragment = ListCardsFragment()
-                val args = Bundle()
-                listCardsFragment!!.arguments = args
-                val fragmentManager = supportFragmentManager
-                fragmentManager.beginTransaction().replace(R.id.content_frame, listCardsFragment!!)
+                if(app.firebasestore.cards.size>0) {
+                    mWearableNavigationDrawer?.setCurrentItem(0, true)
+                    model.mSelectedTopNav.value = 0
+                    listCardsFragment = ListCardsFragment()
+                    val args = Bundle()
+                    listCardsFragment!!.arguments = args
+                    val fragmentManager = supportFragmentManager
+                    fragmentManager.beginTransaction()
+                        .replace(R.id.content_frame, listCardsFragment!!)
                         .commit()
+                }
+                else{
+                    toastMessage = "No Cards To View"
+                }
             }
             R.id.bottom_menu_subs -> {
-                mWearableNavigationDrawer?.setCurrentItem(0, true)
-                model.mSelectedTopNav.value = 0
-                listSubstitutesFragment = ListSubstitutesFragment()
-                val args = Bundle()
-                listSubstitutesFragment!!.arguments = args
-                val fragmentManager = supportFragmentManager
-                fragmentManager.beginTransaction().replace(
+                if(app.firebasestore.substitutes.size>0) {
+                    mWearableNavigationDrawer?.setCurrentItem(0, true)
+                    model.mSelectedTopNav.value = 0
+                    listSubstitutesFragment = ListSubstitutesFragment()
+                    val args = Bundle()
+                    listSubstitutesFragment!!.arguments = args
+                    val fragmentManager = supportFragmentManager
+                    fragmentManager.beginTransaction().replace(
                         R.id.content_frame,
                         listSubstitutesFragment!!
-                ).commit()
+                    ).commit()
+                }
+                else{
+                    toastMessage = "No Substitutes To View"
+                }
             }
             R.id.bottom_menu_injuries -> {
-                mWearableNavigationDrawer?.setCurrentItem(0, true)
-                model.mSelectedTopNav.value = 0
-                listInjuriesFragment = ListInjuriesFragment()
-                val args = Bundle()
-                listInjuriesFragment!!.arguments = args
-                val fragmentManager = supportFragmentManager
-                fragmentManager.beginTransaction().replace(
+                if(app.firebasestore.injuries.size>0) {
+                    mWearableNavigationDrawer?.setCurrentItem(0, true)
+                    model.mSelectedTopNav.value = 0
+                    listInjuriesFragment = ListInjuriesFragment()
+                    val args = Bundle()
+                    listInjuriesFragment!!.arguments = args
+                    val fragmentManager = supportFragmentManager
+                    fragmentManager.beginTransaction().replace(
                         R.id.content_frame,
                         listInjuriesFragment!!
-                ).commit()
+                    ).commit()
+                }
+                else{
+                    toastMessage = "No Injuries To View"
+                }
 
             }
             R.id.bottom_menu_reset_stopwatch -> {
