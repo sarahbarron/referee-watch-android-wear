@@ -118,6 +118,14 @@ class GamesMemStore : GamesStore {
         TODO("Not yet implemented")
     }
 
+    override fun setStartTimeOFGame(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun setEndTimeOFGame(): Boolean {
+        TODO("Not yet implemented")
+    }
+
 
     fun logAllGames(){
         TODO("Not yet implemented")

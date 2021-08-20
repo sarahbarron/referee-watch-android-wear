@@ -60,12 +60,16 @@
 
     <!--    Bottom Menu -->
     <string name="bottom_menu_sign_out">Sign Out</string>
-    <string name="bottom_menu_end_half">End Time</string>
+    <string name="bottom_menu_start_game">Start Game</string>
+    <string name="bottom_menu_end_game">End Game</string>
     <string name="bottom_menu_home">Home</string>
     <string name="bottom_menu_scores">List Scores</string>
     <string name="bottom_menu_cards">List Cards</string>
     <string name="bottom_menu_subs">List Subs</string>
     <string name="bottom_menu_injuries">List Injuries</string>
+    <string name="bottom_menu_view_teamA">TeamA Teamsheet</string>
+    <string name="bottom_menu_view_teamB">TeamB Teamsheet</string>
+    <string name="bottom_menu_additional_comments">Additional Comments</string>
 
     <!--    fragments -->
     <string name="team_1">Team 1</string>

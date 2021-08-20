@@ -22,6 +22,4 @@ class Stopwatch(val context: Context) : StopwatchStore{
     override fun setStopwatchRunning(running: Boolean?){
         stopwatchRunning = running!!
     }
-
-
 }

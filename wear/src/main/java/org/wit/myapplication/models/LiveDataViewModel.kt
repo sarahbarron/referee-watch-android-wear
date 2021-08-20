@@ -45,6 +45,3 @@ class LiveDataViewModel: ViewModel() {
     }
 
 }
-
-
-

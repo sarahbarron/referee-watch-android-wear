@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
@@ -598,10 +599,41 @@ class GamesFireStore(val context: Context) : GamesStore {
             }
         }
 
+
+    override fun setStartTimeOFGame():Boolean{
+        try{
+            var gameId = game.id
+            var time = Date();
+            if(gameId!=null) {
+                db.collection("Game").document(gameId).update("matchStarted", time);
+            }
+            return true
+        }
+        catch (e: java.lang.Exception){
+            Log.w(GamesFireStore.TAG, "Error setting start time of the game");
+        }
+        return false
+    }
+    override fun setEndTimeOFGame():Boolean{
+        try{
+            var gameId = game.id
+            var time = Date();
+            if(gameId!=null) {
+                db.collection("Game").document(gameId).update("matchEnded", time);
+            }
+            return true
+        }
+        catch (e: java.lang.Exception){
+            Log.w(GamesFireStore.TAG, "Error setting end time of the game");
+        }
+        return false
+    }
+
+
     companion object {
         private const val TAG = "Firestore"
     }
 
 
-}
 
+}

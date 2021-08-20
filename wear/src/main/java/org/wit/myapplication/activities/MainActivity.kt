@@ -19,6 +19,8 @@ import androidx.fragment.app.Fragment
 import androidx.wear.ambient.AmbientModeSupport
 import androidx.wear.widget.drawer.WearableActionDrawerView
 import androidx.wear.widget.drawer.WearableNavigationDrawerView
+import kotlinx.android.synthetic.main.card_games.*
+import kotlinx.android.synthetic.main.fragment_stopwatch.*
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.uiThread
@@ -99,6 +101,7 @@ class MainActivity :AppCompatActivity(),
         app = application as MainApp
         game = app.firebasestore.game
 
+
         Log.i(TAG, "Game Id: $game.id")
         fetchDataFromFirebase(game)
 
@@ -131,8 +134,6 @@ class MainActivity :AppCompatActivity(),
         mWearableActionDrawer?.controller?.closeDrawer()
         mWearableActionDrawer?.setOnMenuItemClickListener(this)
 
-        startStopwatchListener()
-
     }
 
 
@@ -160,6 +161,8 @@ class MainActivity :AppCompatActivity(),
         Log.d(TAG, "onMenuItemClick(): $menuItem")
         val itemId = menuItem.itemId
         var toastMessage = ""
+
+
         when (itemId) {
 
             R.id.menu_home -> {
@@ -173,11 +176,52 @@ class MainActivity :AppCompatActivity(),
                         .commit()
 
             }
-            R.id.menu_end_half -> {
+            R.id.menu_additional_comments ->{
                 mWearableNavigationDrawer?.setCurrentItem(0, true)
                 model.mSelectedTopNav.value = 0
-                resetStopWatch()
             }
+//            Start the game
+            R.id.menu_start_game ->{
+                mWearableNavigationDrawer?.setCurrentItem(0, true)
+                model.mSelectedTopNav.value = 0
+                //set the time in firestore
+                app.firebasestore.setStartTimeOFGame();
+                // start the watch
+                if(mBound) {
+                    // if stopwatch is aready running reset it
+                    resetStopWatch();
+                    // call method within the service to start the stopwatch
+                    mService.updateServiceRunning(true)
+                }
+                else startStopwatchListener()
+                toastMessage="Game Started"
+                watchFragment = StopwatchFragment()
+                val args = Bundle()
+                watchFragment!!.arguments = args
+                val fragmentManager = supportFragmentManager
+                fragmentManager.beginTransaction().replace(R.id.content_frame, watchFragment!!)
+                    .commit()
+            }
+
+            R.id.menu_end_game -> {
+                mWearableNavigationDrawer?.setCurrentItem(0, true)
+                model.mSelectedTopNav.value = 0
+                app.firebasestore.setEndTimeOFGame();
+                resetStopWatch()
+                toastMessage= "Game Ended"
+            }
+            R.id.menu_teamA_teamsheet ->{
+                mWearableNavigationDrawer?.setCurrentItem(0, true)
+                model.mSelectedTopNav.value = 0
+
+            }
+
+            R.id.menu_teamB_teamsheet->{
+                mWearableNavigationDrawer?.setCurrentItem(0, true)
+                model.mSelectedTopNav.value = 0
+
+            }
+
             R.id.bottom_menu_scores -> {
                 mWearableNavigationDrawer?.setCurrentItem(0, true)
                 model.mSelectedTopNav.value = 0

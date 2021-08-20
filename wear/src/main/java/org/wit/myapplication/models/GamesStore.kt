@@ -6,6 +6,7 @@ import kotlinx.coroutines.Job
 import java.lang.reflect.Member
 
 interface GamesStore{
+
     fun findAllGames(): ArrayList<GameModel>?
     fun findGameById(id: String): GameModel?
     fun findAllScores(): ArrayList<ScoreModel>?
@@ -32,4 +33,6 @@ interface GamesStore{
     fun updateTeamBGoalTotal()
     fun updateTeamAPointsTotal()
     fun updateTeamBPointsTotal()
+    fun setStartTimeOFGame(): Boolean
+    fun setEndTimeOFGame(): Boolean
 }
