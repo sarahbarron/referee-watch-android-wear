@@ -78,6 +78,13 @@ class GamesFireStore(val context: Context) : GamesStore {
         return injuries
     }
 
+    override fun findAllTeamsheetA(): ArrayList<TeamsheetPlayerModel>?{
+        return teamAPlayers
+    }
+    override fun findAllTeamsheetB(): ArrayList<TeamsheetPlayerModel>?{
+        return teamBPlayers
+    }
+
 
     override fun findTeam(id: String): TeamModel? {
         if (teamA?.id == id) {

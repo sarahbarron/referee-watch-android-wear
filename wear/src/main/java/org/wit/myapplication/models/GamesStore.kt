@@ -36,4 +36,6 @@ interface GamesStore{
     fun setStartTimeOFGame(): Boolean
     fun setEndTimeOFGame(): Boolean
     fun saveAdditionalComments(comments: AdditionalCommentsModel):Boolean
+    fun findAllTeamsheetB(): ArrayList<TeamsheetPlayerModel>?
+    fun findAllTeamsheetA(): ArrayList<TeamsheetPlayerModel>?
 }

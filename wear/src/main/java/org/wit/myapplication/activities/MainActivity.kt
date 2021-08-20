@@ -54,8 +54,8 @@ class MainActivity :AppCompatActivity(),
     private var listSubstitutesFragment: ListSubstitutesFragment? = null
     private var listInjuriesFragment: ListInjuriesFragment? = null
     private var additionalCommentsFragment: AdditionalCommentsFragment? = null
-
-
+    private var listTeamsheetAFragment: ListTeamsheetAFragment?= null
+    private var listTeamsheetBFragment: ListTeamsheetBFragment?= null
     lateinit var app: MainApp
     var edit: Boolean = false
     var game = GameModel()
@@ -232,12 +232,24 @@ class MainActivity :AppCompatActivity(),
             R.id.menu_teamA_teamsheet ->{
                 mWearableNavigationDrawer?.setCurrentItem(0, true)
                 model.mSelectedTopNav.value = 0
+                listTeamsheetAFragment = ListTeamsheetAFragment()
+                val args = Bundle()
+                listTeamsheetAFragment!!.arguments = args
+                val fragmentManager = supportFragmentManager
+                fragmentManager.beginTransaction().replace(R.id.content_frame, listTeamsheetAFragment!!)
+                    .commit()
 
             }
 
             R.id.menu_teamB_teamsheet->{
                 mWearableNavigationDrawer?.setCurrentItem(0, true)
                 model.mSelectedTopNav.value = 0
+                listTeamsheetBFragment = ListTeamsheetBFragment()
+                val args = Bundle()
+                listTeamsheetBFragment!!.arguments = args
+                val fragmentManager = supportFragmentManager
+                fragmentManager.beginTransaction().replace(R.id.content_frame, listTeamsheetBFragment!!)
+                    .commit()
 
             }
 
@@ -274,7 +286,6 @@ class MainActivity :AppCompatActivity(),
                         R.id.content_frame,
                         listSubstitutesFragment!!
                 ).commit()
-
             }
             R.id.bottom_menu_injuries -> {
                 mWearableNavigationDrawer?.setCurrentItem(0, true)

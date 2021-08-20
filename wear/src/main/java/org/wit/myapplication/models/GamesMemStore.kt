@@ -130,6 +130,14 @@ class GamesMemStore : GamesStore {
         TODO("Not yet implemented")
     }
 
+    override fun findAllTeamsheetB(): ArrayList<TeamsheetPlayerModel>? {
+        TODO("Not yet implemented")
+    }
+
+    override fun findAllTeamsheetA(): ArrayList<TeamsheetPlayerModel>? {
+        TODO("Not yet implemented")
+    }
+
 
     fun logAllGames(){
         TODO("Not yet implemented")
