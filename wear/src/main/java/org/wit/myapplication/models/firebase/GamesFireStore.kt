@@ -554,24 +554,26 @@ class GamesFireStore(val context: Context) : GamesStore {
                     .collection("teamsheet")
                     .document(teamId)
                     .collection("players")
-                    .get().await()
-
-                if (team == "teamA") {
-                    teamAPlayers.clear()
-                    teamsheetplayers.documents.mapNotNullTo(teamAPlayers) {
-                        it.toObject(TeamsheetPlayerModel::class.java)
+                    .addSnapshotListener{teamsheetplayers, e ->
+                        if(teamsheetplayers!=null && !teamsheetplayers.isEmpty) {
+                            if (team == "teamA") {
+                                teamAPlayers.clear()
+                                teamsheetplayers.documents.mapNotNullTo(teamAPlayers) {
+                                    it.toObject(TeamsheetPlayerModel::class.java)
+                                }
+                                fetchPlayers(teamAPlayers)
+                                Log.i(TAG, "FETCH TEAM A PLAYERS $teamAPlayers")
+                            }
+                            if (team == "teamB") {
+                                teamBPlayers.clear()
+                                teamsheetplayers.documents.mapNotNullTo(teamBPlayers) {
+                                    it.toObject(TeamsheetPlayerModel::class.java)
+                                }
+                                fetchPlayers(teamBPlayers)
+                                Log.i(TAG, "FETCH TEAM B PLAYERS $teamBPlayers")
+                            }
+                        }
                     }
-                    fetchPlayers(teamAPlayers)
-                    Log.i(TAG, "FETCH TEAM A PLAYERS $teamAPlayers")
-                }
-                if (team == "teamB") {
-                    teamBPlayers.clear()
-                    teamsheetplayers.documents.mapNotNullTo(teamBPlayers) {
-                        it.toObject(TeamsheetPlayerModel::class.java)
-                    }
-                    fetchPlayers(teamBPlayers)
-                    Log.i(TAG, "FETCH TEAM B PLAYERS $teamBPlayers")
-                }
             } catch (e: java.lang.Exception) {
                 Log.w(TAG, "Fetch Teamsheet Players exception $e")
             }
