@@ -116,6 +116,7 @@ class SubFragment : Fragment() {
 
         view.btnSaveSub.setOnClickListener {
             try {
+                if(app.firebasestore.gameStarted){
                 // Check if a team has been selected and get the selected teams document reference
                 if (teamA != null) {
                     teamDocRef = db.collection("Team").document(model.teamA.value!!.id.toString())
@@ -132,7 +133,7 @@ class SubFragment : Fragment() {
                     blackcard = view.sub_blackcard_checkbox.isChecked
                     if (!bloodsub!! && !blackcard!!)
                         allowedSubs = checkIfTeamIsAllowedMoreNormalSubs(team!!)
-                    else if(bloodsub) allowedSubs = true
+                    else if (bloodsub) allowedSubs = true
 
                     // Check if this team is allowed more subs
                     if (!allowedSubs) {
@@ -147,36 +148,34 @@ class SubFragment : Fragment() {
                     jerseyNumOn = getJerseyOn(view.sub_player_on_number_input.text.toString())
                     jerseyNumOff = getJerseyOff(view.sub_player_off_number_input.text.toString())
 
-                    if(jerseyNumOn == null && jerseyNumOff == null) alertReferee("Input Jersey Numbers")
-                    else if(jerseyNumOn == null) alertReferee("Input Jersey Number\nFor Player Coming On")
-                    else if(jerseyNumOff == null)alertReferee("Input Jersey Number\nFor Player Going Off")
-                    else{
+                    if (jerseyNumOn == null && jerseyNumOff == null) alertReferee("Input Jersey Numbers")
+                    else if (jerseyNumOn == null) alertReferee("Input Jersey Number\nFor Player Coming On")
+                    else if (jerseyNumOff == null) alertReferee("Input Jersey Number\nFor Player Going Off")
+                    else {
                         /* get the member document reference of the number inputted or null if
                         the number inputted isn't on the team sheet
                          */
                         memberOnDocRef = getMemberDocRef(team!!, jerseyNumOn!!)
                         memberOffDocRef = getMemberDocRef(team!!, jerseyNumOff!!)
 
-                        if(memberOnDocRef == null && memberOffDocRef == null)alertReferee("Player $jerseyNumOn && Player $jerseyNumOff are not on the teamsheet")
-                        else if(memberOnDocRef == null)alertReferee("Player $jerseyNumOn is not on the teamsheet")
-                        else if(memberOffDocRef == null)alertReferee("Player $jerseyNumOff is not on the teamsheet")
+                        if (memberOnDocRef == null && memberOffDocRef == null) alertReferee("Player $jerseyNumOn && Player $jerseyNumOff are not on the teamsheet")
+                        else if (memberOnDocRef == null) alertReferee("Player $jerseyNumOn is not on the teamsheet")
+                        else if (memberOffDocRef == null) alertReferee("Player $jerseyNumOff is not on the teamsheet")
                         // check if the player is currently on the field
-                        else{
+                        else {
                             playerComingOnAlreadyTheOnField =
                                 app.firebasestore.isPlayerOnTheField(team!!, jerseyNumOn!!)
                             playerGoingOffIsTheOnField =
                                 app.firebasestore.isPlayerOnTheField(team!!, jerseyNumOff!!)
 
-                            if(playerComingOnAlreadyTheOnField!! && !playerGoingOffIsTheOnField!!) {
+                            if (playerComingOnAlreadyTheOnField!! && !playerGoingOffIsTheOnField!!) {
                                 alertReferee("Check Jersey\nNumbers Inputted\nfor Player On \nand Player Off")
                                 memberOnDocRef = null
                                 memberOffDocRef = null
-                            }
-                            else if (playerComingOnAlreadyTheOnField!!) {
+                            } else if (playerComingOnAlreadyTheOnField!!) {
                                 alertReferee("Check Input\nPlayer On: $jerseyNumOn\nIs Already ON the field")
                                 memberOnDocRef = null
-                            }
-                            else if (!playerGoingOffIsTheOnField!!) {
+                            } else if (!playerGoingOffIsTheOnField!!) {
                                 alertReferee("Check Input\nPlayer OFF: $jerseyNumOff\nIs NOT on the field")
                                 memberOffDocRef = null
                             }
@@ -208,11 +207,19 @@ class SubFragment : Fragment() {
 
                         uiThread {
 
-                            if(subSaved) alertReferee("Sub Saved")
+                            if (subSaved) alertReferee("Sub Saved")
                             else alertReferee("Sub NOT Saved")
                         }
                     }
                 }
+            }else{
+            Toast.makeText(
+                context,
+                "Game Must Be Started To Record Substitute",
+                Toast.LENGTH_LONG
+            )
+                .show()
+        }
 
             } catch (e: Exception) {
                 Log.w(TAG, "Exception: when saving sub $e")

@@ -201,6 +201,7 @@ class CardFragment : Fragment() {
         view.saveCardBtn.setOnClickListener {
 
             try {
+                if(app.firebasestore.gameStarted){
                 // get the integer input of for the jersey number
                 val jerseynum = root.card_player_number_input.text.toString()
                 val textNote = root.card_note_input.text.toString()
@@ -248,9 +249,8 @@ class CardFragment : Fragment() {
                 else if (jerseyInput > 0 && jerseynum != "" && team != null) {
 
                     memberDocRef = getMember(team!!, jerseyInput)
-                   // if the player is not on the teamsheet alert referee
-                    if (memberDocRef==null)
-                    {
+                    // if the player is not on the teamsheet alert referee
+                    if (memberDocRef == null) {
                         Toast.makeText(
                             context,
                             "Player Number: $jerseyInput\nIs NOT on the teamsheet",
@@ -301,14 +301,16 @@ class CardFragment : Fragment() {
                                             "CARD SAVED\n\nSend Player Off",
                                             Toast.LENGTH_LONG
                                         ).show()
-                                        app.firebasestore.setPlayerOffField(team, jerseyInput )
+                                        app.firebasestore.setPlayerOffField(team, jerseyInput)
                                     }
                                     /* Check if a player is already on a yellow or black card
                                         if the player is the player must be sent off.
                                         alert the referee
                                     * */
                                     else if (app.firebasestore.checkIfPlayerIsOnASecondCard(
-                                            memberDocRef!!)) {
+                                            memberDocRef!!
+                                        )
+                                    ) {
                                         view.setBackgroundColor(Color.RED)
                                         Toast.makeText(
                                             context,
@@ -316,7 +318,7 @@ class CardFragment : Fragment() {
                                             Toast.LENGTH_LONG
                                         ).show()
                                         setBackgroundBlack(view)
-                                        app.firebasestore.setPlayerOffField(team, jerseyInput )
+                                        app.firebasestore.setPlayerOffField(team, jerseyInput)
                                     }
                                     /* If it is a black card check if the player can be
                                     substituted or not and alert the referee
@@ -339,7 +341,7 @@ class CardFragment : Fragment() {
                                                 Toast.LENGTH_LONG
                                             )
                                                 .show()
-                                        app.firebasestore.setPlayerOffField(team, jerseyInput )
+                                        app.firebasestore.setPlayerOffField(team, jerseyInput)
 
                                     }
                                     resetCardToBlank()
@@ -355,6 +357,13 @@ class CardFragment : Fragment() {
                         }
                     }
                 }
+            }
+            else{  Toast.makeText(
+                    context,
+                    "Game Must Be Started To Save Card",
+                    Toast.LENGTH_LONG
+                )
+                    .show()}
             } catch (e: Exception) {
                 Log.w(TAG, "Error saving Card Exception: $e")
                 Toast.makeText(

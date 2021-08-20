@@ -383,28 +383,36 @@ class MainActivity :AppCompatActivity(),
             }
 
             "Score" -> {
-                scoreFragment = ScoreFragment()
-                val args = Bundle()
-                scoreFragment!!.arguments = args
-                val fragmentManager = supportFragmentManager
-                fragmentManager.beginTransaction().replace(R.id.content_frame, scoreFragment!!)
+
+                    scoreFragment = ScoreFragment()
+                    val args = Bundle()
+                    scoreFragment!!.arguments = args
+                    val fragmentManager = supportFragmentManager
+                    fragmentManager.beginTransaction().replace(R.id.content_frame, scoreFragment!!)
                         .commit()
+
+
+
             }
             "Card" -> {
-                cardsFragment = CardFragment()
-                val args = Bundle()
-                cardsFragment!!.arguments = args
-                val fragmentManager = supportFragmentManager
-                fragmentManager.beginTransaction().replace(R.id.content_frame, cardsFragment!!)
+
+                    cardsFragment = CardFragment()
+                    val args = Bundle()
+                    cardsFragment!!.arguments = args
+                    val fragmentManager = supportFragmentManager
+                    fragmentManager.beginTransaction().replace(R.id.content_frame, cardsFragment!!)
                         .commit()
+
             }
             "Sub" -> {
-                subFragment = SubFragment()
-                val args = Bundle()
-                subFragment!!.arguments = args
-                val fragmentManager = supportFragmentManager
-                fragmentManager.beginTransaction().replace(R.id.content_frame, subFragment!!)
+
+                    subFragment = SubFragment()
+                    val args = Bundle()
+                    subFragment!!.arguments = args
+                    val fragmentManager = supportFragmentManager
+                    fragmentManager.beginTransaction().replace(R.id.content_frame, subFragment!!)
                         .commit()
+
             }
             "Injury" -> {
                 injuryFragment = InjuryFragment()

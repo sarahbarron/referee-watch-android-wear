@@ -141,10 +141,11 @@ class ScoreFragment(): Fragment(), Parcelable {
 
         layout.saveScoreBtn.setOnClickListener {
             try {
+                if(app.firebasestore.gameStarted){
                 Log.i(TAG, "input text ${layout.score_player_number_input.text} ::")
                 if (layout.score_player_number_input.text.toString() != "") {
                     val jerseynum = layout.score_player_number_input.text.toString()
-                    if(jerseynum.isNotEmpty()) {
+                    if (jerseynum.isNotEmpty()) {
                         jerseyInput = convertJerseyNumToInt(jerseynum)
                     }
                     Log.i(TAG, "JerseyInput $jerseyInput")
@@ -162,7 +163,7 @@ class ScoreFragment(): Fragment(), Parcelable {
 
                         if (onField) {
                             member = app.firebasestore.findMemberByJerseyNum("teamA", jerseyInput)!!
-                            if(member.id !=null)
+                            if (member.id != null)
                                 memberDocRef = db.collection("Member").document(member.id!!)
                             Log.i(
                                 TAG,
@@ -177,7 +178,7 @@ class ScoreFragment(): Fragment(), Parcelable {
                         onField = app.firebasestore.isPlayerOnTheField("teamB", jerseyInput)
                         if (onField) {
                             member = app.firebasestore.findMemberByJerseyNum("teamB", jerseyInput)!!
-                            if(member.id != null)
+                            if (member.id != null)
                                 memberDocRef = db.collection("Member").document(member.id!!)
                             Log.i(
                                 TAG,
@@ -218,8 +219,8 @@ class ScoreFragment(): Fragment(), Parcelable {
                                 Toast.makeText(context, "Score Saved", Toast.LENGTH_LONG).show()
                                 resetScore()
                                 team = ""
-                                teamDocRef= null
-                                memberDocRef= null
+                                teamDocRef = null
+                                memberDocRef = null
                                 jerseyInput = 0
                                 onField = false
                                 // redirect to stopwatch fragment
@@ -237,6 +238,14 @@ class ScoreFragment(): Fragment(), Parcelable {
                         }
                     }
                 }
+            }else{
+            Toast.makeText(
+                context,
+                "Game Must Be Started To Record Score",
+                Toast.LENGTH_LONG
+            )
+                .show()
+        }
             } catch (e: Exception) {
                 Log.w(TAG, "Error Saving Score: $e")
                 Toast.makeText(
