@@ -1,9 +1,11 @@
 import android.graphics.Color
+import android.util.Log
 import android.view.View
-import android.widget.Toast
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.wit.myapplication.fragments.AdditionalCommentsFragment
+
 
 // Convert the Jersey Number input String value to an integer
 fun convertJerseyNumToInt(jerseyNum: String): Int {
@@ -25,7 +27,8 @@ Combine both voice and input text notes together into one string
  */
 fun getVoiceAndTextNote(voiceNotes: ArrayList<String>, textNotes: String) : String{
     var allNotes = "Notes: "
-    if(textNotes.isNotEmpty()) allNotes = "$allNotes,"
+    Log.w("HELPER", "Text: $textNotes Voice: $voiceNotes")
+    if(textNotes.isNotEmpty()) allNotes = "$allNotes, $textNotes"
     for(note in voiceNotes)
     {
         allNotes = "$allNotes, $note"

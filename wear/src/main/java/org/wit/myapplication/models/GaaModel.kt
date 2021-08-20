@@ -152,6 +152,17 @@ data class TeamModel(
 
 
 @Parcelize
+data class AdditionalCommentsModel(
+    var matchProgramme: Boolean = true,
+    var pitchMarked: Boolean = true,
+    var grassCut: Boolean = true,
+    var jerseyNumbered: Boolean = true,
+    var linesmenAttire: String? = null,
+    var delayInStart: String? = null,
+    var extraComments: String? = null
+):Parcelable
+
+@Parcelize
 data class VenueModel(
     @DocumentId
     var id: String? = null,

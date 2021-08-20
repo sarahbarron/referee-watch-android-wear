@@ -19,8 +19,6 @@ import androidx.fragment.app.Fragment
 import androidx.wear.ambient.AmbientModeSupport
 import androidx.wear.widget.drawer.WearableActionDrawerView
 import androidx.wear.widget.drawer.WearableNavigationDrawerView
-import kotlinx.android.synthetic.main.card_games.*
-import kotlinx.android.synthetic.main.fragment_stopwatch.*
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.uiThread
@@ -55,6 +53,7 @@ class MainActivity :AppCompatActivity(),
     private var listCardsFragment: ListCardsFragment? =null
     private var listSubstitutesFragment: ListSubstitutesFragment? = null
     private var listInjuriesFragment: ListInjuriesFragment? = null
+    private var additionalCommentsFragment: AdditionalCommentsFragment? = null
 
 
     lateinit var app: MainApp
@@ -143,9 +142,9 @@ class MainActivity :AppCompatActivity(),
         val topNavArrayNames = resources.getStringArray(R.array.topnav_array_names)
         for (item in topNavArrayNames) {
             Log.d(TAG, "ITEM :$item")
-            var itemResourceId = resources.getIdentifier(item, "array", packageName)
+            val itemResourceId = resources.getIdentifier(item, "array", packageName)
             Log.d(TAG, "ItemResourceID :$itemResourceId")
-            var itemInformation = resources.getStringArray(itemResourceId)
+            val itemInformation = resources.getStringArray(itemResourceId)
             Log.d(TAG, "ItemInformation :$itemInformation")
             topNavSystem.add(
                     TopNav(
@@ -176,25 +175,40 @@ class MainActivity :AppCompatActivity(),
                         .commit()
 
             }
+//            Add additional comments for the match report
             R.id.menu_additional_comments ->{
                 mWearableNavigationDrawer?.setCurrentItem(0, true)
                 model.mSelectedTopNav.value = 0
+                additionalCommentsFragment = AdditionalCommentsFragment()
+                val args = Bundle()
+                additionalCommentsFragment!!.arguments = args
+                val fragmentManager = supportFragmentManager
+                fragmentManager.beginTransaction().replace(R.id.content_frame, additionalCommentsFragment!!)
+                    .commit()
             }
 //            Start the game
             R.id.menu_start_game ->{
                 mWearableNavigationDrawer?.setCurrentItem(0, true)
                 model.mSelectedTopNav.value = 0
-                //set the time in firestore
-                app.firebasestore.setStartTimeOFGame();
-                // start the watch
-                if(mBound) {
-                    // if stopwatch is aready running reset it
-                    resetStopWatch();
-                    // call method within the service to start the stopwatch
-                    mService.updateServiceRunning(true)
+
+                val teamsheetA = app.firebasestore.teamAPlayers
+                val teamsheetB = app.firebasestore.teamBPlayers
+                if(teamsheetA.size>0 && teamsheetB.size>0) {
+                    //set the time in firestore
+                    app.firebasestore.setStartTimeOFGame()
+                    // start the watch
+                    if (mBound) {
+                        // if stopwatch is aready running reset it
+                        resetStopWatch()
+                        // call method within the service to start the stopwatch
+                        mService.updateServiceRunning(true)
+                        app.firebasestore.gameStarted=true
+                    } else startStopwatchListener()
+                    toastMessage = "Game Started"
                 }
-                else startStopwatchListener()
-                toastMessage="Game Started"
+                else{
+                    toastMessage = "Cant start without teamsheets"
+                }
                 watchFragment = StopwatchFragment()
                 val args = Bundle()
                 watchFragment!!.arguments = args
@@ -204,11 +218,16 @@ class MainActivity :AppCompatActivity(),
             }
 
             R.id.menu_end_game -> {
-                mWearableNavigationDrawer?.setCurrentItem(0, true)
-                model.mSelectedTopNav.value = 0
-                app.firebasestore.setEndTimeOFGame();
-                resetStopWatch()
-                toastMessage= "Game Ended"
+                if(app.firebasestore.gameStarted) {
+                    mWearableNavigationDrawer?.setCurrentItem(0, true)
+                    model.mSelectedTopNav.value = 0
+                    app.firebasestore.setEndTimeOFGame()
+                    resetStopWatch()
+                    toastMessage = "Game Ended"
+                }
+                else{
+                    toastMessage = "Game hasn't started yet"
+                }
             }
             R.id.menu_teamA_teamsheet ->{
                 mWearableNavigationDrawer?.setCurrentItem(0, true)
@@ -516,11 +535,44 @@ class MainActivity :AppCompatActivity(),
         }
     }
 
+//    Start/Play the stopwatch
     fun onClickStart(view: View) {
-        if(mBound) {
-            Log.i(TAG, "Button Start")
-            // call method within the service
-            mService.updateServiceRunning(true)
+
+        val teamsheetA = app.firebasestore.teamAPlayers
+        val teamsheetB = app.firebasestore.teamBPlayers
+        val gameStarted = app.firebasestore.gameStarted
+//        If the game hasn't already started start the game
+        if(teamsheetA.size>0 && teamsheetB.size>0 && !gameStarted) {
+            //set the time in firestore
+            app.firebasestore.setStartTimeOFGame();
+            // start the watch
+            if (mBound) {
+                // if stopwatch is aready running reset it
+                resetStopWatch();
+                // call method within the service to start the stopwatch
+                mService.updateServiceRunning(true)
+                app.firebasestore.gameStarted=true;
+            } else startStopwatchListener()
+
+        }
+
+//        If the game is already started keep running
+        else if(teamsheetA.size>0 && teamsheetB.size>0 && gameStarted){
+            if(mBound) {
+                Log.i(TAG, "Button Start")
+                // call method within the service
+                mService.updateServiceRunning(true)
+            }
+            else startStopwatchListener()
+        }
+        else if(teamsheetA.size==0 || teamsheetB.size==0){
+            val toast = Toast.makeText(
+                applicationContext,
+                "Need teamsheets to start game",
+                Toast.LENGTH_SHORT
+            )
+            toast.show()
+
         }
         else startStopwatchListener()
     }

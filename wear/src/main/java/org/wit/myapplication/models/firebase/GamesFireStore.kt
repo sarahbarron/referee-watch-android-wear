@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
@@ -47,6 +46,7 @@ class GamesFireStore(val context: Context) : GamesStore {
     var footballSubsAllowed = 6
     var footballBlackCardSubsAllowed = 3
 
+    var gameStarted = false;
 
     lateinit var userId: String
     lateinit var db: FirebaseFirestore
@@ -609,10 +609,12 @@ class GamesFireStore(val context: Context) : GamesStore {
             if(gameId!=null) {
                 db.collection("Game").document(gameId).update("matchStarted", time);
             }
+            gameStarted=true;
             return true
         }
         catch (e: java.lang.Exception){
-            Log.w(GamesFireStore.TAG, "Error setting start time of the game");
+            Log.w(GamesFireStore.TAG,
+                "Error setting start time of the game");
         }
         return false
     }
@@ -631,6 +633,33 @@ class GamesFireStore(val context: Context) : GamesStore {
         return false
     }
 
+
+
+    override  fun saveAdditionalComments(comments: AdditionalCommentsModel):Boolean{
+        try{
+            var gameId = game.id
+            var matchProgramme = comments.matchProgramme
+            var pitchMarked= comments.pitchMarked
+            var grassCut = comments.grassCut
+            var jerseyNumbered = comments.jerseyNumbered
+            var linesmenAttire = comments.linesmenAttire
+            var delayInStart = comments.delayInStart
+            var extraComments = comments.extraComments
+            if(gameId!=null){
+                db.collection("Game").document(gameId).update("matchProgramme", matchProgramme)
+                db.collection("Game").document(gameId).update("pitchMarked", pitchMarked)
+                db.collection("Game").document(gameId).update("grassCut", grassCut)
+                db.collection("Game").document(gameId).update("jerseyNumbered", jerseyNumbered)
+                db.collection("Game").document(gameId).update("linesmenAttire", linesmenAttire)
+                db.collection("Game").document(gameId).update("delayInStart",delayInStart)
+                db.collection("Game").document(gameId).update("extraComments",extraComments)
+                return true
+            }
+        } catch (e: java.lang.Exception){
+            Log.w(GamesFireStore.TAG, "Error saving additional notes");
+        }
+        return false
+    }
 
     companion object {
         private const val TAG = "Firestore"

@@ -126,6 +126,10 @@ class GamesMemStore : GamesStore {
         TODO("Not yet implemented")
     }
 
+    override fun saveAdditionalComments(comments: AdditionalCommentsModel): Boolean {
+        TODO("Not yet implemented")
+    }
+
 
     fun logAllGames(){
         TODO("Not yet implemented")

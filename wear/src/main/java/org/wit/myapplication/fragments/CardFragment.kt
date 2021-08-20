@@ -18,12 +18,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import convertJerseyNumToInt
 import getVoiceAndTextNote
 import kotlinx.android.synthetic.main.fragment_cards.view.*
-import kotlinx.android.synthetic.main.fragment_injury.view.*
-import kotlinx.android.synthetic.main.fragment_score.view.*
-import kotlinx.android.synthetic.main.fragment_stopwatch.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.wit.myapplication.R
 import org.wit.myapplication.main.MainApp
 import org.wit.myapplication.models.*

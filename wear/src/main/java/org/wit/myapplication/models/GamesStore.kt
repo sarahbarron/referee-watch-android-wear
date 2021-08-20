@@ -35,4 +35,5 @@ interface GamesStore{
     fun updateTeamBPointsTotal()
     fun setStartTimeOFGame(): Boolean
     fun setEndTimeOFGame(): Boolean
+    fun saveAdditionalComments(comments: AdditionalCommentsModel):Boolean
 }
