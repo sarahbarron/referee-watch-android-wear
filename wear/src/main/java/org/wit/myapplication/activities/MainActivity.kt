@@ -186,7 +186,7 @@ class MainActivity :AppCompatActivity(),
                 fragmentManager.beginTransaction().replace(R.id.content_frame, additionalCommentsFragment!!)
                     .commit()
             }
-//            Start the game
+//          Start the game
             R.id.menu_start_game ->{
                 mWearableNavigationDrawer?.setCurrentItem(0, true)
                 model.mSelectedTopNav.value = 0
@@ -229,6 +229,30 @@ class MainActivity :AppCompatActivity(),
                     toastMessage = "Game hasn't started yet"
                 }
             }
+
+            R.id.menu_teamA_took_to_field_at -> {
+                    mWearableNavigationDrawer?.setCurrentItem(0, true)
+                    model.mSelectedTopNav.value = 0
+                    val saved = app.firebasestore.setTimeTeamATookToField()
+                    if(saved) {
+                        toastMessage = "Time Recorded"
+                    }
+                    else{
+                        toastMessage = "Problem Saving Time"
+                    }
+            }
+            R.id.menu_teamB_took_to_field_at -> {
+                mWearableNavigationDrawer?.setCurrentItem(0, true)
+                model.mSelectedTopNav.value = 0
+                val saved = app.firebasestore.setTimeTeamBTookToField()
+                if(saved) {
+                    toastMessage = "Time Recorded"
+                }
+                else{
+                    toastMessage = "Problem Saving Time"
+                }
+            }
+
             R.id.menu_teamA_teamsheet ->{
                 if(app.firebasestore.teamAPlayers.size>0) {
                     mWearableNavigationDrawer?.setCurrentItem(0, true)

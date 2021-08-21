@@ -640,6 +640,39 @@ class GamesFireStore(val context: Context) : GamesStore {
         return false
     }
 
+    override fun setTimeTeamATookToField():Boolean{
+        try{
+            var gameId = game.id
+            var time = Date();
+            if(gameId!=null) {
+                db.collection("Game").document(gameId).update("teamATookToField", time);
+            }
+            return true
+        }
+        catch (e: java.lang.Exception){
+            Log.w(GamesFireStore.TAG,
+                "Error setting time team A took to the field");
+        }
+        return false
+    }
+
+    override fun setTimeTeamBTookToField():Boolean{
+        try{
+            var gameId = game.id
+            var time = Date();
+            if(gameId!=null) {
+                db.collection("Game").document(gameId).update("teamBTookToField", time);
+            }
+            return true
+        }
+        catch (e: java.lang.Exception){
+            Log.w(GamesFireStore.TAG,
+                "Error setting time team B took to the field");
+        }
+        return false
+    }
+
+
 
 
     override  fun saveAdditionalComments(comments: AdditionalCommentsModel):Boolean{

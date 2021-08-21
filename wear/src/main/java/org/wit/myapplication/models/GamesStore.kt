@@ -38,4 +38,6 @@ interface GamesStore{
     fun saveAdditionalComments(comments: AdditionalCommentsModel):Boolean
     fun findAllTeamsheetB(): ArrayList<TeamsheetPlayerModel>?
     fun findAllTeamsheetA(): ArrayList<TeamsheetPlayerModel>?
+    fun setTimeTeamBTookToField(): Boolean
+    fun setTimeTeamATookToField(): Boolean
 }

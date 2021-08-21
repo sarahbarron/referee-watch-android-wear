@@ -70,6 +70,9 @@
     <string name="bottom_menu_view_teamA">TeamA Teamsheet</string>
     <string name="bottom_menu_view_teamB">TeamB Teamsheet</string>
     <string name="bottom_menu_additional_comments">Additional Comments</string>
+    <string name="team_a_took_to_the_field">Team A Took To The Field</string>
+    <string name="team_b_took_to_the_field">Team B Took To The Field</string>
+    <string name="games_list">List Games</string>
 
     <!--    fragments -->
     <string name="team_1">Team 1</string>
@@ -90,13 +93,11 @@
     <string name="yellowCard">Yellow</string>
     <string name="redCard">Red</string>
     <string name="blackCard">Black</string>
-    <string name="games_list">Games List</string>
     <string name="next">Next</string>
     <string name="dash">-</string>
     <string name="zerozero">00</string>
     <string name="initials">IN:</string>
     <string name="openpar"> ( </string>
     <string name="closingpar"> ) </string>
-    <string name="team_a_took_to_the_field">Team A Took To The Field</string>
-    <string name="team_b_took_to_the_field">Team B Took To The Field</string>
+
 </resources>

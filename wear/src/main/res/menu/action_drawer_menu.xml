@@ -14,12 +14,16 @@
         android:id="@+id/menu_additional_comments"
         android:title="@string/bottom_menu_additional_comments"
         android:icon="@drawable/comment"/>
+
     <item android:id="@+id/menu_teamA_took_to_field_at"
         android:icon="@drawable/teamsheet_players"
         android:title="@string/team_a_took_to_the_field"/>
+
     <item android:id="@+id/menu_teamB_took_to_field_at"
         android:icon="@drawable/teamsheet_a"
         android:title="@string/team_b_took_to_the_field"/>
+
+
     <item android:id="@+id/menu_teamA_teamsheet"
         android:icon="@drawable/teamsheet_players"
         android:title="@string/bottom_menu_view_teamA"/>
