@@ -18,6 +18,10 @@ h3{
 .card{
     padding:50px;
 }
+
+.card-body{
+    padding-left: 50px;
+}
 h4{
 padding: 20px 0;
 }
