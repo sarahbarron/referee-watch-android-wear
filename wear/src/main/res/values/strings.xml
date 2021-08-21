@@ -97,4 +97,6 @@
     <string name="initials">IN:</string>
     <string name="openpar"> ( </string>
     <string name="closingpar"> ) </string>
+    <string name="team_a_took_to_the_field">Team A Took To The Field</string>
+    <string name="team_b_took_to_the_field">Team B Took To The Field</string>
 </resources>
