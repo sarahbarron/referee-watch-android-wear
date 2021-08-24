@@ -61,7 +61,15 @@ class SubstituteAdapter constructor(
             player = players.find{ p->p.id == substitute.playerOff?.id}!!
             if (player.firstName !=null || player.lastName !=null ) playerOffName = "Player OFF: ${player.firstName} ${player.lastName}"
         }
-        if (player.ownClub?.id == teamBid) team = teamBname
+
+        val teamId = substitute.team?.id
+        val teamAid = teamA.id
+        if(teamId == teamAid){
+            team = teamAname
+        }
+        else{
+            team = teamBname
+        }
         if(substitute.bloodsub) bloodsub = "Bloodsub"
 
         holder.itemView.subTime.text = time

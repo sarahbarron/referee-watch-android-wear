@@ -40,7 +40,6 @@ class CardAdapter constructor(
         val card = cards[holder.adapterPosition]
         val teamAname = teamA.name!!
         val teamBname = teamB.name!!
-        val teamBid = teamB.id!!
         val players = players
 
         var time =""
@@ -56,8 +55,15 @@ class CardAdapter constructor(
         }
         if (players.size != 0) player = players.find{ p->p.id == card.member?.id}!!
         if (player.firstName !=null || player.lastName !=null ) playerName = "${player.firstName} ${player.lastName}"
-        if (player.ownClub?.id == teamBid) team = teamBname
 
+        val teamId = card.team?.id
+        val teamAid = teamA.id
+        if(teamId == teamAid){
+            team = teamAname
+        }
+        else{
+            team = teamBname
+        }
 
         holder.itemView.cardTime.text = time
         holder.itemView.cardTeam.text = team

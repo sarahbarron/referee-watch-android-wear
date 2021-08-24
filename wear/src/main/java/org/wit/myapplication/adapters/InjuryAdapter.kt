@@ -57,7 +57,15 @@ class InjuryAdapter constructor(
         }
         if (players.size != 0) player = players.find{ p->p.id == injury.member?.id}!!
         if (player.firstName !=null || player.lastName !=null ) playerName = "${player.firstName} ${player.lastName}"
-        if (player.ownClub?.id == teamBid) team = teamBname
+
+        val teamId = injury.team?.id
+        val teamAid = teamA.id
+        if(teamId == teamAid){
+            team = teamAname
+        }
+        else{
+            team = teamBname
+        }
 
         holder.itemView.injuryTime.text = time
         holder.itemView.injuryTeam.text = team

@@ -37,10 +37,10 @@ class GamesFireStore(val context: Context) : GamesStore {
     var injuries = ArrayList<InjuryModel>()
     var substitutes = ArrayList<SubstituteModel>()
 
-    var teamASubs = 5
+    var teamASubs = 0
     var teamBSubs = 0
     var teamABlackCardSubs = 0
-    var teamBBlackCardSubs = 3
+    var teamBBlackCardSubs = 0
     var sport = ""
     var hurlingSubsAllowed = 5
     var footballSubsAllowed = 6
@@ -119,7 +119,7 @@ class GamesFireStore(val context: Context) : GamesStore {
     override fun saveScore(scoreModel: ScoreModel): Boolean {
         try {
             db.collection("Scores").document().set(scoreModel)
-          //  scores.add(scoreModel)
+            scores.add(scoreModel)
             Log.i(TAG, "firestore save score scoreModel = $scoreModel\nscores = $scores")
             return true
         } catch (e: java.lang.Exception) {
@@ -261,7 +261,7 @@ class GamesFireStore(val context: Context) : GamesStore {
                     return false
             }
         }
-        return false
+        return true
     }
 
     override fun updateNormalSubs(team: String) {
@@ -514,6 +514,7 @@ class GamesFireStore(val context: Context) : GamesStore {
                         }
                         Log.i(TAG, "fetch Subs : $substitutes")
                     } else {
+
                         Log.i(TAG, "Substitutes = null")
                     }
                 }
