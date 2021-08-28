@@ -551,7 +551,7 @@ class MainActivity :AppCompatActivity(),
         doAsync {
             app.firebasestore.fetchTeam(game.id!!, game.teamA?.id!!, "teamA")
             app.firebasestore.fetchTeam(game.id!!, game.teamB?.id!!, "teamB")
-            //app.firebasestore.fetchScores(game.id!!)
+//            app.firebasestore.fetchScores(game.id!!)
             app.firebasestore.fetchCards(game.id!!)
             app.firebasestore.fetchSubstitutes(game.id!!)
             app.firebasestore.fetchInjuries(game.id!!)

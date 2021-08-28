@@ -404,7 +404,7 @@ class GamesFireStore(val context: Context) : GamesStore {
     }
 
 
-    // Fetch A Scores
+//     Fetch A Scores
 //    fun fetchScores(gameId: String)  {
 //        try {
 //            db = FirebaseFirestore.getInstance()
