@@ -67,11 +67,11 @@
     <string name="bottom_menu_cards">List Cards</string>
     <string name="bottom_menu_subs">List Subs</string>
     <string name="bottom_menu_injuries">List Injuries</string>
-    <string name="bottom_menu_view_teamA">Waterford Teamsheet</string>
-    <string name="bottom_menu_view_teamB">Cork Teamsheet</string>
+    <string name="bottom_menu_view_teamA">Team A Team Sheet</string>
+    <string name="bottom_menu_view_teamB">Team B Team Sheet</string>
     <string name="bottom_menu_additional_comments">Additional Comments</string>
-    <string name="team_a_took_to_the_field">Waterford Took To The Field</string>
-    <string name="team_b_took_to_the_field">Cork Took To The Field</string>
+    <string name="team_a_took_to_the_field">Team A Took To The Field</string>
+    <string name="team_b_took_to_the_field">Team B Took To The Field</string>
     <string name="games_list">List Games</string>
 
     <!--    fragments -->

@@ -7,10 +7,7 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -19,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.wear.ambient.AmbientModeSupport
 import androidx.wear.widget.drawer.WearableActionDrawerView
 import androidx.wear.widget.drawer.WearableNavigationDrawerView
+import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.uiThread
@@ -27,10 +25,8 @@ import org.wit.myapplication.TopNav
 import org.wit.myapplication.fragments.*
 import org.wit.myapplication.main.MainApp
 import org.wit.myapplication.models.GameModel
-import org.wit.myapplication.service.StopwatchService
 import org.wit.myapplication.models.LiveDataViewModel
-import kotlin.collections.ArrayList
-import org.jetbrains.anko.doAsync
+import org.wit.myapplication.service.StopwatchService
 
 
 /**
@@ -160,7 +156,6 @@ class MainActivity :AppCompatActivity(),
         Log.d(TAG, "onMenuItemClick(): $menuItem")
         val itemId = menuItem.itemId
         var toastMessage = ""
-
 
         when (itemId) {
 
@@ -560,6 +555,13 @@ class MainActivity :AppCompatActivity(),
             uiThread {
                 model.teamA.value = app.firebasestore.teamA
                 model.teamB.value = app.firebasestore.teamB
+                // add the team name to the bottom menu teamsheet
+                val menu: Menu? = mWearableActionDrawer?.menu
+                menu?.findItem(R.id.menu_teamA_teamsheet)?.title = "${model.teamA.value?.name} team sheet"
+                menu?.findItem(R.id.menu_teamB_teamsheet)?.title = "${model.teamB.value?.name} team sheet"
+                menu?.findItem(R.id.menu_teamA_took_to_field_at)?.title = "${model.teamA.value?.name} took to the field"
+                menu?.findItem(R.id.menu_teamB_took_to_field_at)?.title = "${model.teamB.value?.name} took to the field"
+
             }
         }
 

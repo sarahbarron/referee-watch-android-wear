@@ -3,7 +3,6 @@
     <item android:id="@+id/menu_home"
         android:icon="@drawable/ic_menu_report"
         android:title="@string/bottom_menu_home" />
-
     <item android:id="@+id/menu_start_game"
         android:icon="@drawable/ic_start"
         android:title="@string/bottom_menu_start_game"/>
@@ -27,6 +26,7 @@
     <item android:id="@+id/menu_teamA_teamsheet"
         android:icon="@drawable/teamsheet_players"
         android:title="@string/bottom_menu_view_teamA"/>
+
     <item android:id="@+id/menu_teamB_teamsheet"
         android:icon="@drawable/teamsheet_a"
         android:title="@string/bottom_menu_view_teamB"/>
